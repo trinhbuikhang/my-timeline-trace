@@ -68,7 +68,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: trinhbuikhang/trinhbuikhang
-          token: ${{ secrets.PROFILE_REPO_PAT }}
+          token: ${{ secrets.PROFILE_REPO_PAT1 }}
           path: profile
 
       - name: 🌌 Sync profile README
