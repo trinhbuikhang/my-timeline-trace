@@ -18,12 +18,9 @@ for path in YEARS.glob("*.md"):
 entries.sort(reverse=True)
 
 rows = []
-for year, path in entries:
-    if year == 2026:
-        label = "🌱 First Year"
-    else:
-        label = "🛰️ Annual Signal"
-    rows.append(f"| **{year}** | `ONLINE` | [{label}]({path.as_posix()}) |")
+for year, _path in entries:
+    label = "🌱 First Year" if year == 2026 else "🛰️ Annual Signal"
+    rows.append(f"| **{year}** | `ONLINE` | [{label}](years/{year}.md) |")
 
 timeline = "\n".join(rows) if rows else "| — | `OFFLINE` | No transmissions yet |"
 
