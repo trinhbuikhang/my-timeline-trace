@@ -18,7 +18,7 @@ A small record of who I was, what I built, who I loved, what I learned, and what
 
 | Year | Signal | Record |
 |---|---|---|
-| **2026** | `ONLINE` | [🌱 First Year](/home/runner/work/my-timeline-trace/my-timeline-trace/years/2026.md) |
+| **2026** | `ONLINE` | [🌱 First Year](years/2026.md) |
 
 Every year, GitHub Actions adds another capsule to this archive.
 
