@@ -18,9 +18,9 @@ A small record of who I was, what I built, who I loved, what I learned, and what
 
 | Year | Signal | Record |
 |---|---|---|
-| 🌱 **2026** | `ONLINE` | [Open the first time capsule](years/2026.md) |
+| **2026** | `ONLINE` | [🌱 First Year](/home/runner/work/my-timeline-trace/my-timeline-trace/years/2026.md) |
 
-Every year, GitHub Actions adds another signal to this archive.
+Every year, GitHub Actions adds another capsule to this archive.
 
 No one needs to remember.  
 No one needs to maintain it.
@@ -53,6 +53,8 @@ The machine keeps the clock.
 ## 📡 Transmission Protocol
 
 **First transmission:** 2026  
+**Latest transmission:** 2026  
+**Capsules recorded:** 1  
 **Frequency:** Once per year  
 **Origin:** Earth  
 **Destination:** The future  
