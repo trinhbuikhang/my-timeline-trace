@@ -64,22 +64,17 @@ jobs:
             git push
           fi
 
-      - name: 👤 Sync profile README
-        env:
-          PROFILE_REPO_PAT: ${{ secrets.PROFILE_REPO_PAT }}
+      - name: 👤 Checkout profile repository
+        uses: actions/checkout@v4
+        with:
+          repository: trinhbuikhang/trinhbuikhang
+          token: ${{ secrets.PROFILE_REPO_PAT }}
+          path: profile
+
+      - name: 🌌 Sync profile README
         shell: bash
         run: |
           set -euo pipefail
-
-          if [ -z "${PROFILE_REPO_PAT:-}" ]; then
-            echo "PROFILE_REPO_PAT is not configured; skipping profile sync."
-            exit 0
-          fi
-
-          echo "Cloning profile repository..."
-          git clone --depth 1 \
-            "https://x-access-token:${PROFILE_REPO_PAT}@github.com/trinhbuikhang/trinhbuikhang.git" \
-            profile
 
           cp README.md profile/README.md
 
