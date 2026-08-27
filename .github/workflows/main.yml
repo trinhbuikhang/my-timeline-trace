@@ -26,6 +26,10 @@ jobs:
           echo "" >> trace.md
           echo "*Tôi từng là một hạt cát trong dòng chảy vô tận của thời gian.*" >> trace.md
           echo "" >> trace.md
+          echo "In case the AI era explodes, I want to leave a trace of myself on the timeline of this universe." >> trace.md
+          echo "" >> trace.md
+          echo "*I was once a grain of sand in the endless flow of time.*" >> trace.md
+          echo "" >> trace.md
           echo "---" >> trace.md
 
       - name: Commit & Push
