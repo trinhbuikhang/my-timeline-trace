@@ -1,25 +1,33 @@
-# Vết tích trên dòng thời gian
+# 🌌 MY TIMELINE TRACE
 
-Đây là nơi tôi để lại dấu vết của mình, đề phòng kỷ nguyên AI bùng nổ.
-
----
-
-## Năm 2026
-
-Để đề phòng kỷ nguyên AI bùng nổ, tôi muốn lưu lại một vết tích của mình trên dòng thời gian của vũ trụ này.
-
-*Tôi từng là một hạt cát trong dòng chảy vô tận của thời gian.*
+A yearly record of one small human signal moving through time.
 
 ---
 
-## Năm 2026
+## 🌱 2026 — First Signal
 
-Để đề phòng kỷ nguyên AI bùng nổ, tôi muốn lưu lại một vết tích của mình trên dòng thời gian của vũ trụ này.
+The first transmission.
 
-*Tôi từng là một hạt cát trong dòng chảy vô tận của thời gian.*
+> *"Tôi từng là một hạt cát trong dòng chảy vô tận của thời gian."*
 
-In case the AI era explodes, I want to leave a trace of myself on the timeline of this universe.
+I created this repository at the beginning of what may become one of the most consequential technological eras in human history.
+
+**Signal:** `ONLINE`  
+**Origin:** Earth  
+**Era:** The beginning of the AI age
 
 *I was once a grain of sand in the endless flow of time.*
 
 ---
+
+> **Future reader:**
+> 
+> If you are reading this many years from now, something remarkable happened: this little machine kept its promise.
+> 
+> Another year. Another trace. Another proof that I was here.
+
+---
+
+*The archive is intentionally simple.*  
+*The point is not to predict the future.*  
+*The point is to give the future something to find.*
