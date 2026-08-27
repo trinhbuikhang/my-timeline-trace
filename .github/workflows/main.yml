@@ -4,7 +4,7 @@ on:
   schedule:
     # Chạy vào 00:00 ngày 1 tháng 1 hàng năm (UTC)
     - cron: '0 0 1 1 *'
-  workflow_dispatch:  # Cho phép bấm chạy thử thủ công
+  workflow_dispatch:
 
 jobs:
   update-trace:
@@ -16,26 +16,45 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Append new trace
+      - name: Update README
         run: |
           YEAR=$(date +%Y)
-          echo "" >> trace.md
-          echo "## Năm $YEAR" >> trace.md
-          echo "" >> trace.md
-          echo "Để đề phòng kỷ nguyên AI bùng nổ, tôi muốn lưu lại một vết tích của mình trên dòng thời gian của vũ trụ này." >> trace.md
-          echo "" >> trace.md
-          echo "*Tôi từng là một hạt cát trong dòng chảy vô tận của thời gian.*" >> trace.md
-          echo "" >> trace.md
-          echo "In case the AI era explodes, I want to leave a trace of myself on the timeline of this universe." >> trace.md
-          echo "" >> trace.md
-          echo "*I was once a grain of sand in the endless flow of time.*" >> trace.md
-          echo "" >> trace.md
-          echo "---" >> trace.md
+          
+          # Nếu README chưa có phần tiêu đề thì tạo mới
+          if ! grep -q "## Dòng thời gian" README.md; then
+            cat > README.md << 'EOF'
+          # 🌌 Vết Tích Trên Dòng Thời Gian
+          
+          > *"Tôi từng là một hạt cát trong dòng chảy vô tận của thời gian."*
+          
+          Đây là nơi tôi để lại dấu vết của mình giữa vũ trụ bao la,  
+          đề phòng kỷ nguyên AI bùng nổ và mọi thứ thay đổi.
+          
+          ---
+          
+          ## 📜 Dòng thời gian
+          
+          EOF
+          fi
+          
+          # Thêm entry năm mới
+          echo "" >> README.md
+          echo "### 🌿 Năm $YEAR" >> README.md
+          echo "" >> README.md
+          echo "Để đề phòng kỷ nguyên AI bùng nổ, tôi muốn lưu lại một vết tích của mình trên dòng thời gian của vũ trụ này." >> README.md
+          echo "" >> README.md
+          echo "*Tôi từng là một hạt cát trong dòng chảy vô tận của thời gian.*" >> README.md
+          echo "" >> README.md
+          echo "In case the AI era explodes, I want to leave a trace of myself on the timeline of this universe." >> README.md
+          echo "" >> README.md
+          echo "*I was once a grain of sand in the endless flow of time.*" >> README.md
+          echo "" >> README.md
+          echo "---" >> README.md
 
       - name: Commit & Push
         run: |
           git config user.name "Timeline Bot"
           git config user.email "bot@users.noreply.github.com"
-          git add trace.md
-          git commit -m "Thêm vết tích năm $(date +%Y)" || echo "Không có thay đổi"
+          git add README.md
+          git commit -m "🌌 Cập nhật vết tích năm $(date +%Y)" || echo "Không có thay đổi"
           git push
