@@ -2,11 +2,13 @@
 
 > *A tiny signal from one human, sent into the future.*
 
-This repository exists for one simple reason:
+This is not a blog.  
+It is not a résumé.  
+It is not an attempt to predict the future.
 
-**to leave a trace that survives me.**
+**It is a time capsule.**
 
-The world is entering an era where AI can write code, create images, generate ideas, and perhaps one day preserve almost everything about us. So I wanted to leave something deliberately simple — a small timestamped record saying:
+A small record of who I was, what I built, who I loved, what I learned, and what I believed — preserved year by year as the world enters the AI age.
 
 > **I was here. I witnessed this era. I wondered what came next.**
 
@@ -14,27 +16,13 @@ The world is entering an era where AI can write code, create images, generate id
 
 ## ⏳ The Timeline
 
-### 🌱 2026 — First Signal
+| Year | Signal | Record |
+|---|---|---|
+| 🌱 **2026** | `ONLINE` | [Open the first time capsule](years/2026.md) |
 
-The first trace.
+Every year, GitHub Actions adds another signal to this archive.
 
-> *"Tôi từng là một hạt cát trong dòng chảy vô tận của thời gian."*
-
-I created this repository at the beginning of what I believe may become one of the most consequential technological eras in human history.
-
-**Signal:** `ONLINE`  
-**Origin:** Earth  
-**Era:** The beginning of the AI age
-
-*I was once a grain of sand in the endless flow of time.*
-
----
-
-## 🛰️ Protocol
-
-This timeline is designed to update itself **once every year**.
-
-No one needs to remember.
+No one needs to remember.  
 No one needs to maintain it.
 
 If everything works, another year will simply appear here.
@@ -43,19 +31,32 @@ And another.
 
 And another.
 
-Until one day, someone — human or otherwise — looks back through the commits and finds this tiny signal from 2026.
+---
+
+## 🧭 What Each Year Contains
+
+Each annual capsule is a snapshot of a human life at one point in time:
+
+- 👨‍👩‍👧 **Family** — people I love, memories, and things worth passing on
+- 💼 **Work & Craft** — what I built, learned, failed at, and became proud of
+- 🧠 **Lessons** — what changed my mind and what I still don't understand
+- ❤️ **People & Moments** — ordinary things that may become extraordinary with time
+- 🤖 **The AI Era** — what technology changed and what I believed about it
+- 🎯 **Looking Forward** — hopes, goals, and things worth protecting
+- ✉️ **Letter to Future Me** — a message written across time
+
+The machine keeps the clock.  
+**The human provides the meaning.**
 
 ---
 
-## 📡 Current Status
+## 📡 Transmission Protocol
 
-| | |
-|---|---|
-| **Signal** | 🟢 ACTIVE |
-| **First transmission** | 2026 |
-| **Latest transmission** | 2026 |
-| **Transmission interval** | 1 year |
-| **Destination** | The future |
+**First transmission:** 2026  
+**Frequency:** Once per year  
+**Origin:** Earth  
+**Destination:** The future  
+**Maintained by:** GitHub Actions + one stubborn human
 
 ---
 
@@ -64,6 +65,10 @@ Until one day, someone — human or otherwise — looks back through the commits
 > *Time does not remember us.*  
 > *But sometimes, we leave something behind for it to find.*
 
+If you are reading this decades from now:
+
+**Hello from 2026.**
+
 ---
 
-<sub>Automatically maintained by GitHub Actions · Started in 2026 · If you're reading this in the distant future: hello.</sub>
+<sub>Started in 2026 · An intentionally small archive of one human life</sub>
