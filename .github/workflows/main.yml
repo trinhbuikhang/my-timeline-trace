@@ -1,66 +1,66 @@
-name: 🌌 Yearly Timeline Transmission
+name: 🌌 Timeline Keeper
 
 on:
   schedule:
-    # 00:00 UTC on January 1 every year.
     - cron: '0 0 1 1 *'
+
+  push:
+    paths:
+      - 'years/*.md'
+      - 'scripts/build_timeline.py'
+      - '.github/workflows/main.yml'
+
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  transmit:
+  maintain-timeline:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📡 Receive current timeline
+      - name: 📡 Receive timeline
         uses: actions/checkout@v4
 
-      - name: ⏳ Append this year's signal
+      - name: 🆕 Create annual capsule when needed
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         shell: bash
         run: |
           set -euo pipefail
 
           YEAR="$(date -u +%Y)"
+          FILE="years/${YEAR}.md"
+          TEMPLATE="years/_template.md"
 
-          # Idempotency: never write the same year twice.
-          if grep -qE "^### .*${YEAR}.*$" README.md; then
-            echo "Signal for ${YEAR} already exists. Nothing to transmit."
+          if [ -f "$FILE" ]; then
+            echo "${FILE} already exists. Nothing to create."
             exit 0
           fi
 
-          cat >> README.md << EOF
+          test -f "$TEMPLATE"
+          sed \
+            -e "s/YEAR/${YEAR}/g" \
+            -e "s/TEN_YEARS_LATER/$((YEAR + 10))/g" \
+            "$TEMPLATE" > "$FILE"
 
-### 🛰️ ${YEAR} — Annual Signal
+          echo "Created ${FILE}."
 
-Another year has passed.
+      - name: 🧭 Rebuild README from capsules
+        run: python scripts/build_timeline.py
 
-I am still here.
-Still watching.
-Still wondering what comes next.
-
-**Signal:** \`ONLINE\`  
-**Timestamp:** ${YEAR}-01-01  
-**Transmission:** #${YEAR}
-
-> *The universe keeps moving. So do I.*
-
----
-EOF
-
-      - name: 💾 Commit transmission
+      - name: 💾 Commit timeline changes
         shell: bash
         run: |
           set -euo pipefail
 
-          if git diff --quiet -- README.md; then
-            echo "No new signal to commit."
+          if git diff --quiet; then
+            echo "Timeline is already up to date."
             exit 0
           fi
 
           git config user.name "Timeline Bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md
-          git commit -m "🌌 Transmit ${YEAR:-$(date -u +%Y)} signal"
+          git add README.md years/
+          git commit -m "🌌 Maintain timeline"
           git push
