@@ -76,31 +76,12 @@ jobs:
             exit 0
           fi
 
-          git clone --depth 1 "https://x-access-token:${PROFILE_REPO_PAT}@github.com/trinhbuikhang/trinhbuikhang.git" profile
-          cp README.md profile/TIMELINE.md
+          echo "Cloning profile repository..."
+          git clone --depth 1 \
+            "https://x-access-token:${PROFILE_REPO_PAT}@github.com/trinhbuikhang/trinhbuikhang.git" \
+            profile
 
-          python - <<'PY'
-          from pathlib import Path
-
-          timeline = Path("profile/TIMELINE.md").read_text(encoding="utf-8")
-          profile_readme = f'''# 🌌 MY TIMELINE TRACE
-
-> *A living archive of one human life, carried forward year by year.*
-
-This profile is automatically synchronized from **[my-timeline-trace](https://github.com/trinhbuikhang/my-timeline-trace)**.
-
-The machine keeps the clock. **The human provides the meaning.**
-
----
-
-{timeline}
-
----
-
-*Synced automatically · Started in 2026*
-'''
-          Path("profile/README.md").write_text(profile_readme, encoding="utf-8")
-          PY
+          cp README.md profile/README.md
 
           cd profile
           git config user.name "Timeline Bot"
