@@ -1,0 +1,66 @@
+---
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/reddit-mono';
+import '@fontsource-variable/newsreader/opsz.css';
+import '@fontsource-variable/newsreader/opsz-italic.css';
+import '@fontsource/patrick-hand';
+import '../d2/d2.css';
+import top from '../d2/top.html?raw';
+import foot from '../d2/foot.html?raw';
+import { localize } from '../lib/d2';
+import { useT, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title?: string;
+  description?: string;
+  /** The home page carries the chapters the header links to; other pages link back to them. */
+  home?: boolean;
+}
+
+const { lang, title, description, home = false } = Astro.props;
+const t = useT(lang);
+const fullTitle = title ? `${title} — Pharaoh Alone` : 'Pharaoh Alone';
+const other: Lang = lang === 'vi' ? 'en' : 'vi';
+const alternate = Astro.url.pathname.replace(/^\/(vi|en)\//, `/${other}/`);
+const paths = { [lang]: Astro.url.pathname, [other]: alternate } as Record<Lang, string>;
+const switcher = `<span class="lang">${(['vi', 'en'] as const)
+  .map((l) => `<a href="${paths[l]}" hreflang="${l}" lang="${l}"${l === lang ? ' aria-current="true"' : ''}>${l.toUpperCase()}</a>`)
+  .join('')}</span>`;
+let header = localize(top, lang).replace(/<span class="lang">[\s\S]*?<\/span>/, switcher);
+if (!home) header = header.replace(/href="#/g, `href="/${lang}/#`);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description ?? t('meta.description')} />
+    <meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#161513" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="alternate" hreflang={other} href={new URL(alternate, Astro.site)} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description ?? t('meta.description')} />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try { localStorage.setItem('pa-lang', document.documentElement.lang); } catch (e) {}
+      // switching language keeps the reader in the same chapter
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('.lang a');
+        if (a && location.hash) a.href = a.getAttribute('href').split('#')[0] + location.hash;
+      });
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t('skip')}</a>
+    <Fragment set:html={header} />
+    <main id="main">
+      <slot />
+    </main>
+    <Fragment set:html={localize(foot, lang)} />
+  </body>
+</html>

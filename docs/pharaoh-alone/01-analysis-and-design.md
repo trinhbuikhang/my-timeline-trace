@@ -383,7 +383,7 @@ Site là một **phòng lab sạch sẽ**: nhiều khoảng trắng, nhãn mẫu
 
 ### Bổ sung hướng thiết kế
 
-**1. Hero = quả địa cầu GIS.** Phép chiếu orthographic vẽ bằng canvas (d3-geo); theo giao diện D, đất liền vẽ dạng nét như hình trong datasheet, đường bờ biển lấy từ Natural Earth 110m (`site/scripts/build-land.mjs` → `site/public/land.json`, ~20 KB gzip, tải sau). Các địa điểm là điểm đo TP1, TP2… kèm toạ độ, đường hành trình nét đứt chạy giữa các nơi, ô đọc `TÂM` cập nhật trực tiếp. Kéo/vuốt hoặc phím mũi tên để xoay, có quán tính, tự quay chậm, dừng khi ra khỏi màn hình. Dữ liệu: `site/src/content/places.yaml`, có thể thêm vị trí dự án.
+**1. Hero = quả địa cầu GIS.** Phép chiếu orthographic vẽ bằng canvas (d3-geo); theo giao diện D, đất liền vẽ dạng nét như hình trong datasheet, đường bờ biển lấy từ Natural Earth 110m (`site/scripts/build-land.mjs` → `site/src/d2/land.json`, ~20 KB gzip, đóng gói cùng script trang). Các địa điểm là điểm đo TP1, TP2… kèm toạ độ, đường hành trình nét đứt chạy giữa các nơi, ô đọc `TÂM` cập nhật trực tiếp. Kéo/vuốt hoặc phím mũi tên để xoay, có quán tính, tự quay chậm, dừng khi ra khỏi màn hình. Dữ liệu: `site/src/content/places.yaml`, có thể thêm vị trí dự án.
 
 **2. Hai giọng (two voices).** Thay cho một motion system chung:
 

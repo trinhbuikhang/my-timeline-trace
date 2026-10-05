@@ -1,7 +1,8 @@
 # Bốn hướng giao diện thay thế (05/10/2026)
 
-> **Đã chọn: D · Datasheet cơ điện tử.** Site `site/` được dựng lại theo D. A, B, C giữ lại để tham khảo và có thể đổi sau.
-> **D2 · Datasheet trên bàn làm việc** (`themes/d2-workbench.html`, đang chờ Khang duyệt): giữ khung D nhưng viết cho người đọc chứ không phải cho máy —
+> **Đang dùng: D2 · Datasheet trên bàn làm việc** (Khang duyệt 06/10/2026). Mã nguồn nằm trong `site/src/d2/`; `themes/d2-workbench.html` là bản xem thử một file, dựng lại từ đó bằng `node docs/pharaoh-alone/themes/src/build.mjs`.
+> Trước đó site dựng theo D · Datasheet cơ điện tử; A, B, C, D giữ lại để tham khảo.
+> **D2**: giữ khung D nhưng viết cho người đọc chứ không phải cho máy —
 > kể theo chương có thật (sinh viên → 2019 → 2024 → 2025 → bây giờ → một ngày nào đó) thay cho mục đánh số; demo tự tay chỉnh được (Kp của robot dò đường, thổi gió vào UAV, người máy nhìn theo con trỏ và vẫy tay);
 > "bẩn" có chủ đích: hạt giấy, ghi chú viết tay (Patrick Hand), vòng bút đỏ, băng dính, vết cà phê, thẻ lên máy bay, thông tin công ty bị bôi đen; văn xuôi dùng serif Newsreader; khung ảnh polaroid chờ ảnh thật.
 > Lời kể trong D2 là bản nháp dựa trên các mốc Khang đã đưa, Khang sẽ viết lại.

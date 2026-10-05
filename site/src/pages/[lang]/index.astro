@@ -1,26 +1,17 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Front from '../../components/home/Front.astro';
-import Family from '../../components/home/Family.astro';
-import Pins from '../../components/home/Pins.astro';
-import Now from '../../components/home/Now.astro';
-import Systems from '../../components/home/Systems.astro';
-import Stories from '../../components/home/Stories.astro';
-import Trace from '../../components/home/Trace.astro';
-import Support from '../../components/home/Support.astro';
+import D2Layout from '../../layouts/D2Layout.astro';
+import home from '../../d2/home.html?raw';
+import { localize } from '../../lib/d2';
 import { LANGS, type Lang } from '../../i18n/ui';
 
 export const getStaticPaths = () => LANGS.map((lang) => ({ params: { lang } }));
 const lang = Astro.params.lang as Lang;
 ---
 
-<BaseLayout lang={lang}>
-  <Front lang={lang} />
-  <Family lang={lang} />
-  <Pins lang={lang} />
-  <Now lang={lang} />
-  <Systems lang={lang} />
-  <Stories lang={lang} />
-  <Trace lang={lang} />
-  <Support lang={lang} />
-</BaseLayout>
+<D2Layout lang={lang} home>
+  <Fragment set:html={localize(home, lang)} />
+</D2Layout>
+
+<script>
+  import '../../d2/entry';
+</script>

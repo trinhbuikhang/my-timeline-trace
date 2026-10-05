@@ -1,4 +1,4 @@
-// Writes public/land.json: Natural Earth 110m land as one compact MultiPolygon
+// Writes src/d2/land.json: Natural Earth 110m land as one compact MultiPolygon
 // (coordinates rounded to 0.1°), drawn as line art on the homepage globe.
 // pnpm build:land
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -20,5 +20,5 @@ const coordinates = polys
   .filter((poly) => poly.length);
 
 const out = JSON.stringify({ type: 'MultiPolygon', coordinates });
-writeFileSync(new URL('../public/land.json', import.meta.url), out);
+writeFileSync(new URL('../src/d2/land.json', import.meta.url), out);
 console.log(`land.json: ${coordinates.length} polygons, ${(out.length / 1024).toFixed(1)} KB`);

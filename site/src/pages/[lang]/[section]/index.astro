@@ -1,6 +1,6 @@
 ---
 // Temporary page for sections that are not built yet (M2/M3).
-import BaseLayout from '../../../layouts/BaseLayout.astro';
+import D2Layout from '../../../layouts/D2Layout.astro';
 import { LANGS, SECTIONS, href, useT, type Lang, type Section } from '../../../i18n/ui';
 
 export const getStaticPaths = () =>
@@ -11,22 +11,15 @@ const section = Astro.params.section as Section;
 const t = useT(lang);
 ---
 
-<BaseLayout lang={lang} title={section.toUpperCase()} active={section}>
-  <div class="wip">
-    <p class="mono meta">PA-001 · {section.toUpperCase()} · REV —</p>
-    <h1>{section.toUpperCase()}</h1>
-    <p class="title">{t('wip.title')}<span class="caret" aria-hidden="true"></span></p>
-    <p class="body">{t('wip.body')}</p>
-    <a href={href(lang)}>← {t('wip.back')}</a>
-  </div>
-</BaseLayout>
+<D2Layout lang={lang} title={section.toUpperCase()}>
+  <section class="ch on wip">
+    <div class="when"><b>{section.toUpperCase()}</b><span>PA-001 · REV —</span></div>
+    <h2>{t('wip.title')}</h2>
+    <div class="prose"><p>{t('wip.body')}</p></div>
+    <p><a class="hand red golink" href={href(lang)}>← {t('wip.back')}</a></p>
+  </section>
+</D2Layout>
 
 <style>
-  .wip { min-height: 62svh; display: grid; align-content: center; gap: 14px; padding-block: 48px; }
-  .meta { margin: 0; font-size: 12px; color: var(--ink-2); }
-  h1 { margin: 0; font: 900 clamp(64px, 13vw, 160px)/0.85 var(--body); font-stretch: 62%; }
-  .title { margin: 0; font: 700 22px/1.2 var(--body); font-stretch: 92%; }
-  .body { margin: 0; color: var(--ink-2); max-width: 40em; }
-  a { color: var(--accent); font-weight: 700; text-decoration: none; }
-  a:hover { text-decoration: underline; }
+  .wip { min-height: 62svh; }
 </style>
