@@ -10,15 +10,19 @@ const lang = z.enum(['vi', 'en']);
 /** Every story gets its own voice: on the homepage the mood picks the scope waveform. */
 export const MOODS = ['ink', 'dusk', 'paper', 'field', 'ember'] as const;
 
+/**
+ * stories/vi/<name>.md is written by Khang; stories/en/<name>.md is its translation.
+ * Language and pairing come from the folder and file name, so front matter can stay short.
+ */
 const stories = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/stories' }),
   schema: z.object({
     title: z.string(),
-    lang,
-    translationKey: z.string(),
+    lang: lang.optional(),
+    translationKey: z.string().optional(),
     date: z.coerce.date().optional(),
-    category: z.enum(['LIFE', 'ENGINEERING', 'BUILDING', 'THOUGHTS', 'PEOPLE']),
-    summary: z.string(),
+    category: z.enum(['LIFE', 'ENGINEERING', 'BUILDING', 'THOUGHTS', 'PEOPLE']).default('LIFE'),
+    summary: z.string().default(''),
     mood: z.enum(MOODS).default('ink'),
     /** Optional accent override for this story only. */
     accent: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),

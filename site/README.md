@@ -12,19 +12,33 @@ pnpm build:land   # regenerate src/d2/land.json (globe coastline, Natural Earth 
 
 ## How the home page is built
 
-The home page is theme D2, kept as plain files in `src/d2/`:
+**Words and layout are separate.** Khang writes Vietnamese in `src/content/home/vi/*.md`, one file per section, with one `## key` per piece of text. `src/content/home/en/*.md` holds the English, under the same keys. The guide for editing, in Vietnamese, is `src/content/HUONG-DAN.md`.
+
+The layout is theme D2, kept as plain files in `src/d2/`:
 
 | File | What |
 |---|---|
-| `top.html`, `home.html`, `foot.html` | Markup, written once in both languages: Vietnamese in the element, English in `data-en` (and `data-en-aria` for `aria-label`). Never nest two `data-en` elements. |
+| `top.html`, `home.html`, `foot.html` | Templates. Elements carry hooks instead of words: `data-t` (one line), `data-tp` (paragraphs), `data-tl` (list), `data-ta` (aria-label), `data-tj` (JSON for the script). |
 | `d2.css` | All styles |
-| `main.js`, `globe-core.js` | Page script (canvases, demos, globe). Plain ES5, no imports, so the standalone preview can inline them |
+| `main.js`, `globe-core.js` | Page script (canvases, demos, globe). Plain ES5, no imports, so the standalone preview can inline them. Canvas words come from `word('slug.key')`, which reads the `#d2-text` JSON. |
 | `entry.ts` | Loads d3-geo and `land.json`, then the two scripts |
 
-At build time `src/lib/d2.ts` keeps one language per page (`/vi/`, `/en/`) and drops the other, so each page is fully in its own language without JavaScript.
-`node ../docs/pharaoh-alone/themes/src/build.mjs` assembles the same files into one self-contained preview page, `docs/pharaoh-alone/themes/d2-workbench.html`.
+At build time, `src/lib/text.mjs` fills the templates with bilingual markup: Vietnamese in the element, English in `data-en`. `src/lib/d2.ts` then keeps one language per page (`/vi/`, `/en/`).
 
-Most home page copy is in `home.html` for now. The collections below are not wired into the D2 home page yet; they are kept for the section pages (M2/M3).
+- A missing English key falls back to Vietnamese and logs a build warning.
+- A missing Vietnamese key fails the build with a message naming the file.
+
+`node ../docs/pharaoh-alone/themes/src/build.mjs` assembles the same templates and text into one self-contained preview page, `docs/pharaoh-alone/themes/d2-workbench.html`.
+
+**Translating:** run `pnpm text` to list what is untranslated, changed since translation, or a mistyped key. After translating, run `pnpm text:mark`. It stores a hash of each translated Vietnamese text in `src/content/.translated.json`.
+
+**Stories:** each Vietnamese post is `src/content/stories/vi/<slug>.md`, and its English version is `stories/en/<slug>.md`. Language and pairing come from the folder and file name.
+
+- The home page shows the three newest posts.
+- `/[lang]/stories/` lists them all, and `/[lang]/stories/<slug>/` shows one.
+- English falls back to the Vietnamese original, with a note.
+
+The other collections below are not wired into the D2 home page yet. They are kept for the section pages (M2/M3).
 
 ## Updating content
 
@@ -34,7 +48,8 @@ Most home page copy is in `home.html` for now. The collections below are not wir
 | Trace milestones | `src/content/trace.yaml` |
 | Places on the globe | `src/content/places.yaml` |
 | Systems | `src/content/systems/{vi,en}/<slug>.md` |
-| Stories | `src/content/stories/{vi,en}/<slug>.md(x)` — pick a `mood` (it sets the scope waveform) |
+| Stories | `src/content/stories/vi/<slug>.md` (English: `stories/en/<slug>.md`) — see `src/content/HUONG-DAN.md` |
+| Home page words | `src/content/home/vi/*.md` (English: `home/en/`) |
 | Product family (robots) | `src/content/lineage.yaml` — add the year and a one-sentence `note` |
 | Professional work | `src/content/professional.yaml` (high level only) |
 | Yearly capsules | `../years/YYYY.md` (unchanged, read at build time) |

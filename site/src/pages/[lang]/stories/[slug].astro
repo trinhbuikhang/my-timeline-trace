@@ -1,0 +1,30 @@
+---
+import { render as renderEntry } from 'astro:content';
+import D2Layout from '../../../layouts/D2Layout.astro';
+import { getStoryPairs } from '../../../lib/content';
+import { LANGS, href, tx, type Lang } from '../../../i18n/ui';
+
+export async function getStaticPaths() {
+  const pairs = (await getStoryPairs()).filter((p) => !p.vi.data.placeholder);
+  return LANGS.flatMap((lang) => pairs.map((p) => ({ params: { lang, slug: p.slug }, props: { pair: p } })));
+}
+
+const lang = Astro.params.lang as Lang;
+const { pair } = Astro.props;
+const t = tx(lang);
+// English falls back to the Vietnamese original until the translation exists
+const entry = (lang === 'en' && pair.en) || pair.vi;
+const fallback = lang === 'en' && !pair.en;
+const { Content } = await renderEntry(entry);
+const d = entry.data.date;
+---
+
+<D2Layout lang={lang} title={entry.data.title} description={entry.data.summary || undefined}>
+  <article class="ch on post" lang={fallback ? 'vi' : undefined}>
+    <div class="when"><b>{entry.data.category}</b><span>{d ? d.toISOString().slice(0, 10) : ''}</span></div>
+    <h1>{entry.data.title}</h1>
+    {fallback && <p class="hand red" lang="en">This story has not been translated yet. Here is the Vietnamese original.</p>}
+    <div class="prose post-body"><Content /></div>
+    <p><a class="hand red golink" href={href(lang, 'stories')}>← {t('Tất cả câu chuyện', 'All stories')}</a></p>
+  </article>
+</D2Layout>

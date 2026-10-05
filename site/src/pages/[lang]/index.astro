@@ -1,15 +1,21 @@
 ---
 import D2Layout from '../../layouts/D2Layout.astro';
 import home from '../../d2/home.html?raw';
-import { localize } from '../../lib/d2';
+import { homeText, render } from '../../lib/d2';
+import { storyCards } from '../../lib/text.mjs';
+import { getStoryPairs } from '../../lib/content';
 import { LANGS, type Lang } from '../../i18n/ui';
 
 export const getStaticPaths = () => LANGS.map((lang) => ({ params: { lang } }));
 const lang = Astro.params.lang as Lang;
+
+// the three newest stories become the scope cards; written ones link to their page
+const stories = (await getStoryPairs()).slice(0, 3).map((p) => ({ slug: p.slug, vi: p.vi.data, en: p.en?.data }));
+const cards = storyCards(stories, homeText(), (s) => (s.vi.placeholder ? '#stories' : `stories/${s.slug}/`));
 ---
 
 <D2Layout lang={lang} home>
-  <Fragment set:html={localize(home, lang)} />
+  <Fragment set:html={render(home.replace('<!--stories-->', cards), lang)} />
 </D2Layout>
 
 <script>

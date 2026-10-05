@@ -7,7 +7,7 @@ import '@fontsource/patrick-hand';
 import '../d2/d2.css';
 import top from '../d2/top.html?raw';
 import foot from '../d2/foot.html?raw';
-import { localize } from '../lib/d2';
+import { render } from '../lib/d2';
 import { useT, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -27,7 +27,7 @@ const paths = { [lang]: Astro.url.pathname, [other]: alternate } as Record<Lang,
 const switcher = `<span class="lang">${(['vi', 'en'] as const)
   .map((l) => `<a href="${paths[l]}" hreflang="${l}" lang="${l}"${l === lang ? ' aria-current="true"' : ''}>${l.toUpperCase()}</a>`)
   .join('')}</span>`;
-let header = localize(top, lang).replace(/<span class="lang">[\s\S]*?<\/span>/, switcher);
+let header = render(top, lang).replace(/<span class="lang">[\s\S]*?<\/span>/, switcher);
 if (!home) header = header.replace(/href="#/g, `href="/${lang}/#`);
 ---
 
@@ -61,6 +61,6 @@ if (!home) header = header.replace(/href="#/g, `href="/${lang}/#`);
     <main id="main">
       <slot />
     </main>
-    <Fragment set:html={localize(foot, lang)} />
+    <Fragment set:html={render(foot, lang)} />
   </body>
 </html>

@@ -4,7 +4,7 @@ import D2Layout from '../../../layouts/D2Layout.astro';
 import { LANGS, SECTIONS, href, useT, type Lang, type Section } from '../../../i18n/ui';
 
 export const getStaticPaths = () =>
-  LANGS.flatMap((lang) => SECTIONS.map((section) => ({ params: { lang, section } })));
+  LANGS.flatMap((lang) => SECTIONS.filter((s) => s !== 'stories').map((section) => ({ params: { lang, section } })));
 
 const lang = Astro.params.lang as Lang;
 const section = Astro.params.section as Section;

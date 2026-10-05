@@ -7,7 +7,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "build:land": "node scripts/build-land.mjs"
+    "build:land": "node scripts/build-land.mjs",
+    "text": "node scripts/text-status.mjs",
+    "text:mark": "node scripts/text-status.mjs --mark"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.2",

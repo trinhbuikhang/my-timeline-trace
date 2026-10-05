@@ -8,6 +8,9 @@
   readColors();
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { readColors(); drawTiming(); });
   function dark() { return parseInt(C.paper.slice(1, 3), 16) < 0x80; }
+  // words come from the Markdown text (src/content/home), filled in at build time as { key: [vi, en] }
+  var TX = {}; try { TX = JSON.parse(document.getElementById('d2-text').textContent); } catch (e) {}
+  function word(k) { var v = TX[k]; return v ? v[lang === 'en' ? 1 : 0] : k; }
   var HAND = '"Patrick Hand", cursive', MONO = '500 11px "Reddit Mono Variable", "Reddit Mono", monospace';
 
   // the standalone preview swaps language in place; the site ships one page per language
@@ -183,8 +186,8 @@
       hist.forEach(function (e, i) { var x = w - (hist.length - i) * (w / 260), y = y0 + sh / 2 - e * sh * 0.45; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
       ctx.stroke();
       ctx.font = MONO; ctx.fillStyle = C['ink-2']; ctx.fillText('e(t)', 4, y0 + 11);
-      stat.textContent = 'IR ' + hits.map(function (b) { return b ? '■' : '□'; }).join('') + '  e=' + (err >= 0 ? '+' : '') + err.toFixed(2) + '  ' + (lang === 'en' ? 'lost ' : 'lạc ') + lost;
-      if (lostT > 0.2) { ctx.font = '24px ' + HAND; ctx.fillStyle = C.pen; ctx.fillText(lang === 'en' ? 'lost it!' : 'lạc rồi!', robot.x + 16, robot.y - 14); }
+      stat.textContent = 'IR ' + hits.map(function (b) { return b ? '■' : '□'; }).join('') + '  e=' + (err >= 0 ? '+' : '') + err.toFixed(2) + '  ' + ((word('sinh-vien-robot.hd-lac') + ' ')) + lost;
+      if (lostT > 0.2) { ctx.font = '24px ' + HAND; ctx.fillStyle = C.pen; ctx.fillText(word('sinh-vien-robot.hd-lac-roi'), robot.x + 16, robot.y - 14); }
     });
   })();
 
@@ -219,8 +222,8 @@
         var k;
         if (rt < 1) { k = rt; spin = k; alt = 0; jit = [(Math.random() - 0.5) * 1.6 * k, (Math.random() - 0.5) * 1.6 * k]; }
         else if (rt < 2.3) { k = (rt - 1) / 1.3; spin = 1.4; alt = Math.sin(k * Math.PI) * 0.45; tilt = Math.sin(rt * 17) * k * 0.9; pitch = Math.cos(rt * 13) * k * 0.6; yawOff += dt * k * 3.2; }
-        else if (rt < 2.6) { k = (rt - 2.3) / 0.3; spin = 1 - k; alt = 0; tilt = 0.9 + k * 0.3; pitch = 0.3; note = lang === 'en' ? 'thud.' : 'bịch.'; }
-        else { spin = 0; alt = 0; tilt = 1.2; pitch = 0.3; note = lang === 'en' ? 'it lifted. not flying. yet.' : 'nhấc được. chưa bay được.'; }
+        else if (rt < 2.6) { k = (rt - 2.3) / 0.3; spin = 1 - k; alt = 0; tilt = 0.9 + k * 0.3; pitch = 0.3; note = word('sinh-vien-uav.hd-cham-dat'); }
+        else { spin = 0; alt = 0; tilt = 1.2; pitch = 0.3; note = word('sinh-vien-uav.hd-ket-qua'); }
         if (dt && alt > 0.02) { trail.push([pos[0] + tilt * s * 0.05, pos[1] - alt * s * 0.1]); if (trail.length > 80) trail.shift(); }
       }
       if (!real && dt) { trail.push(pos.slice()); if (trail.length > 160) trail.shift(); }
@@ -266,8 +269,8 @@
       if (note) { ctx.font = '26px ' + HAND; ctx.fillStyle = C.pen; ctx.fillText(note, cx + R * 0.6, cy - R * 1.1); }
       if (!real) {
         var off = Math.hypot(pos[0] - tx, pos[1] - ty) / s;
-        stat.textContent = (lang === 'en' ? 'off set-point ' : 'lệch ') + (off * 100).toFixed(0) + '%  roll ' + (tilt * 20).toFixed(1) + '°  tail servo ' + (servo * 30).toFixed(0) + '°';
-      } else stat.textContent = (lang === 'en' ? 'real life · attempt ' : 'ngoài đời · lần thử ') + tries + (lang === 'en' ? ' · no take-off' : ' · chưa cất cánh');
+        stat.textContent = ((word('sinh-vien-uav.hd-lech') + ' ')) + (off * 100).toFixed(0) + '%  roll ' + (tilt * 20).toFixed(1) + '°  tail servo ' + (servo * 30).toFixed(0) + '°';
+      } else stat.textContent = ((word('sinh-vien-uav.hd-lan-thu') + ' ')) + tries + ((' ' + word('sinh-vien-uav.hd-chua-cat-canh')));
     });
   })();
 
@@ -332,7 +335,7 @@
       });
       ctx.globalAlpha = 1;
       (labels || []).forEach(function (L) {
-        var p = P(L.at), tx = p[0] + L.dx, ty = p[1] + L.dy, txt = lang === 'en' ? L.en : L.vi;
+        var p = P(L.at), tx = p[0] + L.dx, ty = p[1] + L.dy, txt = word(L.k);
         ctx.strokeStyle = C.pen; ctx.fillStyle = C.pen; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.quadraticCurveTo(p[0] + L.dx * 0.2, ty, tx - (L.dx < 0 ? -4 : 4), ty); ctx.stroke();
         ctx.beginPath(); ctx.arc(p[0], p[1], 2.4, 0, 7); ctx.fill();
         ctx.font = '19px ' + HAND; var tw = ctx.measureText(txt).width; ctx.fillText(txt, L.dx < 0 ? tx - tw - 6 : tx + 6, ty + 6);
@@ -360,7 +363,7 @@
     for (var s = -2; s <= 2; s++) G.cyl([80, -30, s * 18], [0, -1, 0], 3.5, 5, 8, 1, 2);
     G.poly([[20, 9, 0], [50, 22, 0], [78, -24, 0]], 0, 1);
     return { size: 255 };
-  }, [{ at: [80, -30, 36], dx: 46, dy: -6, vi: '5 × IR', en: '5 × IR' }, { at: [-35, 26, 58], dx: -30, dy: -28, vi: 'bánh dẫn động', en: 'drive wheel' }]);
+  }, [{ at: [80, -30, 36], dx: 46, dy: -6, k: 'sinh-vien-robot.hd-nhan-cam-bien' }, { at: [-35, 26, 58], dx: -30, dy: -28, k: 'sinh-vien-robot.hd-nhan-banh-xe' }]);
 
   // tri-rotor (Y3), drawn from memory: three arms, the tail motor tilts on a servo for yaw
   model(document.getElementById('m-tri'), function (G, t) {
@@ -386,7 +389,7 @@
       for (var b = 0; b < 2; b++) G.line(G.on(top, up, 64, spin + b * Math.PI), top);
     });
     return { size: 340 };
-  }, [{ at: [-168, 30, 0], dx: -10, dy: -58, vi: 'servo đuôi', en: 'tail servo' }]);
+  }, [{ at: [-168, 30, 0], dx: -10, dy: -58, k: 'sinh-vien-uav.hd-nhan-servo' }]);
 
   /* ---------- 2019: a damped response written by a sweeping trace ---------- */
   (function () {
@@ -431,7 +434,7 @@
       ctx.font = MONO; ctx.fillStyle = C['ink-2']; ctx.textAlign = 'right'; ctx.fillText('0', L - 8, z + 4);
       ctx.fillText('e', L - 8, T + 8); ctx.textAlign = 'left';
       [[0.14, '2022'], [0.42, '2023'], [0.62, '2024'], [0.82, '2025']].forEach(function (m) { ctx.fillText(m[1], X(m[0]) - 14, B + 18); });
-      ctx.textAlign = 'right'; ctx.fillText(lang === 'en' ? 'now' : 'nay', R, B + 18); ctx.textAlign = 'left';
+      ctx.textAlign = 'right'; ctx.fillText(word('2022.hd-nay'), R, B + 18); ctx.textAlign = 'left';
       // trace
       var p = shown, n = Math.max(2, Math.floor((R - L) * p / 2));
       ctx.strokeStyle = C.ink; ctx.lineWidth = 1.8; ctx.lineJoin = 'round'; ctx.beginPath();
@@ -440,14 +443,14 @@
       if (p > 0.16) { // red pen at the spike
         ctx.strokeStyle = C.pen; ctx.fillStyle = C.pen; ctx.lineWidth = 1.6; ctx.beginPath();
         ctx.ellipse(X(0.145), Y(e(0.14)) + 4, 16, 22, -0.2, 0, Math.PI * 2 * Math.min(1, (p - 0.16) * 8)); ctx.stroke();
-        ctx.font = '20px ' + HAND; ctx.fillText(lang === 'en' ? 'here.' : 'ở đây.', X(0.145) + 22, Y(e(0.14)) - 8);
+        ctx.font = '20px ' + HAND; ctx.fillText(word('2022.hd-o-day'), X(0.145) + 22, Y(e(0.14)) - 8);
       }
       var u1 = p, ex = X(u1), ey = Y(e(u1));
       ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(ex, ey, 3.5, 0, 7); ctx.fill();
       if (p > 0.92) {
         var a = Math.min(1, (p - 0.92) * 14); ctx.globalAlpha = a;
         ctx.fillStyle = C.pen; ctx.strokeStyle = C.pen; ctx.font = '20px ' + HAND; ctx.textAlign = 'right';
-        ctx.fillText(lang === 'en' ? 'not at zero yet. still fixing.' : 'chưa về 0. vẫn đang sửa.', R - 4, T + 18);
+        ctx.fillText(word('2022.hd-chua-ve-0'), R - 4, T + 18);
         ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(R - 40, T + 26); ctx.quadraticCurveTo(R - 30, ey - 30, ex - 4, ey - 8); ctx.stroke();
         ctx.textAlign = 'left'; ctx.globalAlpha = 1;
       }
@@ -503,8 +506,7 @@
     var L1 = 17, L2 = 15, X0 = -4, PL = 46, REST = 58, GOAL = 40;
     var stage, phase, phaseT, bub, grab, rec, play, aim, arm, shift, pk, geo = null, hailed, quiet;
     function smooth(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
-    function T(vi, en) { return lang === 'en' ? en : vi; }
-    function say(vi, en, live) { if (bub && bub.vi === vi && bub.live === !!live) return; bub = { vi: vi, en: en, at: live && bub && bub.live ? bub.at : job.t, live: !!live }; }
+    function say(txt, live) { if (bub && bub.txt === txt && bub.live === !!live) return; bub = { txt: txt, at: live && bub && bub.live ? bub.at : job.t, live: !!live }; }
     function along(pts, p) {
       var lens = [], tot = 0; for (var i = 1; i < pts.length; i++) { var l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); lens.push(l); tot += l; }
       var d = p * tot; for (var k = 0; k < lens.length; k++) { if (d <= lens[k]) { var q = d / (lens[k] || 1); return [pts[k][0] + (pts[k + 1][0] - pts[k][0]) * q, pts[k][1] + (pts[k + 1][1] - pts[k][1]) * q]; } d -= lens[k]; }
@@ -523,8 +525,8 @@
       stage = s; phase = ''; phaseT = 0; grab = null;
       quest.forEach(function (li, i) { li.className = i < s ? 'done' : i === s ? 'now' : ''; });
       qend.classList.toggle('on', s >= 3);
-      if (s === 1) say('nắm tay tôi, chỗ vòng đỏ, rồi kéo một đường. tôi sẽ làm theo.', 'take my hand at the red ring and draw a move. I\'ll copy it.');
-      if (s === 2) say('cái này một mình tôi không nhấc nổi. bạn cầm đầu bên kia nhé?', 'I can\'t lift this alone. take the other end?');
+      if (s === 1) say(word('mot-ngay-nao-do.hd-robot-bay-dong-tac'));
+      if (s === 2) say(word('mot-ngay-nao-do.hd-robot-nho-giup'));
     }
     function reset() { arm = { l: [0.16, 0.28], r: [0.16, 0.28] }; shift = 0; pk = { gy: REST, ry: REST, held: false, hold: 0, done: false, v: 0, msgT: 0 }; rec = null; play = null; aim = null; hailed = false; quiet = 0; bub = null; stay = 0; setStage(0); }
     var job = animate(c, draw);
@@ -540,17 +542,17 @@
     }
     function start(what, p) {
       quiet = 0;
-      if (what === 'hand') { grab = 'hand'; rec = { pts: [], t0: job.t }; aim = p; say('đang ghi…', 'recording…'); }
+      if (what === 'hand') { grab = 'hand'; rec = { pts: [], t0: job.t }; aim = p; say(word('mot-ngay-nao-do.hd-robot-dang-ghi')); }
       if (what === 'plank') { grab = 'plank'; pk.held = true; aim = p; }
     }
     function release() {
       if (grab === 'hand') {
         var pts = rec.pts, dur = pts.length ? pts[pts.length - 1].t : 0, len = 0;
         for (var i = 1; i < pts.length; i++) len += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
-        if (dur < 0.6 || len < 14) { rec = null; say('ngắn quá. kéo thêm một đoạn nữa?', 'too short. a longer move?'); }
-        else { phase = 'think'; phaseT = 0; say('để tôi thử…', 'let me try…'); }
+        if (dur < 0.6 || len < 14) { rec = null; say(word('mot-ngay-nao-do.hd-robot-ngan-qua')); }
+        else { phase = 'think'; phaseT = 0; say(word('mot-ngay-nao-do.hd-robot-thu')); }
       }
-      if (grab === 'plank') { pk.held = false; if (!pk.done) say('nặng quá hả? thử lại nhé.', 'too heavy? try again.'); }
+      if (grab === 'plank') { pk.held = false; if (!pk.done) say(word('mot-ngay-nao-do.hd-robot-tuot-tay')); }
       grab = null; aim = null;
     }
     c.addEventListener('touchstart', function (e) { var t = e.touches[0]; if (t && hit(local(t.clientX, t.clientY))) e.preventDefault(); }, { passive: false });
@@ -588,17 +590,17 @@
 
       // ---- story ----
       if (stage === 0) {
-        if (!hailed && t > 0.8) { hailed = true; say('có ai ở đó không?', 'anyone there?'); }
-        if (stay > 1.2 && !phase) { phase = 'hi'; phaseT = 0; say('chào. thấy bạn rồi.', 'hi. I see you.'); }
+        if (!hailed && t > 0.8) { hailed = true; say(word('mot-ngay-nao-do.hd-robot-goi')); }
+        if (stay > 1.2 && !phase) { phase = 'hi'; phaseT = 0; say(word('mot-ngay-nao-do.hd-robot-chao')); }
         if (phase === 'hi' && phaseT > 2.6) setStage(1);
       }
-      if ((stage === 1 || stage === 3) && phase === 'think' && phaseT > 1.1) { phase = 'replay'; phaseT = 0; play = 0; say('thế này à?', 'like this?'); }
+      if ((stage === 1 || stage === 3) && phase === 'think' && phaseT > 1.1) { phase = 'replay'; phaseT = 0; play = 0; say(word('mot-ngay-nao-do.hd-robot-the-nay-a')); }
       if (phase === 'replay') {
         play += dt; var dur = rec.pts[rec.pts.length - 1].t;
-        if (play > dur + 0.5) { phase = 'learned'; phaseT = 0; say('hiểu rồi. tôi học bằng cách nhìn bạn làm.', 'got it. I learn by watching you.'); if (stage === 1) quest[1].className = 'done'; }
+        if (play > dur + 0.5) { phase = 'learned'; phaseT = 0; say(word('mot-ngay-nao-do.hd-robot-hieu-roi')); if (stage === 1) quest[1].className = 'done'; }
       }
       if (phase === 'learned' && phaseT > 3) { rec = null; if (stage === 1) setStage(2); else phase = ''; }
-      if (stage === 1 && !grab && !phase && quiet > 9) { quiet = 0; bub = null; say('vòng đỏ là tay tôi. nắm vào rồi kéo.', 'the red ring is my hand. grab it and drag.'); }
+      if (stage === 1 && !grab && !phase && quiet > 9) { quiet = 0; bub = null; say(word('mot-ngay-nao-do.hd-robot-nhac-lai')); }
       if (stage >= 2) shift = Math.min(1, shift + dt * 0.8);
 
       // ---- arms ----
@@ -608,7 +610,7 @@
       if (grab === 'hand' && aim) {
         tr = ik(1, aim[0], aim[1]); kArm = Math.min(1, dt * 16);
         var wr = wrist(1, arm.r), el = t - rec.t0; rec.pts.push({ t: el, x: wr[0], y: wr[1] });
-        say('đang ghi… ' + el.toFixed(1) + ' s', 'recording… ' + el.toFixed(1) + ' s', true);
+        say(word('mot-ngay-nao-do.hd-robot-dang-ghi') + ' ' + el.toFixed(1) + ' s', true);
         if (el > 6) release();
       }
       if (phase === 'replay') { var pts = rec.pts, i = 0; while (i < pts.length - 1 && pts[i + 1].t < play) i++; tl = ik(-1, -pts[i].x, pts[i].y); kArm = Math.min(1, dt * 16); }
@@ -623,12 +625,12 @@
           pk.msgT -= dt;
           if (pk.held && pk.msgT <= 0) {
             pk.msgT = 1.1;
-            if (Math.abs(pk.v) > 70) say('từ từ! tôi chưa theo kịp.', 'easy! I can\'t keep up.');
-            else if (near) say('rồi. giữ vậy…', 'that\'s it. hold…');
-            else if (pk.ry > GOAL) say('lên chút nữa.', 'a bit higher.');
-            else say('cao quá rồi.', 'too high.');
+            if (Math.abs(pk.v) > 70) say(word('mot-ngay-nao-do.hd-robot-tu-tu'));
+            else if (near) say(word('mot-ngay-nao-do.hd-robot-giu'));
+            else if (pk.ry > GOAL) say(word('mot-ngay-nao-do.hd-robot-len-chut'));
+            else say(word('mot-ngay-nao-do.hd-robot-cao-qua'));
           }
-          if (pk.hold > 1.1) { pk.done = true; pk.ry = pk.gy = GOAL; pk.held = false; grab = null; aim = null; quest[2].className = 'done'; say('được rồi. không ai nhấc một mình.', 'done. nobody lifts alone.'); stage = 3; phase = ''; qend.classList.add('on'); }
+          if (pk.hold > 1.1) { pk.done = true; pk.ry = pk.gy = GOAL; pk.held = false; grab = null; aim = null; quest[2].className = 'done'; say(word('mot-ngay-nao-do.hd-robot-xong')); stage = 3; phase = ''; qend.classList.add('on'); }
         }
         if (!pk.done) { tl = ik(-1, 0, pk.gy); tr = ik(1, 10, pk.gy); kArm = Math.min(1, dt * 10); }
       }
@@ -658,7 +660,7 @@
         ctx.strokeStyle = C.pen; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.2;
         if (!pk.done) { ctx.strokeRect(s0[0], s0[1] - 3 * u, s1[0] - s0[0], 3 * u); }
         ctx.beginPath(); ctx.moveTo(s0[0] - 2 * u, s0[1]); ctx.lineTo(s1[0] + 2 * u, s1[1]); [X0 + 6, X0 + PL - 6].forEach(function (bx) { var b = P(bx, GOAL + 1.5); ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0], b[1] + 5 * u); ctx.lineTo(b[0] + 4 * u, b[1]); }); ctx.stroke(); ctx.setLineDash([]);
-        if (!pk.done) { ctx.font = '600 10px "Reddit Mono Variable", "Reddit Mono", monospace'; ctx.fillStyle = C.pen; ctx.fillText(T('KỆ · ĐẶT CÙNG NHAU', 'SHELF · PLACE TOGETHER'), s0[0] + 2 * u, s0[1] - 3 * u - 6); }
+        if (!pk.done) { ctx.font = '600 10px "Reddit Mono Variable", "Reddit Mono", monospace'; ctx.fillStyle = C.pen; ctx.fillText(word('mot-ngay-nao-do.hd-nhan-ke'), s0[0] + 2 * u, s0[1] - 3 * u - 6); }
         ctx.globalAlpha = 1;
       }
 
@@ -682,7 +684,7 @@
         ctx.restore(); ctx.globalAlpha = 1;
         if (!pk.done) {
           var deg = Math.atan2(pk.ry - pk.gy, rx - X0) * 180 / Math.PI, mid = P((X0 + rx) / 2 + 6, (pk.gy + pk.ry) / 2 + 3.5);
-          ctx.font = MONO; ctx.fillStyle = Math.abs(deg) < 3 ? C.accent : C['ink-2']; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillText(T('nghiêng ', 'tilt ') + (deg > 0 ? '+' : '') + deg.toFixed(1) + '°', mid[0], mid[1]); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+          ctx.font = MONO; ctx.fillStyle = Math.abs(deg) < 3 ? C.accent : C['ink-2']; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillText((word('mot-ngay-nao-do.hd-nghieng') + ' ') + (deg > 0 ? '+' : '') + deg.toFixed(1) + '°', mid[0], mid[1]); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
           if (!pk.held) ring(a1, t);
           if (pk.hold > 0) { ctx.strokeStyle = C.accent; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(a1[0], a1[1], 11, -Math.PI / 2, -Math.PI / 2 + Math.min(1, pk.hold / 1.1) * Math.PI * 2); ctx.stroke(); }
         }
@@ -702,7 +704,7 @@
       }
       if ((stage === 1 || stage === 3) && !grab && !phase && !(stage === 3 && wv > 0.3)) {
         ring(J.rW, t);
-        if (stage === 1) { ctx.font = '19px ' + HAND; ctx.fillStyle = C.pen; ctx.fillText(T('nắm đây', 'grab here'), J.rW[0] + 14, J.rW[1] + 18); }
+        if (stage === 1) { ctx.font = '19px ' + HAND; ctx.fillStyle = C.pen; ctx.fillText(word('mot-ngay-nao-do.hd-nam-day'), J.rW[0] + 14, J.rW[1] + 18); }
       }
 
       // neurons fire faster while it is thinking
@@ -725,7 +727,7 @@
 
       // speech: typed out, wrapped, tail pointing at the head
       if (bub) {
-        var txt = T(bub.vi, bub.en), shown = bub.live || reduce ? txt : txt.slice(0, Math.floor((t - bub.at) * 32)), fs = Math.max(16, Math.min(21, w / 26));
+        var txt = bub.txt, shown = bub.live || reduce ? txt : txt.slice(0, Math.floor((t - bub.at) * 32)), fs = Math.max(16, Math.min(21, w / 26));
         ctx.font = fs + 'px ' + HAND;
         var bx = head[0] + 13 * u, by = Math.max(6, head[1] - 22 * u), maxW = Math.min(w - bx - 10, w * 0.44), words = txt.split(' '), lines = [''], k2 = 0;
         if (maxW < 110) { bx = Math.max(8, w - 10 - Math.min(w * 0.44, 200)); maxW = w - bx - 10; }
@@ -771,7 +773,7 @@
     });
     function draw(dt, t) {
       var f = fit(c), x = f.ctx, w = f.w, h = f.h; if (!w) return;
-      var vi = lang !== 'en', top = h * 0.66, cy = top * 0.54;
+      var top = h * 0.66, cy = top * 0.54;
       var bw = Math.min(w * 0.25, 170), bh = Math.min(top * 0.56, 130), pl = w * 0.06, sp = bh / 6; SP = sp;
       // patience also works: after a long wait the plug finds its own way
       if (!mated && !reduce && t > 16 && !touched) { mis *= Math.pow(0.3, dt); if (Math.abs(mis) < 0.09) { mis = 0; mate(t); } }
@@ -812,9 +814,9 @@
       x.fillStyle = C.ink;
       for (j = 0; j < 5; j++) x.fillRect(xR - 1, cy + (j - 2) * sp - 3, 4, 6);
       x.textAlign = 'center'; x.fillStyle = C.ink; x.font = '700 13px "Archivo Variable", "Archivo", sans-serif';
-      x.fillText(vi ? 'BẠN' : 'YOU', left + bw * 0.59, cy - 4 + off); x.fillText('KHANG', xR + bw / 2, cy - 4);
+      x.fillText(word('cung-lam.hd-ban'), left + bw * 0.59, cy - 4 + off); x.fillText('KHANG', xR + bw / 2, cy - 4);
       x.font = MONO; x.fillStyle = C['ink-2'];
-      x.fillText(vi ? 'vấn đề' : 'problem', left + bw * 0.59, cy + 14 + off); x.fillText(vi ? 'công cụ' : 'tools', xR + bw / 2, cy + 14);
+      x.fillText(word('cung-lam.hd-van-de'), left + bw * 0.59, cy + 14 + off); x.fillText(word('cung-lam.hd-cong-cu'), xR + bw / 2, cy + 14);
       var mid = xL + pl / 2;
       if (!mated && t > 1.4) {
         x.save(); x.translate(mid, cy - bh / 2 - 16); x.rotate(Math.sin(t * 6) * 0.15);
@@ -824,14 +826,14 @@
           x.globalAlpha = a; x.strokeStyle = C.pen; x.fillStyle = C.pen; x.lineWidth = 1.6;
           var hx = left - 16, hy = cy + off;
           x.beginPath(); x.moveTo(hx, hy - 22); x.lineTo(hx, hy + 22); x.moveTo(hx - 5, hy - 16); x.lineTo(hx, hy - 22); x.lineTo(hx + 5, hy - 16); x.moveTo(hx - 5, hy + 16); x.lineTo(hx, hy + 22); x.lineTo(hx + 5, hy + 16); x.stroke();
-          x.font = '19px ' + HAND; x.textAlign = 'left'; x.fillText(vi ? 'kéo tôi' : 'drag me', Math.max(4, left - 8), cy - bh / 2 + off - 10);
+          x.font = '19px ' + HAND; x.textAlign = 'left'; x.fillText(word('cung-lam.hd-keo-toi'), Math.max(4, left - 8), cy - bh / 2 + off - 10);
           x.globalAlpha = 1;
         }
       }
       if (mated) {
         var s2 = sm((k - 0.4) / 0.3);
         x.save(); x.translate(mid, cy - bh / 2 - 26); x.rotate(-0.08); x.globalAlpha = s2 * 0.9;
-        x.font = '700 12px "Reddit Mono Variable", "Reddit Mono", monospace'; var lab = vi ? 'ĐÃ KHỚP' : 'MATED', tw = x.measureText(lab).width;
+        x.font = '700 12px "Reddit Mono Variable", "Reddit Mono", monospace'; var lab = word('cung-lam.hd-da-khop'), tw = x.measureText(lab).width;
         x.strokeStyle = C.pen; x.lineWidth = 2; x.strokeRect(-tw / 2 - 7, -13, tw + 14, 21); x.fillStyle = C.pen; x.textAlign = 'center'; x.fillText(lab, 0, 2);
         x.restore();
       }
@@ -840,7 +842,7 @@
       x.strokeStyle = C.rule; x.lineWidth = 1; x.beginPath(); x.moveTo(0, top); x.lineTo(w, top); x.stroke();
       x.setLineDash([2, 4]); x.strokeStyle = C['ink-2']; x.beginPath(); x.moveTo(L, z); x.lineTo(R, z); x.stroke(); x.setLineDash([]);
       x.font = MONO; x.fillStyle = C['ink-2']; x.textAlign = 'right'; x.fillText('e', L - 8, sT + 10); x.fillText('0', L - 8, z + 4);
-      x.textAlign = 'left'; x.fillText(vi ? '← từ 2022' : '← from 2022', L, sB + 16);
+      x.textAlign = 'left'; x.fillText(word('cung-lam.hd-tu-2022'), L, sB + 16);
       var n = Math.max(2, Math.floor((R - L) / 3));
       level += ((mated ? 0.38 : 1) - level) * Math.min(1, dt * 1.2);
       if (reduce || buf.length !== n) { buf = []; for (j = 0; j < n; j++) buf.push(sample(j * 0.05, mated ? 0.38 : 1)); level = mated ? 0.38 : 1; }
@@ -851,7 +853,7 @@
       x.fillStyle = C.accent; x.beginPath(); x.arc(R, z - buf[n - 1] * A, 3.2, 0, 7); x.fill();
       if (mated && k > 1.6) {
         x.globalAlpha = sm((k - 1.6) / 0.5); x.font = '19px ' + HAND; x.fillStyle = C.pen; x.textAlign = 'right';
-        x.fillText(vi ? 'nhỏ đi một chút. chưa về 0.' : 'a little smaller. not zero.', R - 6, sT + 12); x.globalAlpha = 1;
+        x.fillText(word('cung-lam.hd-nho-di'), R - 6, sT + 12); x.globalAlpha = 1;
       }
       x.textAlign = 'left';
     }
@@ -888,7 +890,7 @@
   });
 
   /* ---------- trace: timing diagram with a red-pen "you are here" ---------- */
-  var tm = [[1992, 'Ra đời', 'Born'], [2015, 'Sinh viên · robot', 'Student · robots'], [2019, 'Bước ngoặt', 'Turning point'], [2022, 'Ra quân', 'Left the army'], [2024, 'New Zealand', 'New Zealand'], [2025, 'Dữ liệu · GIS', 'Data · GIS'], [2026, 'Phần mềm · AI', 'Software · AI']];
+  var tm = (TX['dau-vet.cac-moc'] || [[], []])[lang === 'en' ? 1 : 0].map(function (m) { var r = /^(\d{4})\s*[:·–-]?\s*(.*)$/.exec(m) || [0, 0, m]; return [+r[1], r[2]]; });
   var tsvg = document.getElementById('timing'), segs = [], TW = 900, futureX = 1e9;
   function drawTiming() {
     TW = tsvg.getBoundingClientRect().width || 900;
@@ -898,14 +900,14 @@
     var x = 0, out = '<defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="' + C.paper + '"/><line x1="0" y1="0" x2="0" y2="7" stroke="' + C['ink-2'] + '" stroke-width="1.2"/></pattern></defs>';
     segs = [];
     tm.forEach(function (m, i) {
-      var w = weights[i] / tot * (TW - 2), xa = x + 1, xb = x + w + 1, cur = i === tm.length - 1, label = lang === 'en' ? m[2] : m[1];
+      var w = weights[i] / tot * (TW - 2), xa = x + 1, xb = x + w + 1, cur = i === tm.length - 1, label = m[1];
       segs.push([xa, xb, m[0], i < tm.length - 1 ? tm[i + 1][0] : m[0] + 1]);
       out += '<path class="ln' + (cur ? ' cur' : '') + '" d="M' + xa + ' ' + mid + ' L' + (xa + sl) + ' ' + y0 + ' H' + (xb - sl) + ' L' + xb + ' ' + mid + ' L' + (xb - sl) + ' ' + y1 + ' H' + (xa + sl) + ' Z"/>';
       var inside = xb - xa - 2 * sl > label.length * 6.6;
       if (inside) out += '<text x="' + (xa + sl + 6) + '" y="' + (mid + 4.5) + '"' + (cur ? ' class="curt"' : '') + '>' + label + '</text>';
       else out += '<text x="' + (xa + sl) + '" y="' + (y1 + 34) + '">' + label + '</text><line class="tick" x1="' + (xa + sl + 4) + '" x2="' + (xa + sl + 4) + '" y1="' + y1 + '" y2="' + (y1 + 22) + '"/>';
       out += '<text class="yr" x="' + xa + '" y="' + (!inside || i % 2 ? y0 - 8 : y1 + 16) + '">' + m[0] + '</text>';
-      if (cur) { var hx = (xa + xb) / 2, fl = hx + 180 > TW ? -1 : 1; out += '<path class="herel" d="M' + (hx + fl * 34) + ' ' + (y0 - 46) + ' C' + (hx + fl * 10) + ' ' + (y0 - 40) + ' ' + hx + ' ' + (y0 - 30) + ' ' + hx + ' ' + (y0 - 6) + ' M' + (hx - 5) + ' ' + (y0 - 13) + ' L' + hx + ' ' + (y0 - 5) + ' L' + (hx + 6) + ' ' + (y0 - 12) + '"/><text class="here" x="' + (hx + fl * 38) + '" y="' + (y0 - 42) + '"' + (fl < 0 ? ' text-anchor="end"' : '') + '>' + (lang === 'en' ? 'I am here' : 'mình đang ở đây') + '</text>'; }
+      if (cur) { var hx = (xa + xb) / 2, fl = hx + 180 > TW ? -1 : 1; out += '<path class="herel" d="M' + (hx + fl * 34) + ' ' + (y0 - 46) + ' C' + (hx + fl * 10) + ' ' + (y0 - 40) + ' ' + hx + ' ' + (y0 - 30) + ' ' + hx + ' ' + (y0 - 6) + ' M' + (hx - 5) + ' ' + (y0 - 13) + ' L' + hx + ' ' + (y0 - 5) + ' L' + (hx + 6) + ' ' + (y0 - 12) + '"/><text class="here" x="' + (hx + fl * 38) + '" y="' + (y0 - 42) + '"' + (fl < 0 ? ' text-anchor="end"' : '') + '>' + (word('dau-vet.hd-dang-o-day')) + '</text>'; }
       x += w;
     });
     var fa = x + 1, fb = TW - 1; futureX = fa;
@@ -919,7 +921,7 @@
   tsvg.addEventListener('pointermove', function (e) {
     var cur = document.getElementById('cursor'), r = tsvg.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * TW, label = '?';
     segs.forEach(function (s) { if (x >= s[0] && x < s[1]) label = '≈ ' + Math.floor(s[2] + (x - s[0]) / (s[1] - s[0]) * (s[3] - s[2])); });
-    if (x >= futureX) label = lang === 'en' ? 'future' : 'tương lai';
+    if (x >= futureX) label = word('dau-vet.hd-tuong-lai');
     cur.style.display = ''; var ln = cur.querySelector('line'), rc = cur.querySelector('rect'), tx = cur.querySelector('text');
     ln.setAttribute('x1', x); ln.setAttribute('x2', x);
     var rw = label.length * 7 + 12, rx = Math.min(Math.max(x - rw / 2, 0), TW - rw);

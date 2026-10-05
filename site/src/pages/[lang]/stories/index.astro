@@ -1,0 +1,33 @@
+---
+import D2Layout from '../../../layouts/D2Layout.astro';
+import { getStoryPairs } from '../../../lib/content';
+import { LANGS, href, tx, type Lang } from '../../../i18n/ui';
+
+export const getStaticPaths = () => LANGS.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const t = tx(lang);
+const pairs = await getStoryPairs();
+const fmt = (d?: Date) => (d ? d.toISOString().slice(0, 7) : '');
+---
+
+<D2Layout lang={lang} title={t('Câu chuyện', 'Stories')}>
+  <section class="ch on post-list">
+    <div class="when"><b>{t('Câu chuyện', 'Stories')}</b><span>{t('không phải mọi thứ đều là kỹ thuật', 'not everything is engineering')}</span></div>
+    <ol class="posts">
+      {pairs.map((p) => {
+        const e = (lang === 'en' && p.en) || p.vi;
+        const live = !p.vi.data.placeholder;
+        return (
+          <li>
+            <span class="meta">{e.data.category}{e.data.date && <> · {fmt(e.data.date)}</>}</span>
+            {live ? <a href={href(lang, `stories/${p.slug}`)}>{e.data.title}</a> : <span class="ttl">{e.data.title}</span>}
+            {live && e.data.summary && <p>{e.data.summary}</p>}
+            {!live && <span class="hand red">{t('chưa viết', 'not written yet')}</span>}
+            {live && lang === 'en' && !p.en && <span class="hand">{t('', 'in Vietnamese for now')}</span>}
+          </li>
+        );
+      })}
+    </ol>
+    <p><a class="hand red golink" href={href(lang)}>← {t('Về trang đầu', 'Back to the front page')}</a></p>
+  </section>
+</D2Layout>
