@@ -198,7 +198,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .motto::before { content: '“'; color: var(--pen); margin-right: .04em; }
 .motto-src { margin: 12px 0 0; font: 500 12px/1.4 var(--mono); color: var(--ink-2); }
 .mate { position: relative; background: var(--sheet); border: 1px solid var(--rule); padding: 10px; box-shadow: 0 14px 30px -24px rgb(0 0 0 / .5); }
-.mate canvas { width: 100%; aspect-ratio: 16 / 9; display: block; cursor: pointer; background-image: radial-gradient(var(--rule) 1px, transparent 1.2px); background-size: 16px 16px; }
+.mate canvas { width: 100%; aspect-ratio: 16 / 10.5; display: block; cursor: grab; touch-action: none; outline-offset: 3px; background-image: radial-gradient(var(--rule) 1px, transparent 1.2px); background-size: 16px 16px; }
 .pinout { width: 100%; border-collapse: collapse; margin-top: 30px; font-size: 14.5px; }
 .pinout caption { text-align: left; font: 600 12px/1 var(--mono); color: var(--ink-2); text-transform: uppercase; letter-spacing: .05em; padding-bottom: 8px; }
 .pinout th { text-align: left; font: 600 11px/1 var(--mono); color: var(--ink-2); text-transform: uppercase; letter-spacing: .05em; border-bottom: 2px solid var(--ink); padding: 6px 10px 6px 0; }
@@ -207,6 +207,15 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .pinout td:nth-child(2) { font: 700 12px var(--mono); color: var(--accent); width: 64px; letter-spacing: .04em; }
 .pinout td:nth-child(3) b { font-weight: 700; }
 .pinout tr.nc td { color: var(--ink-2); font-style: italic; }
+.js .pinout tbody tr { opacity: .25; transition: opacity .5s var(--ease); }
+.js .pinout tbody tr.lit { opacity: 1; }
+.pinout tbody tr.lit td:first-child { color: var(--pen); font-weight: 700; }
+.pinout .lock { color: var(--pen); text-transform: none; font: 18px/1 var(--hand); letter-spacing: 0; margin-left: 8px; }
+.pinout.mated .lock { display: none; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; }
+.links a { border: 1.5px solid var(--ink); padding: 8px 12px; font: 600 12px/1 var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--ink); text-decoration: none; background: var(--sheet); }
+.links a:hover { background: var(--ink); color: var(--paper); }
+.links a span { color: var(--accent); margin-right: 6px; }
 .steps { list-style: none; counter-reset: s; display: grid; gap: 12px 20px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin: 30px 0 0; padding: 0; }
 .steps li { counter-increment: s; border-top: 2px solid var(--ink); padding-top: 8px; font: 400 17px/1.4 var(--serif); }
 .steps li::before { content: '0' counter(s); display: block; font: 600 11px/1 var(--mono); color: var(--accent); margin-bottom: 6px; }
@@ -684,23 +693,24 @@ html:not(.js) .meter i { transform: none; }
     <div class="grid2">
       <div>
         <blockquote class="motto rv">Friendship through understanding.</blockquote>
-        <p class="motto-src rv d1"><span data-en="— heard while training in Australia, HMAS Cerberus">— nghe được khi sang Úc đào tạo, HMAS Cerberus</span> · 20??</p>
+        <p class="motto-src rv d1"><span data-en="— HMAS Cerberus, Australia · shipboard survival course">— HMAS Cerberus, Úc · khoá sinh tồn trên tàu</span> · 20??</p>
         <div class="prose">
-          <p class="rv d1" data-en="It has stayed with me since. Today I use it as a way of working: understand each other's problem first, build second.">Câu đó theo tôi đến giờ. Bây giờ tôi dùng nó như một cách làm việc: hiểu vấn đề của nhau trước, rồi mới xây.</p>
-          <p class="rv d2" data-en="If you have a problem that needs maps, data, automation or a machine that moves, I'd like to hear it. Not a pitch. A conversation.">Nếu bạn có một vấn đề cần đến bản đồ, dữ liệu, tự động hoá hay một cái máy biết chuyển động, tôi muốn được nghe. Không phải chào hàng. Một cuộc nói chuyện.</p>
+          <p class="rv d1" data-en="I heard it on a shipboard survival course: fire, explosions, chemicals, the things that happen to a ship in a fight. On a burning ship, nobody survives alone. The line has stayed with me since.">Tôi nghe câu này ở một khoá học sinh tồn trên tàu: cháy, nổ, hoá chất, những thứ xảy ra với một con tàu khi có giao tranh. Trên một con tàu đang cháy, không ai sống sót một mình. Câu đó theo tôi đến giờ.</p>
+          <p class="rv d2" data-en="Today I use it as a way of working: understand each other's problem first, build second. If yours needs maps, data, automation or a machine that moves, I'd like to hear it. Not a pitch. A conversation.">Bây giờ tôi dùng nó như một cách làm việc: hiểu vấn đề của nhau trước, rồi mới xây. Nếu vấn đề của bạn cần đến bản đồ, dữ liệu, tự động hoá hay một cái máy biết chuyển động, tôi muốn được nghe. Không phải chào hàng. Một cuộc nói chuyện.</p>
         </div>
-        <p class="hand note rv d3" style="--r:-2deg" data-en="↑ Khang: which year at Cerberus? and does the line come from there, or from someone you met?">↑ Khang: năm nào ở Cerberus? câu này là khẩu hiệu ở đó hay của một người bạn gặp?</p>
+        <p class="hand note rv d3" style="--r:-2deg" data-en="↑ Khang: which year?">↑ Khang: năm nào?</p>
       </div>
       <div class="rv d1">
         <figure class="mate tape" style="margin:0">
-          <canvas id="mate" role="img" aria-label="Hai đầu nối tiến lại gần nhau; chân cắm lệch nên chưa cắm được, chỉnh cho thẳng hàng rồi mới khớp, sau đó tín hiệu chạy hai chiều"></canvas>
+          <canvas id="mate" tabindex="0" role="img" aria-label="Hai đầu nối, BẠN và KHANG. Chân cắm đang lệch nên chưa cắm được. Kéo đầu BẠN lên hoặc xuống, hoặc dùng phím mũi tên, cho thẳng hàng thì mới khớp; khi khớp, tín hiệu chạy hai chiều và đường sai số từ năm 2022 nhỏ đi."></canvas>
         </figure>
-        <div class="figcap"><span data-en="PA-IO-001 · connector, mated only when aligned">PA-IO-001 · đầu nối, chỉ khớp khi thẳng hàng</span><span data-en="click to replay">bấm để xem lại</span></div>
+        <div class="figcap"><span data-en="PA-IO-001 · mates only when aligned · e(t) continued from 2022">PA-IO-001 · chỉ khớp khi thẳng hàng · e(t) nối tiếp từ 2022</span><span data-en="drag ↕ to align">kéo ↕ cho thẳng hàng</span></div>
+        <p class="hand red note" style="--r:-2.5deg;margin-top:12px" data-en="trust isn't repaid in money. it's repaid by understanding people, one at a time.">lòng tin không trả bằng tiền. trả bằng việc hiểu người khác, từng người một.</p>
       </div>
     </div>
 
-    <table class="pinout rv">
-      <caption data-en="Pinout · what I can bring">Sơ đồ chân · những gì tôi có thể mang tới</caption>
+    <table class="pinout rv" id="pinout">
+      <caption><span data-en="Pinout · what I can bring">Sơ đồ chân · những gì tôi có thể mang tới</span><span class="lock" data-en="← mate the connector to read">← cắm khớp đầu nối để đọc</span></caption>
       <thead><tr><th>#</th><th data-en="Signal">Tín hiệu</th><th data-en="Function">Chức năng</th></tr></thead>
       <tbody>
         <tr><td>1</td><td>GIS</td><td><b data-en="Maps and spatial data.">Bản đồ và dữ liệu không gian.</b> <span data-en="Turning field data into maps people can actually use.">Biến dữ liệu hiện trường thành bản đồ người ta dùng được.</span></td></tr>
@@ -722,7 +732,12 @@ html:not(.js) .meter i { transform: none; }
 
     <div class="reach rv">
       <span class="kicker" data-en="CONTACT">LIÊN HỆ</span>
-      <span class="ph" data-en="[Khang to fill in] email · LinkedIn · GitHub">[Chờ Khang điền] email · LinkedIn · GitHub</span>
+      <span class="links">
+        <a id="mail" href="#together"><span>@</span>Email</a>
+        <a href="#together" id="li"><span>in</span>LinkedIn</a>
+        <a href="https://github.com/trinhbuikhang" rel="me noopener"><span>&lt;/&gt;</span>GitHub</a>
+      </span>
+      <span class="hand note" style="--r:-2deg" data-en="↑ Khang: paste your LinkedIn link">↑ Khang: dán link LinkedIn</span>
     </div>
   </section>
 
@@ -1318,76 +1333,119 @@ html:not(.js) .meter i { transform: none; }
     });
   })();
 
-  /* ---------- together: pins wiggle until aligned, then mate; signals both ways ---------- */
+  /* ---------- together: the visitor aligns the pins; once mated, signals run both ways and the 2022 error shrinks ---------- */
   (function () {
-    var c = document.getElementById('mate');
-    var job = animate(c, draw);
-    c.addEventListener('click', function () { job.t = 0; if (reduce) draw(0, 0); });
+    var m = document.getElementById('mail'); m.href = 'mailto:' + ['trinhbuikhang060708', 'gmail.com'].join('@');
+    var c = document.getElementById('mate'), table = document.getElementById('pinout'), rows = [].slice.call(table.querySelectorAll('tbody tr'));
+    var mis, mated, matedAt, touched, drag = null, moved = 0, timers = [], buf = [], acc = 0, level = 1, SP = 20;
     function sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+    function light(on) {
+      timers.forEach(clearTimeout); timers = [];
+      table.classList.toggle('mated', on);
+      rows.forEach(function (r, i) { if (!on) r.classList.remove('lit'); else timers.push(setTimeout(function () { r.classList.add('lit'); }, reduce ? 0 : 500 + i * 220)); });
+    }
+    function reset() { mis = (Math.random() < 0.5 ? -1 : 1) * 0.62; mated = false; touched = false; job.t = 0; light(false); }
+    function mate(t) { if (mated) return; mated = true; matedAt = t; light(true); }
+    var job = animate(c, draw);
+    reset();
+    if (reduce) { mis = 0; mate(0); }
+    function nudge(d) { if (mated) return; touched = true; mis = Math.max(-0.9, Math.min(0.9, mis + d)); if (Math.abs(mis) < 0.09) { mis = 0; mate(job.t); } if (reduce) draw(0, job.t); }
+    c.addEventListener('pointerdown', function (e) { drag = e.clientY; moved = 0; c.setPointerCapture(e.pointerId); c.style.cursor = 'grabbing'; });
+    c.addEventListener('pointermove', function (e) { if (drag === null) return; var d = e.clientY - drag; drag = e.clientY; moved += Math.abs(d); nudge(d / SP); });
+    function up() { if (drag === null) return; drag = null; c.style.cursor = ''; if (moved < 3 && mated && job.t - matedAt > 1) { reset(); if (reduce) { mis = 0; mate(0); draw(0, 0); } } }
+    c.addEventListener('pointerup', up); c.addEventListener('pointercancel', up);
+    c.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); nudge(e.key === 'ArrowUp' ? -0.08 : 0.08); }
+      if ((e.key === 'Enter' || e.key === ' ') && mated) { e.preventDefault(); reset(); }
+    });
     function draw(dt, t) {
-      if (reduce) t = 6;
-      var f = fit(c), x = f.ctx, w = f.w, h = f.h, cy = h * 0.5;
-      var bw = w * 0.25, bh = Math.min(h * 0.5, 150), pl = w * 0.06, sp = bh / 6;
-      var gap = 140 * (1 - sm(t / 1.6)) + 26 - 26 * sm((t - 3.6) / 0.5) - pl * 0.8 * sm((t - 3.6) / 0.5);
-      var mis = t < 1.6 ? 13 : 13 * Math.exp(-(t - 1.6) * 2.2) * Math.cos((t - 1.6) * 9);
-      if (t > 3.6) mis = 0;
-      var left = (w - (2 * bw + pl + Math.max(gap, -pl * 0.8))) / 2, xL = left + bw, xR = xL + pl + gap;
-      var done = t > 4.1;
+      var f = fit(c), x = f.ctx, w = f.w, h = f.h; if (!w) return;
+      var vi = lang !== 'en', top = h * 0.66, cy = top * 0.54;
+      var bw = Math.min(w * 0.25, 170), bh = Math.min(top * 0.56, 130), pl = w * 0.06, sp = bh / 6; SP = sp;
+      // patience also works: after a long wait the plug finds its own way
+      if (!mated && !reduce && t > 16 && !touched) { mis *= Math.pow(0.3, dt); if (Math.abs(mis) < 0.09) { mis = 0; mate(t); } }
+      var k = mated ? t - matedAt : -1, ins = sm(k / 0.4);
+      var gap = mated ? 8 - (8 + pl * 0.8) * ins : 140 * (1 - sm(t / 1.4)) + 8 + (t > 1.4 ? 3 * Math.abs(Math.sin(t * 3)) : 0);
+      var off = mis * sp;
+      var left = (w - (2 * bw + pl + gap)) / 2, xL = left + bw, xR = xL + pl + gap;
       x.lineCap = 'round'; x.lineJoin = 'round';
-      // cables: two lanes each side
+      // cables, two lanes each side
       x.strokeStyle = C.ink; x.lineWidth = 1.4;
       [-6, 6].forEach(function (o) {
-        x.beginPath(); x.moveTo(0, cy + o + mis * 0.4); x.bezierCurveTo(left * 0.5, cy + o + mis * 0.4, left * 0.5, cy + o + mis, left, cy + o + mis); x.stroke();
+        x.beginPath(); x.moveTo(0, cy + o); x.bezierCurveTo(left * 0.5, cy + o, left * 0.5, cy + o + off, left, cy + o + off); x.stroke();
         x.beginPath(); x.moveTo(xR + bw, cy + o); x.lineTo(w, cy + o); x.stroke();
       });
-      // pulses once mated: red goes you → me, copper comes back
-      if (done) {
-        var k = t - 4.1;
+      if (mated && k > 0.4) {
+        var q = k - 0.4;
         for (var i = 0; i < 4; i++) {
-          var p = ((k * 0.32 + i / 4) % 1), px = p * w, qx = w - px;
-          x.globalAlpha = Math.min(1, k * 2);
+          var p = (q * 0.32 + i / 4) % 1, px = p * w, qx = w - px;
+          x.globalAlpha = Math.min(1, q * 2);
           x.fillStyle = C.pen; if (px < left || px > xR + bw) { x.beginPath(); x.arc(px, cy - 6, 3.4, 0, 7); x.fill(); }
           x.fillStyle = C.accent; if (qx < left || qx > xR + bw) { x.beginPath(); x.arc(qx, cy + 6, 3.4, 0, 7); x.fill(); }
-          x.globalAlpha = 1;
         }
+        x.globalAlpha = 1;
       }
-      // pins
+      // pins, plug (you), socket (me) drawn over the pins so they vanish inside
       x.fillStyle = C.ink;
-      for (var j = 0; j < 5; j++) { var py = cy + (j - 2) * sp + mis; x.fillRect(xL, py - 2, pl, 4); }
-      // plug body (you)
-      x.fillStyle = C.sheet; x.strokeStyle = C.ink; x.lineWidth = 1.8;
-      x.fillRect(left, cy - bh / 2 + mis, bw, bh); x.strokeRect(left, cy - bh / 2 + mis, bw, bh);
-      x.beginPath(); x.moveTo(left + bw * 0.18, cy - bh / 2 + mis); x.lineTo(left + bw * 0.18, cy + bh / 2 + mis); x.lineWidth = 1; x.stroke();
-      // socket body (me), drawn over the pins so they disappear inside
-      x.lineWidth = 1.8; x.fillStyle = C.sheet;
+      for (var j = 0; j < 5; j++) x.fillRect(xL, cy + (j - 2) * sp + off - 2, pl, 4);
+      x.fillStyle = C.sheet; x.strokeStyle = drag !== null ? C.accent : C.ink; x.lineWidth = 1.8;
+      x.fillRect(left, cy - bh / 2 + off, bw, bh); x.strokeRect(left, cy - bh / 2 + off, bw, bh);
+      x.lineWidth = 1; x.beginPath(); x.moveTo(left + bw * 0.18, cy - bh / 2 + off); x.lineTo(left + bw * 0.18, cy + bh / 2 + off); x.stroke();
+      if (!mated) { // grip ridges: this is the part you can move
+        x.strokeStyle = C['ink-2']; x.beginPath();
+        for (j = -2; j <= 2; j++) { x.moveTo(left + bw * 0.06, cy + off + j * 6); x.lineTo(left + bw * 0.12, cy + off + j * 6); }
+        x.stroke();
+      }
+      x.strokeStyle = C.ink; x.lineWidth = 1.8; x.fillStyle = C.sheet;
       x.fillRect(xR, cy - bh / 2 - 6, bw, bh + 12); x.strokeRect(xR, cy - bh / 2 - 6, bw, bh + 12);
       x.fillStyle = C.ink;
       for (j = 0; j < 5; j++) x.fillRect(xR - 1, cy + (j - 2) * sp - 3, 4, 6);
-      // names
-      var vi = lang !== 'en';
       x.textAlign = 'center'; x.fillStyle = C.ink; x.font = '700 13px "Archivo", sans-serif';
-      x.fillText(vi ? 'BẠN' : 'YOU', left + bw * 0.59, cy - 4 + mis); x.fillText('KHANG', xR + bw / 2, cy - 4);
+      x.fillText(vi ? 'BẠN' : 'YOU', left + bw * 0.59, cy - 4 + off); x.fillText('KHANG', xR + bw / 2, cy - 4);
       x.font = MONO; x.fillStyle = C['ink-2'];
-      x.fillText(vi ? 'vấn đề' : 'problem', left + bw * 0.59, cy + 14 + mis); x.fillText(vi ? 'công cụ' : 'tools', xR + bw / 2, cy + 14);
-      // what is happening
-      var msg, red = false;
-      if (t < 1.6) msg = vi ? 'tiến lại gần…' : 'getting closer…';
-      else if (t < 3.6) { msg = vi ? 'chưa thẳng hàng · hỏi lại' : 'not aligned · ask again'; red = true; }
-      else if (!done) msg = vi ? 'cắm…' : 'mating…';
-      else msg = vi ? 'đã khớp · tín hiệu hai chiều' : 'mated · signal both ways';
-      x.textAlign = 'left'; x.font = MONO; x.fillStyle = C['ink-2']; x.fillText(msg, 8, h - 10);
-      if (red) {
-        x.font = '22px ' + HAND; x.fillStyle = C.pen; x.textAlign = 'center';
-        var a = Math.sin(t * 6) * 0.15;
-        x.save(); x.translate((xL + xR) / 2 + pl / 2, cy - bh / 2 - 14); x.rotate(a); x.fillText('?', -10, 0); x.fillText('?', 12, 6); x.restore();
+      x.fillText(vi ? 'vấn đề' : 'problem', left + bw * 0.59, cy + 14 + off); x.fillText(vi ? 'công cụ' : 'tools', xR + bw / 2, cy + 14);
+      var mid = xL + pl / 2;
+      if (!mated && t > 1.4) {
+        x.save(); x.translate(mid, cy - bh / 2 - 16); x.rotate(Math.sin(t * 6) * 0.15);
+        x.font = '24px ' + HAND; x.fillStyle = C.pen; x.fillText('?', -10, 0); x.fillText('?', 12, 6); x.restore();
+        if (!touched) { // hint arrow on the plug
+          var a = 0.55 + 0.45 * Math.sin(t * 3);
+          x.globalAlpha = a; x.strokeStyle = C.pen; x.fillStyle = C.pen; x.lineWidth = 1.6;
+          var hx = left - 16, hy = cy + off;
+          x.beginPath(); x.moveTo(hx, hy - 22); x.lineTo(hx, hy + 22); x.moveTo(hx - 5, hy - 16); x.lineTo(hx, hy - 22); x.lineTo(hx + 5, hy - 16); x.moveTo(hx - 5, hy + 16); x.lineTo(hx, hy + 22); x.lineTo(hx + 5, hy + 16); x.stroke();
+          x.font = '19px ' + HAND; x.textAlign = 'left'; x.fillText(vi ? 'kéo tôi' : 'drag me', Math.max(4, left - 8), cy - bh / 2 + off - 10);
+          x.globalAlpha = 1;
+        }
       }
-      if (done) {
-        var s = sm((t - 4.1) / 0.35), cx2 = (xL + xR + pl) / 2;
-        x.save(); x.translate(cx2, cy - bh / 2 - 26); x.rotate(-0.08); x.globalAlpha = s * 0.9;
+      if (mated) {
+        var s2 = sm((k - 0.4) / 0.3);
+        x.save(); x.translate(mid, cy - bh / 2 - 26); x.rotate(-0.08); x.globalAlpha = s2 * 0.9;
         x.font = '700 12px "Reddit Mono", monospace'; var lab = vi ? 'ĐÃ KHỚP' : 'MATED', tw = x.measureText(lab).width;
         x.strokeStyle = C.pen; x.lineWidth = 2; x.strokeRect(-tw / 2 - 7, -13, tw + 14, 21); x.fillStyle = C.pen; x.textAlign = 'center'; x.fillText(lab, 0, 2);
         x.restore();
       }
+      // scope strip: the error signal from 2022 keeps running here
+      var sT = top + 10, sB = h - 22, z = (sT + sB) / 2 + 4, A = (sB - sT) * 0.42, L = 26, R = w - 8;
+      x.strokeStyle = C.rule; x.lineWidth = 1; x.beginPath(); x.moveTo(0, top); x.lineTo(w, top); x.stroke();
+      x.setLineDash([2, 4]); x.strokeStyle = C['ink-2']; x.beginPath(); x.moveTo(L, z); x.lineTo(R, z); x.stroke(); x.setLineDash([]);
+      x.font = MONO; x.fillStyle = C['ink-2']; x.textAlign = 'right'; x.fillText('e', L - 8, sT + 10); x.fillText('0', L - 8, z + 4);
+      x.textAlign = 'left'; x.fillText(vi ? '← từ 2022' : '← from 2022', L, sB + 16);
+      var n = Math.max(2, Math.floor((R - L) / 3));
+      level += ((mated ? 0.38 : 1) - level) * Math.min(1, dt * 1.2);
+      if (reduce || buf.length !== n) { buf = []; for (j = 0; j < n; j++) buf.push(sample(j * 0.05, mated ? 0.38 : 1)); level = mated ? 0.38 : 1; }
+      acc += dt; while (acc > 0.05) { acc -= 0.05; buf.shift(); buf.push(sample(t, level)); }
+      x.strokeStyle = C.ink; x.lineWidth = 1.6; x.beginPath();
+      for (j = 0; j < n; j++) { var px2 = L + j / (n - 1) * (R - L), py = z - buf[j] * A; j ? x.lineTo(px2, py) : x.moveTo(px2, py); }
+      x.stroke();
+      x.fillStyle = C.accent; x.beginPath(); x.arc(R, z - buf[n - 1] * A, 3.2, 0, 7); x.fill();
+      if (mated && k > 1.6) {
+        x.globalAlpha = sm((k - 1.6) / 0.5); x.font = '19px ' + HAND; x.fillStyle = C.pen; x.textAlign = 'right';
+        x.fillText(vi ? 'nhỏ đi một chút. chưa về 0.' : 'a little smaller. not zero.', R - 6, sT + 12); x.globalAlpha = 1;
+      }
+      x.textAlign = 'left';
+    }
+    function sample(t, lv) {
+      return lv * (0.32 + 0.38 * Math.sin(t * 5.3) * Math.cos(t * 1.7) + 0.22 * Math.sin(t * 13.1 + Math.sin(t * 2.3)));
     }
   })();
 
