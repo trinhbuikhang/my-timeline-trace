@@ -274,7 +274,7 @@ html:not(.js) .sv .del > svg path { stroke-dashoffset: 0; } html:not(.js) .sv .i
 .js .on .stamp2 { animation: stamp .35s cubic-bezier(.5, 0, .7, 1) 1.2s forwards; }
 html:not(.js) .stamp2 { opacity: .85; transform: rotate(-9deg); }
 @keyframes stamp { to { opacity: .85; transform: rotate(-9deg) scale(1); } }
-.clips { display: grid; gap: 30px 26px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); margin-top: 30px; }
+.clips { display: grid; gap: 30px 26px; grid-template-columns: minmax(0, 720px); margin-top: 30px; }
 .clip { position: relative; background: #ece5d3; color: #2b2720; padding: 18px 18px 14px; box-shadow: 0 10px 20px -14px rgb(0 0 0 / .5); font: 400 16.5px/1.5 var(--serif); }
 .clip:nth-child(1) { transform: rotate(-1deg); } .clip:nth-child(2) { transform: rotate(1.3deg); }
 .clip p { margin: 10px 0 8px; column-width: 220px; column-gap: 20px; column-rule: 1px solid #cbc2ad; }
@@ -283,7 +283,7 @@ html:not(.js) .stamp2 { opacity: .85; transform: rotate(-9deg); }
 .clip-h span, .clip .src { font: 500 11px/1 var(--mono); color: #6f6758; }
 .clip .src { text-decoration: none; } .clip .src:hover { text-decoration: underline; }
 .clip .src::before { content: '↗ '; }
-.debts { display: grid; gap: 16px 26px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 34px; }
+.debts { display: grid; gap: 16px 26px; grid-template-columns: minmax(0, 520px); margin-top: 34px; }
 .debt { border: 2px solid var(--ink); padding: 14px 16px; background: var(--sheet); }
 .debt p { margin: 6px 0 12px; font: 400 21px/1.35 var(--serif); }
 .lbl2 { font: 700 12px/1 var(--mono); letter-spacing: .06em; color: var(--accent); }
@@ -300,6 +300,14 @@ html:not(.js) .meter i { transform: none; }
 .spine .line2 { font-style: italic; color: var(--pen); }
 .spine .line3 { color: var(--ink-2); font-size: clamp(22px, 2.6vw, 32px); }
 .pencilnote { font-size: 17px; margin: 6px 0 0; }
+/* rough 3D model card */
+.model { position: relative; width: min(400px, 100%); margin: 30px 0 0; padding: 10px 10px 8px; background: var(--sheet) radial-gradient(var(--rule) 1px, transparent 1.2px) 0 0 / 16px 16px; border: 1px solid var(--rule); box-shadow: 0 12px 26px -18px rgb(0 0 0 / .5); transform: rotate(var(--r, -1.5deg)); }
+.model::before { content: ''; position: absolute; width: 84px; height: 22px; background: var(--tape); top: -11px; left: 50%; transform: translateX(-50%) rotate(-3deg); }
+.model canvas { display: block; width: 100%; aspect-ratio: 4 / 3; cursor: grab; touch-action: pan-y; }
+.model canvas:active { cursor: grabbing; }
+.model figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-top: 4px; font: 500 11px/1.3 var(--mono); color: var(--ink-2); }
+.model figcaption .hand { font-size: 20px; color: var(--ink); }
+.ctrl button[aria-pressed=true] { background: var(--ink); color: var(--paper); }
 .solver { margin-top: 70px; }
 .ledger li::before { display: none; }
 .ledger u { text-decoration: none; display: inline-block; min-width: 2.2em; text-align: center; border-bottom: 1.6px solid var(--pencil); color: var(--ink-2); }
@@ -398,10 +406,11 @@ html:not(.js) .meter i { transform: none; }
           <p class="rv d2" data-en="Drifting left? Turn right. Drifting right? Turn left. It sounds simple, until it goes a little faster.">Lệch trái thì rẽ phải. Lệch phải thì rẽ trái. Nghe thì đơn giản, cho đến khi nó chạy nhanh hơn một chút.</p>
           <p class="rv d3" data-en="Measure, correct, measure again. Everything after this is the same loop, only bigger.">Đo, sửa, rồi đo lại. Mọi thứ về sau vẫn là vòng lặp ấy, chỉ to hơn.</p>
         </div>
-        <div class="photo" style="--r:-4deg">
-          <div class="img"><svg viewBox="0 0 100 100" aria-hidden="true"><g class="sketch"><path d="M10 78 C30 70 55 82 90 66"/><rect x="34" y="34" width="34" height="26" rx="2"/><path d="M30 38 V56 M72 38 V56" stroke-width="4"/><path d="M68 40 L80 36 M68 54 L80 58"/><path d="M80 34 V60"/><circle cx="51" cy="47" r="4"/></g></svg></div>
-          <div class="cap" data-en="real photo of the robot — Khang to tape it here">ảnh robot thật — Khang dán vào đây</div>
-        </div>
+        <figure class="model rv d3" style="--r:-1.5deg">
+          <canvas id="m-lf" role="img" aria-label="Mô hình 3D thô của robot dò đường: tấm đế, hai bánh dẫn động, bánh tự lựa, thanh 5 cảm biến hồng ngoại phía trước. Kéo để xoay."></canvas>
+          <figcaption><span class="hand" data-en="rough 3D · drag to turn it">mô hình 3D thô · kéo để xoay</span><span>PA-LF-3D</span></figcaption>
+          <p class="hand pencilnote" data-en="↑ drawn from memory, not from the real thing. Real photo still to come.">↑ vẽ theo trí nhớ, không phải bản vẽ thật. Ảnh thật vẫn đang chờ.</p>
+        </figure>
       </div>
       <div class="rv d1">
         <div class="bench tape">
@@ -422,20 +431,25 @@ html:not(.js) .meter i { transform: none; }
         <h2 class="rv" data-en="No floor to hold on to">Không còn sàn để bám</h2>
         <div class="prose">
           <p class="rv d1 big" data-en="A UAV has no line to follow.">UAV không có vạch kẻ nào để đi theo.</p>
-          <p class="rv d2" data-en="It has to hold its own balance, every few milliseconds, against air that never keeps still.">Nó phải tự giữ thăng bằng, từng vài phần nghìn giây, giữa một bầu không khí không bao giờ đứng yên.</p>
-          <p class="rv d3" data-en="One more axis. Every problem got twice as interesting.">Thêm một <span class="circ">trục z</span>. Bài toán nào cũng thú vị gấp đôi.</p>
+          <p class="rv d2" data-en="It has to hold its own balance, every few milliseconds, against air that never keeps still. Three rotors, not four: one motor short, so the tail has to tilt on a servo just to hold its heading.">Nó phải tự giữ thăng bằng, từng vài phần nghìn giây, giữa một bầu không khí không bao giờ đứng yên. Ba cánh quạt, không phải bốn: thiếu một động cơ, nên cánh đuôi phải nghiêng bằng servo chỉ để giữ hướng.</p>
+          <p class="rv d3" data-en="One more axis. Every problem got twice as hard.">Thêm một <span class="circ">trục z</span>. Bài toán nào cũng khó gấp đôi.</p>
+          <p class="rv d3 big" data-en="And to be honest: it never really flew.">Và nói thật: nó <span class="scrib">chưa bao giờ thực sự bay</span>.</p>
+          <p class="rv d3" data-en="The simulation is what it was supposed to do. Press REAL LIFE to see roughly what it actually did. I’m keeping it here because it was my first error I didn’t hide.">Mô phỏng bên cạnh là thứ nó đáng lẽ phải làm được. Bấm NGOÀI ĐỜI để xem đại khái nó đã làm gì. Tôi giữ nó ở đây vì đó là sai số đầu tiên tôi không giấu.</p>
         </div>
-        <div class="photo" style="--r:3deg">
-          <div class="img"><svg viewBox="0 0 100 100" aria-hidden="true"><g class="sketch"><path d="M28 28 L72 72 M72 28 L28 72"/><ellipse cx="26" cy="26" rx="15" ry="5"/><ellipse cx="74" cy="26" rx="15" ry="5"/><ellipse cx="26" cy="74" rx="15" ry="5"/><ellipse cx="74" cy="74" rx="15" ry="5"/><rect x="42" y="42" width="16" height="16"/></g></svg></div>
-          <div class="cap" data-en="real UAV photo — waiting">ảnh UAV thật — đang chờ</div>
-        </div>
+        <figure class="model rv d3" style="--r:1.5deg">
+          <canvas id="m-tri" role="img" aria-label="Mô hình 3D thô của UAV ba cánh quạt: ba tay đòn lệch nhau 120 độ, động cơ đuôi nghiêng bằng servo để giữ hướng. Kéo để xoay."></canvas>
+          <figcaption><span class="hand" data-en="rough 3D · drag to turn it">mô hình 3D thô · kéo để xoay</span><span>PA-Y3-3D</span></figcaption>
+          <p class="hand pencilnote" data-en="↑ from memory. Khang: swap in the real frame and a photo.">↑ vẽ theo trí nhớ. Khang: sửa theo khung thật và dán ảnh.</p>
+        </figure>
       </div>
       <div class="rv d1">
         <div class="bench tape">
-          <canvas id="uav" style="aspect-ratio:16/11;cursor:crosshair;touch-action:pan-y" role="img" aria-label="Mô phỏng UAV bay lơ lửng. Di chuột hoặc chạm để thổi gió, bộ điều khiển PD giữ nó lại."></canvas>
-          <div class="figcap"><span><b>PA-UAV</b> · <span data-en="PD hover hold">giữ vị trí bằng PD</span></span><span id="uavstat">—</span></div>
+          <canvas id="uav" style="aspect-ratio:16/11;cursor:crosshair;touch-action:pan-y" role="img" aria-label="Mô phỏng UAV ba cánh quạt bay lơ lửng. Di chuột hoặc chạm để thổi gió, bộ điều khiển PD giữ nó lại. Chế độ Ngoài đời cho thấy nó chưa cất cánh được."></canvas>
+          <div class="ctrl"><button type="button" id="uavsim" aria-pressed="true" data-en="SIMULATION">MÔ PHỎNG</button><button type="button" id="uavreal" aria-pressed="false" data-en="REAL LIFE">NGOÀI ĐỜI</button></div>
+          <div class="figcap"><span><b>PA-UAV</b> · <span data-en="tri-rotor, PD hover hold">ba cánh quạt, giữ vị trí bằng PD</span></span><span id="uavstat">—</span></div>
         </div>
-        <p class="hand red note" style="--r:2deg;margin:16px 0 0 auto;display:block;text-align:right" data-en="blow on it with your mouse (or tap) ↑">thổi nó bằng chuột (hoặc chạm) ↑</p>
+        <p class="hand red note" style="--r:2deg;margin:16px 0 0 auto;display:block;text-align:right" data-en="blow on it with your mouse (or tap) ↑ then press REAL LIFE">thổi nó bằng chuột (hoặc chạm) ↑ rồi bấm NGOÀI ĐỜI</p>
+        <p class="hand pencilnote" style="text-align:right" data-en="↑ Khang: did it ever lift at all? fix the real-life animation to match">↑ Khang: nó có nhấc lên được chút nào không? sửa hoạt cảnh cho đúng</p>
       </div>
     </div>
   </section>
@@ -500,25 +514,19 @@ html:not(.js) .meter i { transform: none; }
     <div class="clips">
       <article class="clip tape rv">
         <div class="clip-h"><b>U. S. GRANT</b><span>1854 · 1884–1885</span></div>
-        <p data-en="Left the US Army in 1854. Failed at farming, and at times sold firewood on the muddy streets of St. Louis to feed his family. Decades later he went bankrupt again when a partner turned their firm into a fraud: he and his wife were left with $210 in cash. In his last year, dying of throat cancer, he wrote his memoirs to pay his debts and provide for his wife. He finished days before he died.">Rời quân đội Mỹ năm 1854. Làm nông thất bại, có lúc phải bán củi trên những con phố lầy lội ở St. Louis để nuôi gia đình. Nhiều năm sau, ông phá sản thêm lần nữa vì người cộng sự biến công ty thành một vụ lừa đảo: hai vợ chồng còn 210 đô la tiền mặt. Năm cuối đời, khi đang chết dần vì ung thư vòm họng, ông viết hồi ký để trả nợ và lo cho vợ. Ông viết xong vài ngày trước khi mất.</p>
+        <p data-en="Left the US Army in 1854. Failed at farming, and at times sold firewood on the muddy streets of St. Louis to feed his family. Decades later he went bankrupt again when a partner turned their firm into a fraud: he and his wife were left with $210 in cash. In his last year, dying of throat cancer, he sat down and wrote his memoirs so his family would not be left with nothing. He finished days before he died.">Rời quân đội Mỹ năm 1854. Làm nông thất bại, có lúc phải bán củi trên những con phố lầy lội ở St. Louis để nuôi gia đình. Nhiều năm sau, ông phá sản thêm lần nữa vì người cộng sự biến công ty thành một vụ lừa đảo: hai vợ chồng còn 210 đô la tiền mặt. Năm cuối đời, khi đang chết dần vì ung thư vòm họng, ông ngồi viết hồi ký để gia đình không bị bỏ lại trắng tay. Ông viết xong vài ngày trước khi mất.</p>
         <a class="src" href="https://www.nps.gov/articles/000/the-failure-of-grant-ward-a-cautionary-tale.htm" target="_blank" rel="noopener">nps.gov</a>
-      </article>
-      <article class="clip tape rv d1">
-        <div class="clip-h"><b>MARK TWAIN</b><span>1894 · 1895</span></div>
-        <p data-en="His publishing company went bankrupt in 1894. The law did not require him to pay all of it back. He treated it as a debt of honour anyway, went on a lecture tour around the world, and paid to the last cent.">Công ty xuất bản phá sản năm 1894. Luật không buộc ông trả hết. Ông vẫn coi đó là món nợ danh dự, đi diễn thuyết vòng quanh thế giới, và trả đến đồng cuối cùng.</p>
-        <a class="src" href="https://librivox.org/following-the-equator-by-mark-twain/" target="_blank" rel="noopener">Following the Equator, 1897</a>
       </article>
     </div>
     <div class="debts">
-      <div class="debt rv"><span class="lbl2" data-en="DEBT OF MONEY">NỢ TIỀN</span><p data-en="Has a number. Paid off, it’s done.">Có số. Trả xong là hết.</p><span class="meter"><i></i></span></div>
-      <div class="debt rv d1"><span class="lbl2" data-en="DEBT OF TRUST">NỢ LÒNG TIN</span><p data-en="Has no number. Paid only in time, and in keeping your word.">Không có số. Chỉ trả được bằng <span class="circ">thời gian</span> và việc giữ lời.</p><span class="meter inf"><i></i></span></div>
+      <div class="debt rv"><span class="lbl2" data-en="DEBT OF TRUST">NỢ LÒNG TIN</span><p data-en="Has no number. Paid only in time, and in keeping your word.">Không có số. Chỉ trả được bằng <span class="circ">thời gian</span> và việc giữ lời.</p><span class="meter inf"><i></i></span></div>
     </div>
 
     <div class="spine">
       <h3 class="sub rv" data-en="Where the mettle lives">Bản lĩnh nằm ở đâu</h3>
       <p class="rv d1 line1" data-en="The officer in me did not die the day I took off the uniform.">Người sĩ quan trong tôi không mất đi vào ngày tôi cởi quân phục.</p>
       <p class="rv d2 line2" data-en="It died the moment I started lying.">Nó mất đi vào lúc tôi bắt đầu <span class="scrib">nói dối</span>.</p>
-      <p class="rv d3 line3" data-en="And it comes back, a little at a time, every time I tell the truth, every time I pay something back, every time I do what I promised.">Và nó quay lại, từng chút một, mỗi lần tôi nói thật, mỗi lần tôi trả được một khoản, mỗi lần tôi làm đúng điều đã hứa.</p>
+      <p class="rv d3 line3" data-en="And it comes back, a little at a time, every time I tell the truth, every time I face something instead of dodging it, every time I do what I promised.">Và nó quay lại, từng chút một, mỗi lần tôi nói thật, mỗi lần tôi đối mặt thay vì né tránh, mỗi lần tôi làm đúng điều đã hứa.</p>
       <div class="prose" style="max-width:46ch">
         <p class="rv d3" data-en="I don’t command anyone any more. But I still get up at 5 a.m., still finish the mission before talking about it, and still believe a soldier leaves no one behind, including the people he once hurt.">Tôi không còn chỉ huy ai nữa. Nhưng tôi vẫn dậy lúc 5 giờ sáng, vẫn hoàn thành nhiệm vụ trước khi nói về nó, và vẫn tin rằng người lính không bỏ lại ai, kể cả những người mình từng làm tổn thương.</p>
         <p class="hand rv d3 pencilnote" data-en="↑ Khang: is 5 a.m. right? swap in your real habit">↑ Khang: 5 giờ có đúng không? thay bằng thói quen thật</p>
@@ -536,7 +544,6 @@ html:not(.js) .meter i { transform: none; }
         <h3 data-en="Repair log">Sổ sửa sai</h3>
         <ul>
           <li><span data-en="Met again and apologised to">Đã gặp lại và xin lỗi</span> <u>&nbsp;?&nbsp;</u> <span data-en="people">người</span></li>
-          <li><span data-en="Paid back">Đã trả</span> <u>&nbsp;?&nbsp;</u> / <u>&nbsp;?&nbsp;</u> <span data-en="debts">khoản</span></li>
           <li><span data-en="Days I kept my word">Số ngày giữ đúng lời</span> <u>&nbsp;?&nbsp;</u></li>
         </ul>
         <p class="hand red" style="margin:0" data-en="Khang fills in real numbers, or this page goes.">Khang điền số thật — hoặc bỏ trang này.</p>
@@ -875,60 +882,205 @@ html:not(.js) .meter i { transform: none; }
     });
   })();
 
-  /* ---------- UAV: PD hover hold; the visitor is the wind ---------- */
+  /* ---------- UAV: tri-rotor PD hover hold; the visitor is the wind. REAL LIFE shows it never quite flew ---------- */
   (function () {
     var c = document.getElementById('uav'), stat = document.getElementById('uavstat'), ptr = pointer(c);
-    var pos = null, vel = [0, 0], trail = [], gust = 0;
+    var bSim = document.getElementById('uavsim'), bReal = document.getElementById('uavreal');
+    var pos = null, vel = [0, 0], trail = [], gust = 0, real = false, rt = 0, tries = 0, yawOff = 0;
+    function mode(r) { real = r; rt = 0; tries = r ? 1 : 0; yawOff = 0; trail = []; bSim.setAttribute('aria-pressed', !r); bReal.setAttribute('aria-pressed', r); }
+    bSim.addEventListener('click', function () { mode(false); });
+    bReal.addEventListener('click', function () { mode(true); });
     animate(c, function (dt, t) {
       var f = fit(c), ctx = f.ctx, w = f.w, h = f.h, s = Math.min(w, h); if (!w) return;
       var tx = w * 0.5 + Math.sin(t * 0.4) * w * 0.07, ty = h * 0.5 + Math.sin(t * 0.6) * h * 0.05;
       if (!pos) pos = [tx, ty];
-      var ax = -9 * (pos[0] - tx) - 3.6 * vel[0], ay = -9 * (pos[1] - ty) - 3.6 * vel[1], wind = 0;
-      if (ptr.in) {
-        var dx = pos[0] - ptr.x, dy = pos[1] - ptr.y, d = Math.hypot(dx, dy) || 1, R = s * 0.55;
-        if (d < R) { wind = (1 - d / R); ax += dx / d * s * 14 * wind; ay += dy / d * s * 14 * wind; }
-        if (ptr.tap) { vel[0] += dx / d * s * 2.2; vel[1] += dy / d * s * 2.2; ptr.tap = 0; gust = 1; }
+      var tilt = 0, pitch = 0, alt = 1, spin = 1, wind = 0, note = '', jit = [0, 0];
+      if (!real) {
+        var ax = -9 * (pos[0] - tx) - 3.6 * vel[0], ay = -9 * (pos[1] - ty) - 3.6 * vel[1];
+        if (ptr.in) {
+          var dx = pos[0] - ptr.x, dy = pos[1] - ptr.y, d = Math.hypot(dx, dy) || 1, Rw = s * 0.55;
+          if (d < Rw) { wind = (1 - d / Rw); ax += dx / d * s * 14 * wind; ay += dy / d * s * 14 * wind; }
+          if (ptr.tap) { vel[0] += dx / d * s * 2.2; vel[1] += dy / d * s * 2.2; ptr.tap = 0; gust = 1; }
+        }
+        gust = Math.max(0, gust - dt * 1.5);
+        vel[0] += ax * dt; vel[1] += ay * dt; pos[0] += vel[0] * dt; pos[1] += vel[1] * dt;
+        pos[0] = Math.max(s * 0.2, Math.min(w - s * 0.2, pos[0])); pos[1] = Math.max(s * 0.2, Math.min(h - s * 0.2, pos[1]));
+        tilt = Math.max(-1, Math.min(1, -vel[0] / (s * 1.2))); pitch = Math.max(-1, Math.min(1, -vel[1] / (s * 1.2)));
+      } else {
+        // spool up, a shaky hop, tip over, sit there. Repeat.
+        ptr.tap = 0; vel = [0, 0]; pos = [w * 0.5, h * 0.52];
+        rt += dt; if (rt > 5.2) { rt = 0; tries++; yawOff = 0; }
+        var k;
+        if (rt < 1) { k = rt; spin = k; alt = 0; jit = [(Math.random() - 0.5) * 1.6 * k, (Math.random() - 0.5) * 1.6 * k]; }
+        else if (rt < 2.3) { k = (rt - 1) / 1.3; spin = 1.4; alt = Math.sin(k * Math.PI) * 0.45; tilt = Math.sin(rt * 17) * k * 0.9; pitch = Math.cos(rt * 13) * k * 0.6; yawOff += dt * k * 3.2; }
+        else if (rt < 2.6) { k = (rt - 2.3) / 0.3; spin = 1 - k; alt = 0; tilt = 0.9 + k * 0.3; pitch = 0.3; note = lang === 'en' ? 'thud.' : 'bịch.'; }
+        else { spin = 0; alt = 0; tilt = 1.2; pitch = 0.3; note = lang === 'en' ? 'not flying. yet.' : 'chưa bay được.'; }
+        if (dt && alt > 0.02) { trail.push([pos[0] + tilt * s * 0.05, pos[1] - alt * s * 0.1]); if (trail.length > 80) trail.shift(); }
       }
-      gust = Math.max(0, gust - dt * 1.5);
-      vel[0] += ax * dt; vel[1] += ay * dt; pos[0] += vel[0] * dt; pos[1] += vel[1] * dt;
-      pos[0] = Math.max(s * 0.2, Math.min(w - s * 0.2, pos[0])); pos[1] = Math.max(s * 0.2, Math.min(h - s * 0.2, pos[1]));
-      if (dt) { trail.push(pos.slice()); if (trail.length > 160) trail.shift(); }
-      // set point
-      ctx.strokeStyle = C.pen; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(tx - 7, ty); ctx.lineTo(tx + 7, ty); ctx.moveTo(tx, ty - 7); ctx.lineTo(tx, ty + 7); ctx.stroke();
+      if (!real && dt) { trail.push(pos.slice()); if (trail.length > 160) trail.shift(); }
+      // set point (sim) or the floor marker (real)
+      ctx.strokeStyle = C.pen; ctx.lineWidth = 1.2; ctx.beginPath();
+      if (!real) { ctx.moveTo(tx - 7, ty); ctx.lineTo(tx + 7, ty); ctx.moveTo(tx, ty - 7); ctx.lineTo(tx, ty + 7); }
+      else { ctx.setLineDash([4, 4]); ctx.arc(w * 0.5, h * 0.52, s * 0.3, 0, 7); }
+      ctx.stroke(); ctx.setLineDash([]);
       ctx.beginPath(); trail.forEach(function (p, i) { i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }); ctx.strokeStyle = C.accent; ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]);
-      // wind lines from the pointer
       if (ptr.in && wind > 0) {
         ctx.strokeStyle = C.pencil; ctx.lineWidth = 1; ctx.globalAlpha = 0.6;
-        for (var k = -2; k <= 2; k++) {
-          var ang = Math.atan2(pos[1] - ptr.y, pos[0] - ptr.x) + k * 0.12, ph = (t * 3 + k * 0.3) % 1, r0 = 14 + ph * 40;
+        for (var q = -2; q <= 2; q++) {
+          var ang = Math.atan2(pos[1] - ptr.y, pos[0] - ptr.x) + q * 0.12, ph = (t * 3 + q * 0.3) % 1, r0 = 14 + ph * 40;
           ctx.beginPath(); ctx.moveTo(ptr.x + Math.cos(ang) * r0, ptr.y + Math.sin(ang) * r0); ctx.lineTo(ptr.x + Math.cos(ang) * (r0 + 16), ptr.y + Math.sin(ang) * (r0 + 16)); ctx.stroke();
         }
         ctx.globalAlpha = 1;
       }
-      var tilt = Math.max(-1, Math.min(1, -vel[0] / (s * 1.2))), pitch = Math.max(-1, Math.min(1, -vel[1] / (s * 1.2)));
-      var yaw = Math.PI / 4 + Math.sin(t * 0.3) * 0.25, R = s * 0.19, r = s * 0.085, cx = pos[0], cy = pos[1];
-      // shadow
+      // Y3 layout: two front arms at ±60°, one tail arm; the tail motor tilts on a servo
+      var yaw = -Math.PI / 2 + Math.sin(t * 0.3) * 0.25 + yawOff, sc = 1 + alt * 0.12, R = s * 0.2 * sc, r = s * 0.08 * sc;
+      var cx = pos[0] + jit[0], cy = pos[1] + jit[1] - alt * s * 0.1, sh = real ? 3 + alt * 40 : 18;
+      var arms = [yaw + Math.PI / 3, yaw - Math.PI / 3, yaw + Math.PI], servo = real ? Math.sin(t * 9) * 0.5 * spin : Math.sin(t * 0.3 + 1) * 0.35 - tilt * 0.3;
       ctx.fillStyle = '#000'; ctx.globalAlpha = dark() ? 0.4 : 0.07;
-      for (var i = 0; i < 4; i++) { var a = yaw + i * Math.PI / 2; ctx.beginPath(); ctx.arc(cx + 16 + Math.cos(a) * R, cy + 22 + Math.sin(a) * R, r, 0, 7); ctx.fill(); }
+      arms.forEach(function (a) { ctx.beginPath(); ctx.arc(pos[0] + sh * 0.7 + Math.cos(a) * R, pos[1] + sh + Math.sin(a) * R, r, 0, 7); ctx.fill(); });
       ctx.globalAlpha = 1;
-      var pts = [];
-      for (i = 0; i < 4; i++) { a = yaw + i * Math.PI / 2; pts.push([cx + Math.cos(a) * R * (1 + tilt * Math.cos(a) * 0.12), cy + Math.sin(a) * R * (1 + pitch * Math.sin(a) * 0.12)]); }
-      ctx.strokeStyle = C.ink; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); ctx.lineTo(pts[2][0], pts[2][1]); ctx.moveTo(pts[1][0], pts[1][1]); ctx.lineTo(pts[3][0], pts[3][1]); ctx.stroke();
+      var pts = arms.map(function (a) { return [cx + Math.cos(a) * R * (1 + tilt * Math.cos(a) * 0.12), cy + Math.sin(a) * R * (1 + pitch * Math.sin(a) * 0.12)]; });
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2.4; ctx.beginPath(); pts.forEach(function (p) { ctx.moveTo(cx, cy); ctx.lineTo(p[0], p[1]); }); ctx.stroke();
       pts.forEach(function (p, i) {
-        var a = yaw + i * Math.PI / 2, effort = 1 + Math.max(0, (Math.cos(a) * tilt + Math.sin(a) * pitch)) * 2 + gust;
-        ctx.fillStyle = C.band; ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, 7); ctx.fill(); ctx.stroke();
-        var dir = i % 2 ? 1 : -1, ang = t * 34 * effort * dir;
-        for (var g = 0; g < 3; g++) { var b = ang - dir * g * 0.24; ctx.globalAlpha = g ? 0.25 : 1; ctx.strokeStyle = C.ink; ctx.lineWidth = g ? 1 : 1.7; ctx.beginPath(); ctx.moveTo(p[0] - Math.cos(b) * r * 0.9, p[1] - Math.sin(b) * r * 0.9); ctx.lineTo(p[0] + Math.cos(b) * r * 0.9, p[1] + Math.sin(b) * r * 0.9); ctx.stroke(); }
+        var a = arms[i], effort = (1 + Math.max(0, (Math.cos(a) * tilt + Math.sin(a) * pitch)) * 2 + gust) * spin;
+        ctx.save(); ctx.translate(p[0], p[1]);
+        if (i === 2) { ctx.rotate(a); ctx.scale(1 - Math.abs(servo) * 0.35, 1); ctx.rotate(-a); }
+        ctx.fillStyle = C.band; ctx.strokeStyle = i === 2 ? C.pen : C.rule; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(0, 0, r, 0, 7); ctx.fill(); ctx.stroke();
+        var dir = i === 1 ? -1 : 1, an = t * 34 * effort * dir;
+        for (var g = 0; g < 3; g++) { var b = an - dir * g * 0.24; ctx.globalAlpha = g ? (spin > 0.3 ? 0.25 : 0) : 1; ctx.strokeStyle = C.ink; ctx.lineWidth = g ? 1 : 1.7; ctx.beginPath(); ctx.moveTo(-Math.cos(b) * r * 0.9, -Math.sin(b) * r * 0.9); ctx.lineTo(Math.cos(b) * r * 0.9, Math.sin(b) * r * 0.9); ctx.stroke(); }
+        ctx.restore();
         ctx.globalAlpha = 1; ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(p[0], p[1], 2.2, 0, 7); ctx.fill();
       });
-      ctx.save(); ctx.translate(cx, cy); ctx.rotate(yaw - Math.PI / 4);
-      var bw = s * 0.055; ctx.fillStyle = C.sheet; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4; ctx.fillRect(-bw, -bw, 2 * bw, 2 * bw); ctx.strokeRect(-bw, -bw, 2 * bw, 2 * bw);
-      ctx.fillStyle = C.pen; ctx.beginPath(); ctx.moveTo(bw * 1.7, 0); ctx.lineTo(bw * 1.1, -bw * 0.45); ctx.lineTo(bw * 1.1, bw * 0.45); ctx.fill();
+      ctx.save(); ctx.translate(cx, cy); ctx.rotate(yaw);
+      var bw = s * 0.05 * sc; ctx.fillStyle = C.sheet; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4; ctx.beginPath();
+      for (var v = 0; v < 6; v++) { var va = v * Math.PI / 3; v ? ctx.lineTo(Math.cos(va) * bw, Math.sin(va) * bw) : ctx.moveTo(Math.cos(va) * bw, Math.sin(va) * bw); }
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = C.pen; ctx.beginPath(); ctx.moveTo(bw * 1.8, 0); ctx.lineTo(bw * 1.15, -bw * 0.45); ctx.lineTo(bw * 1.15, bw * 0.45); ctx.fill();
       ctx.restore();
-      var off = Math.hypot(pos[0] - tx, pos[1] - ty) / s;
-      stat.textContent = (lang === 'en' ? 'off set-point ' : 'lệch ') + (off * 100).toFixed(0) + '%  roll ' + (tilt * 20).toFixed(1) + '°  pitch ' + (pitch * 20).toFixed(1) + '°';
+      if (note) { ctx.font = '26px ' + HAND; ctx.fillStyle = C.pen; ctx.fillText(note, cx + R * 0.6, cy - R * 1.1); }
+      if (!real) {
+        var off = Math.hypot(pos[0] - tx, pos[1] - ty) / s;
+        stat.textContent = (lang === 'en' ? 'off set-point ' : 'lệch ') + (off * 100).toFixed(0) + '%  roll ' + (tilt * 20).toFixed(1) + '°  tail servo ' + (servo * 30).toFixed(0) + '°';
+      } else stat.textContent = (lang === 'en' ? 'real life · attempt ' : 'ngoài đời · lần thử ') + tries + (lang === 'en' ? ' · no take-off' : ' · chưa cất cánh');
     });
   })();
+
+  /* ---------- rough 3D: pencil wireframes you can turn ---------- */
+  function model(c, build, labels) {
+    var yaw = 0.7, pitch = 0.36, drag = null, idle = 9, segs;
+    c.addEventListener('pointerdown', function (e) { drag = [e.clientX, e.clientY]; idle = 0; c.setPointerCapture(e.pointerId); });
+    c.addEventListener('pointermove', function (e) {
+      if (!drag) return; yaw -= (e.clientX - drag[0]) * 0.012;
+      if (e.pointerType === 'mouse') pitch = Math.max(0.05, Math.min(1.2, pitch + (e.clientY - drag[1]) * 0.008));
+      drag = [e.clientX, e.clientY]; idle = 0;
+    });
+    c.addEventListener('pointerup', function () { drag = null; }); c.addEventListener('pointercancel', function () { drag = null; });
+    // geometry helpers. y is up; st: 0 ink, 1 red pen, 2 pencil, 3 thick ink
+    function add(a, b, st) { segs.push([a, b, st || 0]); }
+    var G = {
+      line: add,
+      poly: function (p, closed, st) { for (var i = 0; i < p.length - (closed ? 0 : 1); i++) add(p[i], p[(i + 1) % p.length], st); },
+      box: function (x, y, z, a, b, d, st) {
+        a /= 2; b /= 2; d /= 2; var v = []; for (var i = 0; i < 8; i++) v.push([x + (i & 1 ? a : -a), y + (i & 2 ? b : -b), z + (i & 4 ? d : -d)]);
+        [[0, 1], [2, 3], [4, 5], [6, 7], [0, 2], [1, 3], [4, 6], [5, 7], [0, 4], [1, 5], [2, 6], [3, 7]].forEach(function (e) { add(v[e[0]], v[e[1]], st); });
+      },
+      extrude: function (p, y0, y1, st) { G.poly(p.map(function (q) { return [q[0], y0, q[1]]; }), 1, st); G.poly(p.map(function (q) { return [q[0], y1, q[1]]; }), 1, st); p.forEach(function (q) { add([q[0], y0, q[1]], [q[0], y1, q[1]], st); }); },
+      // ring of radius r around axis u through centre o
+      ring: function (o, u, r, n, st, from, to) {
+        var b = basis(u), p = []; from = from || 0; to = to == null ? Math.PI * 2 : to;
+        for (var i = 0; i <= n; i++) { var a = from + (to - from) * i / n; p.push(o.map(function (oc, k) { return oc + (b[0][k] * Math.cos(a) + b[1][k] * Math.sin(a)) * r; })); }
+        G.poly(p, 0, st); return p;
+      },
+      cyl: function (o, u, r, len, n, st, rays) {
+        var e = o.map(function (oc, k) { return oc + u[k] * len; }), A = G.ring(o, u, r, n, st), B = G.ring(e, u, r, n, st);
+        for (var i = 0; i < n; i += Math.max(1, Math.floor(n / (rays || 6)))) add(A[i], B[i], st);
+        return e;
+      },
+      on: function (o, u, r, a) { var b = basis(u); return o.map(function (oc, k) { return oc + (b[0][k] * Math.cos(a) + b[1][k] * Math.sin(a)) * r; }); }
+    };
+    function basis(u) {
+      var t = Math.abs(u[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+      var a = [u[1] * t[2] - u[2] * t[1], u[2] * t[0] - u[0] * t[2], u[0] * t[1] - u[1] * t[0]], l = Math.hypot(a[0], a[1], a[2]); a = a.map(function (x) { return x / l; });
+      return [a, [u[1] * a[2] - u[2] * a[1], u[2] * a[0] - u[0] * a[2], u[0] * a[1] - u[1] * a[0]]];
+    }
+    animate(c, function (dt, t) {
+      var f = fit(c), ctx = f.ctx, w = f.w, h = f.h; if (!w) return;
+      idle += dt; if (!drag && idle > 2.5) yaw += dt * 0.3;
+      segs = []; var meta = build(G, t) || {};
+      var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch), D = 900, S = Math.min(w, h) / (meta.size || 360);
+      function P(v) {
+        var x = v[0] * cy - v[2] * sy, z = v[0] * sy + v[2] * cy, y = v[1] * cp - z * sp, zz = v[1] * sp + z * cp, k = D / (D + zz);
+        return [w / 2 + x * k * S, h * (meta.cy || 0.55) - y * k * S, zz];
+      }
+      var col = [C.ink, C.pen, C.pencil, C.ink], lw = [1.5, 1.7, 0.9, 6];
+      segs.forEach(function (sg, i) {
+        var a = P(sg[0]), b = P(sg[1]), st = sg[2], depth = (a[2] + b[2]) / 2 / (meta.size || 360);
+        ctx.strokeStyle = col[st]; ctx.lineCap = 'round';
+        ctx.globalAlpha = st === 2 ? 0.55 : Math.max(0.35, Math.min(1, 0.8 - depth * 0.9));
+        // two slightly different passes: a pencil line, not a vector line
+        for (var pass = 0; pass < (st === 2 ? 1 : 2); pass++) {
+          var j = pass ? 0.9 : 0.35, h1 = Math.sin(i * 12.99 + pass * 7.1) * j, h2 = Math.cos(i * 78.23 + pass * 3.7) * j;
+          ctx.lineWidth = pass ? lw[st] * 0.55 : lw[st];
+          ctx.beginPath(); ctx.moveTo(a[0] + h1, a[1] + h2); ctx.lineTo(b[0] - h2, b[1] + h1); ctx.stroke();
+        }
+      });
+      ctx.globalAlpha = 1;
+      (labels || []).forEach(function (L) {
+        var p = P(L.at), tx = p[0] + L.dx, ty = p[1] + L.dy, txt = lang === 'en' ? L.en : L.vi;
+        ctx.strokeStyle = C.pen; ctx.fillStyle = C.pen; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.quadraticCurveTo(p[0] + L.dx * 0.2, ty, tx - (L.dx < 0 ? -4 : 4), ty); ctx.stroke();
+        ctx.beginPath(); ctx.arc(p[0], p[1], 2.4, 0, 7); ctx.fill();
+        ctx.font = '19px ' + HAND; var tw = ctx.measureText(txt).width; ctx.fillText(txt, L.dx < 0 ? tx - tw - 6 : tx + 6, ty + 6);
+      });
+    });
+  }
+
+  // line follower, mm-ish, drawn from memory: plate, two drive wheels, a caster, 5 IR sensors up front
+  model(document.getElementById('m-lf'), function (G, t) {
+    for (var gx = -160; gx <= 160; gx += 40) G.line([gx, -38, -120], [gx, -38, 120], 2);
+    for (var gz = -120; gz <= 120; gz += 40) G.line([-160, -38, gz], [160, -38, gz], 2);
+    var tape = []; for (var x = -170; x <= 170; x += 10) tape.push([x, -38, Math.sin((x + t * 60) / 70) * 22]); G.poly(tape, 0, 3);
+    G.extrude([[-72, -46], [40, -46], [72, -24], [72, 24], [40, 46], [-72, 46]], 0, 4);
+    [-1, 1].forEach(function (sd) {
+      var o = [-35, -6, sd * 52], a = -t * 4;
+      var e = G.cyl(o, [0, 0, sd], 32, 12, 22, 0, 22);
+      for (var k = 0; k < 3; k++) G.line(e, G.on(e, [0, 0, sd], 30, a + k * 2.09));
+      G.box(-35, -12, sd * 30, 44, 20, 22);
+    });
+    G.line([56, 0, 0], [56, -22, 0]); G.ring([56, -30, 0], [0, 0, 1], 8, 12); G.ring([56, -30, 0], [1, 0, 0], 8, 12);
+    G.box(-40, 14, 0, 46, 20, 30); G.box(12, 5, 0, 58, 2, 46); G.box(12, 8, 0, 18, 4, 10);
+    for (var p = -18; p <= 18; p += 6) G.line([34, 6, p], [34, 10, p], 2);
+    [-14, 14].forEach(function (z) { G.line([68, 0, z], [80, -26, z]); });
+    G.box(80, -28, 0, 10, 3, 92);
+    for (var s = -2; s <= 2; s++) G.cyl([80, -30, s * 18], [0, -1, 0], 3.5, 5, 8, 1, 2);
+    G.poly([[20, 9, 0], [50, 22, 0], [78, -24, 0]], 0, 1);
+    return { size: 255 };
+  }, [{ at: [80, -30, 36], dx: 46, dy: -6, vi: '5 × IR', en: '5 × IR' }, { at: [-35, 26, 58], dx: -30, dy: -28, vi: 'bánh dẫn động', en: 'drive wheel' }]);
+
+  // tri-rotor (Y3), drawn from memory: three arms, the tail motor tilts on a servo for yaw
+  model(document.getElementById('m-tri'), function (G, t) {
+    for (var gx = -150; gx <= 150; gx += 50) G.line([gx, -46, -150], [gx, -46, 150], 2);
+    for (var gz = -150; gz <= 150; gz += 50) G.line([-150, -46, gz], [150, -46, gz], 2);
+    var hex = []; for (var i = 0; i < 6; i++) hex.push([Math.cos(i * Math.PI / 3) * 40, Math.sin(i * Math.PI / 3) * 40]);
+    G.extrude(hex, 0, 3); G.extrude(hex.map(function (q) { return [q[0] * 0.8, q[1] * 0.8]; }), 16, 19);
+    for (i = 0; i < 6; i += 2) G.line([hex[i][0] * 0.8, 3, hex[i][1] * 0.8], [hex[i][0] * 0.8, 16, hex[i][1] * 0.8], 2);
+    G.box(0, 22, 0, 30, 3, 30); G.poly([[22, 24, 0], [14, 24, -5], [14, 24, 5]], 1, 1);
+    G.box(0, -12, 0, 70, 18, 32);
+    var arms = [Math.PI / 3, -Math.PI / 3, Math.PI], servo = Math.sin(t * 1.4) * 0.35;
+    arms.forEach(function (a, k) {
+      var d = [Math.cos(a), 0, Math.sin(a)], n = [-d[2], 0, d[0]];
+      function at(r, y, o) { return [d[0] * r + n[0] * o, y, d[2] * r + n[2] * o]; }
+      G.box && [[-5, 3], [5, 3], [-5, 10], [5, 10]].forEach(function (q) { G.line(at(36, q[1], q[0]), at(168, q[1], q[0])); });
+      G.line(at(168, 3, -5), at(168, 3, 5)); G.line(at(168, 10, -5), at(168, 10, 5));
+      G.line(at(80, 3, 0), at(80, -46, 0)); G.line(at(80, -46, -12), at(80, -46, 12));
+      var up = [0, 1, 0];
+      if (k === 2) { up = [n[0] * Math.sin(servo), Math.cos(servo), n[2] * Math.sin(servo)]; G.box(d[0] * 145, -2, d[2] * 145, 16, 12, 16, 1); }
+      var top = G.cyl(at(168, 10, 0), up, 14, 20, 14, k === 2 ? 1 : 0, 4);
+      var spin = t * (k === 1 ? -14 : 14);
+      G.ring(top, up, 66, 28, 2);
+      for (var b = 0; b < 2; b++) G.line(G.on(top, up, 64, spin + b * Math.PI), top);
+    });
+    return { size: 340 };
+  }, [{ at: [-168, 30, 0], dx: -10, dy: -58, vi: 'servo đuôi', en: 'tail servo' }]);
 
   /* ---------- 2019: a damped response written by a sweeping trace ---------- */
   (function () {
