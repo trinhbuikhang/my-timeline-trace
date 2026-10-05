@@ -193,6 +193,26 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .pad li.doing::before { background: linear-gradient(135deg, transparent 45%, var(--accent) 45% 60%, transparent 60%); }
 .question { font: 400 clamp(30px, 4vw, 46px)/1.1 var(--hand); color: var(--pen); margin: 0; transform: rotate(-1.5deg); }
 
+/* together: a connector that only mates once the pins line up */
+.motto { margin: 0; font: italic 400 clamp(34px, 4.6vw, 56px)/1.05 var(--serif); letter-spacing: -.01em; }
+.motto::before { content: '“'; color: var(--pen); margin-right: .04em; }
+.motto-src { margin: 12px 0 0; font: 500 12px/1.4 var(--mono); color: var(--ink-2); }
+.mate { position: relative; background: var(--sheet); border: 1px solid var(--rule); padding: 10px; box-shadow: 0 14px 30px -24px rgb(0 0 0 / .5); }
+.mate canvas { width: 100%; aspect-ratio: 16 / 9; display: block; cursor: pointer; background-image: radial-gradient(var(--rule) 1px, transparent 1.2px); background-size: 16px 16px; }
+.pinout { width: 100%; border-collapse: collapse; margin-top: 30px; font-size: 14.5px; }
+.pinout caption { text-align: left; font: 600 12px/1 var(--mono); color: var(--ink-2); text-transform: uppercase; letter-spacing: .05em; padding-bottom: 8px; }
+.pinout th { text-align: left; font: 600 11px/1 var(--mono); color: var(--ink-2); text-transform: uppercase; letter-spacing: .05em; border-bottom: 2px solid var(--ink); padding: 6px 10px 6px 0; }
+.pinout td { border-bottom: 1px solid var(--rule); padding: 9px 10px 9px 0; vertical-align: baseline; }
+.pinout td:first-child { font: 500 12px var(--mono); color: var(--ink-2); width: 34px; }
+.pinout td:nth-child(2) { font: 700 12px var(--mono); color: var(--accent); width: 64px; letter-spacing: .04em; }
+.pinout td:nth-child(3) b { font-weight: 700; }
+.pinout tr.nc td { color: var(--ink-2); font-style: italic; }
+.steps { list-style: none; counter-reset: s; display: grid; gap: 12px 20px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin: 30px 0 0; padding: 0; }
+.steps li { counter-increment: s; border-top: 2px solid var(--ink); padding-top: 8px; font: 400 17px/1.4 var(--serif); }
+.steps li::before { content: '0' counter(s); display: block; font: 600 11px/1 var(--mono); color: var(--accent); margin-bottom: 6px; }
+.steps b { display: block; font: 700 14px/1.2 var(--body); margin-bottom: 2px; }
+.reach { margin-top: 28px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; }
+
 /* someday */
 .dreamfig { position: relative; }
 .dreamfig canvas { width: 100%; aspect-ratio: 4 / 3.4; display: block; background-image: repeating-linear-gradient(45deg, transparent 0 7px, var(--band) 7px 8.5px); border: 1px dashed var(--ink-2); }
@@ -346,7 +366,7 @@ html:not(.js) .meter i { transform: none; }
       Pharaoh Alone
     </a>
     <span class="right">
-      <nav aria-label="Mục lục"><a href="#pitch">Soldier → Solver</a><a href="#ch-student">Robots</a><a href="#ch-work">Systems</a><a href="#stories">Stories</a><a href="#trace">Trace</a><a href="#now">Now</a><a href="#someday">Dream</a></nav>
+      <nav aria-label="Mục lục"><a href="#pitch">Soldier → Solver</a><a href="#ch-student">Robots</a><a href="#ch-work">Systems</a><a href="#stories">Stories</a><a href="#trace">Trace</a><a href="#now">Now</a><a href="#someday">Dream</a><a href="#together">Together</a></nav>
       <span class="lang"><button type="button" data-lang="vi" aria-pressed="true">VI</button><button type="button" data-lang="en" aria-pressed="false">EN</button></span>
     </span>
     <div class="rider" aria-hidden="true"><div class="bot" id="bot">
@@ -655,6 +675,54 @@ html:not(.js) .meter i { transform: none; }
         <canvas id="hu" role="img" aria-label="Phác thảo robot hình người bằng nét đứt; đầu quay theo con trỏ, mạng nơ-ron trong đầu gửi xung xuống các khớp"></canvas>
         <p class="hand red note" style="--r:-3deg;margin:12px 0 0" data-en="it looks at you. it waves if you stay.">nó nhìn theo bạn. ở lại lâu một chút, nó vẫy tay.</p>
       </div>
+    </div>
+  </section>
+
+  <!-- TOGETHER -->
+  <section class="ch" id="together">
+    <div class="when rv"><b data-en="Together">Cùng làm</b><span data-en="channel open · bidirectional">kênh mở · hai chiều</span></div>
+    <div class="grid2">
+      <div>
+        <blockquote class="motto rv">Friendship through understanding.</blockquote>
+        <p class="motto-src rv d1"><span data-en="— heard while training in Australia, HMAS Cerberus">— nghe được khi sang Úc đào tạo, HMAS Cerberus</span> · 20??</p>
+        <div class="prose">
+          <p class="rv d1" data-en="It has stayed with me since. Today I use it as a way of working: understand each other's problem first, build second.">Câu đó theo tôi đến giờ. Bây giờ tôi dùng nó như một cách làm việc: hiểu vấn đề của nhau trước, rồi mới xây.</p>
+          <p class="rv d2" data-en="If you have a problem that needs maps, data, automation or a machine that moves, I'd like to hear it. Not a pitch. A conversation.">Nếu bạn có một vấn đề cần đến bản đồ, dữ liệu, tự động hoá hay một cái máy biết chuyển động, tôi muốn được nghe. Không phải chào hàng. Một cuộc nói chuyện.</p>
+        </div>
+        <p class="hand note rv d3" style="--r:-2deg" data-en="↑ Khang: which year at Cerberus? and does the line come from there, or from someone you met?">↑ Khang: năm nào ở Cerberus? câu này là khẩu hiệu ở đó hay của một người bạn gặp?</p>
+      </div>
+      <div class="rv d1">
+        <figure class="mate tape" style="margin:0">
+          <canvas id="mate" role="img" aria-label="Hai đầu nối tiến lại gần nhau; chân cắm lệch nên chưa cắm được, chỉnh cho thẳng hàng rồi mới khớp, sau đó tín hiệu chạy hai chiều"></canvas>
+        </figure>
+        <div class="figcap"><span data-en="PA-IO-001 · connector, mated only when aligned">PA-IO-001 · đầu nối, chỉ khớp khi thẳng hàng</span><span data-en="click to replay">bấm để xem lại</span></div>
+      </div>
+    </div>
+
+    <table class="pinout rv">
+      <caption data-en="Pinout · what I can bring">Sơ đồ chân · những gì tôi có thể mang tới</caption>
+      <thead><tr><th>#</th><th data-en="Signal">Tín hiệu</th><th data-en="Function">Chức năng</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>GIS</td><td><b data-en="Maps and spatial data.">Bản đồ và dữ liệu không gian.</b> <span data-en="Turning field data into maps people can actually use.">Biến dữ liệu hiện trường thành bản đồ người ta dùng được.</span></td></tr>
+        <tr><td>2</td><td>DATA</td><td><b data-en="Data pipelines.">Đường ống dữ liệu.</b> <span data-en="Cleaning, checking and processing data that is too big to do by hand.">Làm sạch, kiểm tra, xử lý dữ liệu quá lớn để làm tay.</span></td></tr>
+        <tr><td>3</td><td>AUTO</td><td><b data-en="Engineering automation.">Tự động hoá kỹ thuật.</b> <span data-en="Small tools that replace repetitive work.">Công cụ nhỏ thay cho việc lặp đi lặp lại.</span></td></tr>
+        <tr><td>4</td><td>AI</td><td><b data-en="Computer vision and ML.">Thị giác máy tính và ML.</b> <span data-en="Trying models on real images and real data.">Thử mô hình trên ảnh thật, dữ liệu thật.</span></td></tr>
+        <tr><td>5</td><td>HW</td><td><b data-en="Mechatronics.">Cơ điện tử.</b> <span data-en="Sensors, control, prototypes that move.">Cảm biến, điều khiển, mẫu thử biết chuyển động.</span></td></tr>
+        <tr class="nc"><td>6</td><td>NC</td><td data-en="Not connected. Reserved for the thing neither of us has thought of yet.">Chưa nối. Để dành cho thứ cả hai ta chưa nghĩ ra.</td></tr>
+      </tbody>
+    </table>
+    <p class="hand note" style="--r:-1.5deg;margin-top:10px" data-en="↑ built from what is already on this page. Khang: correct it against your real CV.">↑ dựng từ những gì đã có trên trang này. Khang: sửa theo CV thật.</p>
+
+    <ol class="steps">
+      <li class="rv"><b data-en="Listen">Nghe</b><span data-en="You tell me the problem, in your words.">Bạn kể vấn đề, bằng lời của bạn.</span></li>
+      <li class="rv d1"><b data-en="Understand">Hiểu</b><span data-en="I tell it back until you nod.">Tôi kể lại cho đến khi bạn gật đầu.</span></li>
+      <li class="rv d2"><b data-en="Sketch">Phác</b><span data-en="A small, cheap prototype we can still change.">Một bản thử nhỏ, rẻ, còn sửa được.</span></li>
+      <li class="rv d3"><b data-en="Build together">Cùng xây</b><span data-en="Then measure, and go again.">Rồi đo, rồi làm lại.</span></li>
+    </ol>
+
+    <div class="reach rv">
+      <span class="kicker" data-en="CONTACT">LIÊN HỆ</span>
+      <span class="ph" data-en="[Khang to fill in] email · LinkedIn · GitHub">[Chờ Khang điền] email · LinkedIn · GitHub</span>
     </div>
   </section>
 
@@ -1248,6 +1316,79 @@ html:not(.js) .meter i { transform: none; }
       if (wv > 0.6) { ctx.font = '22px ' + HAND; ctx.fillStyle = C.pen; ctx.globalAlpha = (wv - 0.6) / 0.4; ctx.fillText(lang === 'en' ? 'hi.' : 'chào.', J.rW[0] + 10, J.rW[1] - 6); ctx.globalAlpha = 1; }
       ctx.font = MONO; ctx.fillStyle = C['ink-2']; ctx.fillText('PA-HX · REV ?', 10, h - 11);
     });
+  })();
+
+  /* ---------- together: pins wiggle until aligned, then mate; signals both ways ---------- */
+  (function () {
+    var c = document.getElementById('mate');
+    var job = animate(c, draw);
+    c.addEventListener('click', function () { job.t = 0; if (reduce) draw(0, 0); });
+    function sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+    function draw(dt, t) {
+      if (reduce) t = 6;
+      var f = fit(c), x = f.ctx, w = f.w, h = f.h, cy = h * 0.5;
+      var bw = w * 0.25, bh = Math.min(h * 0.5, 150), pl = w * 0.06, sp = bh / 6;
+      var gap = 140 * (1 - sm(t / 1.6)) + 26 - 26 * sm((t - 3.6) / 0.5) - pl * 0.8 * sm((t - 3.6) / 0.5);
+      var mis = t < 1.6 ? 13 : 13 * Math.exp(-(t - 1.6) * 2.2) * Math.cos((t - 1.6) * 9);
+      if (t > 3.6) mis = 0;
+      var left = (w - (2 * bw + pl + Math.max(gap, -pl * 0.8))) / 2, xL = left + bw, xR = xL + pl + gap;
+      var done = t > 4.1;
+      x.lineCap = 'round'; x.lineJoin = 'round';
+      // cables: two lanes each side
+      x.strokeStyle = C.ink; x.lineWidth = 1.4;
+      [-6, 6].forEach(function (o) {
+        x.beginPath(); x.moveTo(0, cy + o + mis * 0.4); x.bezierCurveTo(left * 0.5, cy + o + mis * 0.4, left * 0.5, cy + o + mis, left, cy + o + mis); x.stroke();
+        x.beginPath(); x.moveTo(xR + bw, cy + o); x.lineTo(w, cy + o); x.stroke();
+      });
+      // pulses once mated: red goes you → me, copper comes back
+      if (done) {
+        var k = t - 4.1;
+        for (var i = 0; i < 4; i++) {
+          var p = ((k * 0.32 + i / 4) % 1), px = p * w, qx = w - px;
+          x.globalAlpha = Math.min(1, k * 2);
+          x.fillStyle = C.pen; if (px < left || px > xR + bw) { x.beginPath(); x.arc(px, cy - 6, 3.4, 0, 7); x.fill(); }
+          x.fillStyle = C.accent; if (qx < left || qx > xR + bw) { x.beginPath(); x.arc(qx, cy + 6, 3.4, 0, 7); x.fill(); }
+          x.globalAlpha = 1;
+        }
+      }
+      // pins
+      x.fillStyle = C.ink;
+      for (var j = 0; j < 5; j++) { var py = cy + (j - 2) * sp + mis; x.fillRect(xL, py - 2, pl, 4); }
+      // plug body (you)
+      x.fillStyle = C.sheet; x.strokeStyle = C.ink; x.lineWidth = 1.8;
+      x.fillRect(left, cy - bh / 2 + mis, bw, bh); x.strokeRect(left, cy - bh / 2 + mis, bw, bh);
+      x.beginPath(); x.moveTo(left + bw * 0.18, cy - bh / 2 + mis); x.lineTo(left + bw * 0.18, cy + bh / 2 + mis); x.lineWidth = 1; x.stroke();
+      // socket body (me), drawn over the pins so they disappear inside
+      x.lineWidth = 1.8; x.fillStyle = C.sheet;
+      x.fillRect(xR, cy - bh / 2 - 6, bw, bh + 12); x.strokeRect(xR, cy - bh / 2 - 6, bw, bh + 12);
+      x.fillStyle = C.ink;
+      for (j = 0; j < 5; j++) x.fillRect(xR - 1, cy + (j - 2) * sp - 3, 4, 6);
+      // names
+      var vi = lang !== 'en';
+      x.textAlign = 'center'; x.fillStyle = C.ink; x.font = '700 13px "Archivo", sans-serif';
+      x.fillText(vi ? 'BẠN' : 'YOU', left + bw * 0.59, cy - 4 + mis); x.fillText('KHANG', xR + bw / 2, cy - 4);
+      x.font = MONO; x.fillStyle = C['ink-2'];
+      x.fillText(vi ? 'vấn đề' : 'problem', left + bw * 0.59, cy + 14 + mis); x.fillText(vi ? 'công cụ' : 'tools', xR + bw / 2, cy + 14);
+      // what is happening
+      var msg, red = false;
+      if (t < 1.6) msg = vi ? 'tiến lại gần…' : 'getting closer…';
+      else if (t < 3.6) { msg = vi ? 'chưa thẳng hàng · hỏi lại' : 'not aligned · ask again'; red = true; }
+      else if (!done) msg = vi ? 'cắm…' : 'mating…';
+      else msg = vi ? 'đã khớp · tín hiệu hai chiều' : 'mated · signal both ways';
+      x.textAlign = 'left'; x.font = MONO; x.fillStyle = C['ink-2']; x.fillText(msg, 8, h - 10);
+      if (red) {
+        x.font = '22px ' + HAND; x.fillStyle = C.pen; x.textAlign = 'center';
+        var a = Math.sin(t * 6) * 0.15;
+        x.save(); x.translate((xL + xR) / 2 + pl / 2, cy - bh / 2 - 14); x.rotate(a); x.fillText('?', -10, 0); x.fillText('?', 12, 6); x.restore();
+      }
+      if (done) {
+        var s = sm((t - 4.1) / 0.35), cx2 = (xL + xR + pl) / 2;
+        x.save(); x.translate(cx2, cy - bh / 2 - 26); x.rotate(-0.08); x.globalAlpha = s * 0.9;
+        x.font = '700 12px "Reddit Mono", monospace'; var lab = vi ? 'ĐÃ KHỚP' : 'MATED', tw = x.measureText(lab).width;
+        x.strokeStyle = C.pen; x.lineWidth = 2; x.strokeRect(-tw / 2 - 7, -13, tw + 14, 21); x.fillStyle = C.pen; x.textAlign = 'center'; x.fillText(lab, 0, 2);
+        x.restore();
+      }
+    }
   })();
 
   /* ---------- stories: scope captures ---------- */
