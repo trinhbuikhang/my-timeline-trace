@@ -225,6 +225,20 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* someday */
 .dreamfig { position: relative; }
 .dreamfig canvas { width: 100%; aspect-ratio: 4 / 3.4; display: block; background-image: repeating-linear-gradient(45deg, transparent 0 7px, var(--band) 7px 8.5px); border: 1px dashed var(--ink-2); }
+.dreamfig canvas { touch-action: pan-y; outline-offset: 3px; }
+.quest { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; counter-reset: q; }
+.quest li { counter-increment: q; border-top: 2px solid var(--rule); padding-top: 7px; font: 700 14px/1.3 var(--body); color: var(--ink-2); transition: border-color .4s, color .4s; }
+.quest li::before { content: '0' counter(q); font: 600 11px/1 var(--mono); margin-right: 6px; color: var(--ink-2); }
+.quest span { display: block; font: 400 12.5px/1.35 var(--body); margin-top: 3px; }
+.quest li.now { border-color: var(--accent); color: var(--ink); }
+.quest li.now::before { color: var(--accent); }
+.quest li.done { border-color: var(--ink); color: var(--ink); }
+.quest li.done::before { content: '✓'; color: var(--accent); }
+.qend { display: none; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 14px 0 0; font: 600 12.5px/1.3 var(--mono); }
+.qend.on { display: flex; }
+.qend a { color: var(--accent); }
+.qend button { font: inherit; color: var(--ink); background: var(--sheet); border: 1.5px solid var(--ink); padding: 6px 10px; cursor: pointer; }
+.qend button:hover { background: var(--ink); color: var(--paper); }
 
 /* stories */
 .notes { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); margin-top: 26px; }
@@ -678,11 +692,18 @@ html:not(.js) .meter i { transform: none; }
         <div class="prose">
           <p class="rv d1" data-en="A humanoid robot with AI. There is no drawing of it yet, only phantom lines.">Một robot hình người có AI. Chưa có bản vẽ nào, chỉ có <span class="circ">nét đứt</span>.</p>
           <p class="rv d2" data-en="From following a line, to leaving the ground, to this.">Từ bám theo một vạch kẻ, đến rời khỏi mặt đất, đến đây.</p>
+          <p class="rv d3" data-en="Try it: it watches you, learns from you, and needs you to lift one end.">Thử đi: nó nhìn bạn, học theo bạn, và cần bạn nhấc giúp một đầu.</p>
         </div>
       </div>
       <div class="dreamfig rv d1">
-        <canvas id="hu" role="img" aria-label="Phác thảo robot hình người bằng nét đứt; đầu quay theo con trỏ, mạng nơ-ron trong đầu gửi xung xuống các khớp"></canvas>
-        <p class="hand red note" style="--r:-3deg;margin:12px 0 0" data-en="it looks at you. it waves if you stay.">nó nhìn theo bạn. ở lại lâu một chút, nó vẫy tay.</p>
+        <canvas id="hu" tabindex="0" aria-describedby="quest" role="img" aria-label="Phác thảo robot hình người bằng nét đứt. Nó nhìn theo bạn, học một động tác khi bạn kéo tay nó, rồi cùng bạn nhấc một tấm ván lên kệ. Bàn phím: phím mũi tên để kéo, Enter để thả."></canvas>
+        <ol class="quest" id="quest" aria-live="polite">
+          <li><b data-en="See">Nhìn</b><span data-en="hover over it, or tap">di chuột qua, hoặc chạm vào</span></li>
+          <li><b data-en="Understand">Hiểu</b><span data-en="drag its hand, it copies the move">kéo tay nó, nó làm theo</span></li>
+          <li><b data-en="Work beside">Làm cùng</b><span data-en="lift the other end of the plank">nhấc đầu kia tấm ván</span></li>
+        </ol>
+        <p class="qend" id="qend"><a href="#together" data-en="That's how I'd like to work too → Together">Tôi cũng muốn làm việc như vậy → Cùng làm</a><button type="button" id="hu-reset" data-en="↺ again">↺ chơi lại</button></p>
+        <p class="hand note" style="--r:-2deg;margin:12px 0 0" data-en="↑ no real AI in here. a few hundred lines pretending. the real one I'm still learning.">↑ chưa có AI thật ở đây. vài trăm dòng code giả vờ. phần thật tôi vẫn đang học.</p>
       </div>
     </div>
   </section>
@@ -1383,34 +1404,172 @@ window.PALang = function (buttons) {
     });
   })();
 
-  /* ---------- someday: humanoid that looks at you ---------- */
+  /* ---------- someday: a short play. it sees you, learns a move from your hand, then lifts a plank with you ---------- */
   (function () {
-    var c = document.getElementById('hu'), ptr = pointer(c);
-    var JOINTS = ['lS', 'lE', 'lW', 'rS', 'rE', 'rW', 'lH', 'lK', 'lA', 'rH', 'rK', 'rA'], pulses = [], glow = {}, net = 0, nextFire = 0.4, look = 0, wv = 0, stay = 0;
+    var c = document.getElementById('hu'), ptr = pointer(c), quest = [].slice.call(document.querySelectorAll('#quest li')), qend = document.getElementById('qend');
+    var JOINTS = ['lS', 'lE', 'lW', 'rS', 'rE', 'rW', 'lH', 'lK', 'lA', 'rH', 'rK', 'rA'], pulses = [], glow = {}, net = 0, nextFire = 0.4, look = 0, wv = 0, stay = 0, focused = false;
+    var L1 = 17, L2 = 15, X0 = -4, PL = 46, REST = 58, GOAL = 40;
+    var stage, phase, phaseT, bub, grab, rec, play, aim, arm, shift, pk, geo = null, hailed, quiet;
     function smooth(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+    function T(vi, en) { return lang === 'en' ? en : vi; }
+    function say(vi, en, live) { if (bub && bub.vi === vi && bub.live === !!live) return; bub = { vi: vi, en: en, at: live && bub && bub.live ? bub.at : job.t, live: !!live }; }
     function along(pts, p) {
       var lens = [], tot = 0; for (var i = 1; i < pts.length; i++) { var l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); lens.push(l); tot += l; }
       var d = p * tot; for (var k = 0; k < lens.length; k++) { if (d <= lens[k]) { var q = d / (lens[k] || 1); return [pts[k][0] + (pts[k + 1][0] - pts[k][0]) * q, pts[k][1] + (pts[k + 1][1] - pts[k][1]) * q]; } d -= lens[k]; }
       return pts[pts.length - 1];
     }
-    animate(c, function (dt, t) {
+    // two-link arm in body units; angles are measured from straight down, positive = away from the body
+    function ik(side, tx, ty) {
+      var x = (tx - side * 14) * side, y = ty - 30, d0 = Math.hypot(x, y), d = Math.max(3, Math.min(L1 + L2 - 0.01, d0)), k = d / (d0 || 1);
+      var th = Math.atan2(x, y), A = Math.acos(Math.max(-1, Math.min(1, (L1 * L1 + d * d - L2 * L2) / (2 * L1 * d)))), best = null;
+      [th - A, th + A].forEach(function (a1) { var ex = Math.sin(a1), ey = Math.cos(a1), s = ex * 0.6 + ey; if (!best || s > best.s) best = { s: s, a1: a1, a2: Math.atan2(x * k - L1 * ex, y * k - L1 * ey) }; });
+      return [best.a1, best.a2];
+    }
+    function wrist(side, a) { return [side * (14 + L1 * Math.sin(a[0]) + L2 * Math.sin(a[1])), 30 + L1 * Math.cos(a[0]) + L2 * Math.cos(a[1])]; }
+    function ease(a, tgt, k) { a[0] += (tgt[0] - a[0]) * k; a[1] += (tgt[1] - a[1]) * k; }
+    function setStage(s) {
+      stage = s; phase = ''; phaseT = 0; grab = null;
+      quest.forEach(function (li, i) { li.className = i < s ? 'done' : i === s ? 'now' : ''; });
+      qend.classList.toggle('on', s >= 3);
+      if (s === 1) say('nắm tay tôi, chỗ vòng đỏ, rồi kéo một đường. tôi sẽ làm theo.', 'take my hand at the red ring and draw a move. I\'ll copy it.');
+      if (s === 2) say('cái này một mình tôi không nhấc nổi. bạn cầm đầu bên kia nhé?', 'I can\'t lift this alone. take the other end?');
+    }
+    function reset() { arm = { l: [0.16, 0.28], r: [0.16, 0.28] }; shift = 0; pk = { gy: REST, ry: REST, held: false, hold: 0, done: false, v: 0, msgT: 0 }; rec = null; play = null; aim = null; hailed = false; quiet = 0; bub = null; stay = 0; setStage(0); }
+    var job = animate(c, draw);
+    reset();
+
+    // input: one pointer path for mouse, pen and touch; touches only stop the page from scrolling when they land on a handle
+    function local(cx, cy) { var r = c.getBoundingClientRect(); return geo ? [(cx - r.left - geo.ox) / geo.u, (cy - r.top - geo.oy) / geo.u] : [0, 0]; }
+    function hit(p) {
+      if (!geo) return null; var rad = Math.max(18 / geo.u, 7);
+      if (stage === 2 && !pk.done && p[0] > X0 + PL * 0.45 && p[0] < geo.rx + rad && Math.abs(p[1] - (pk.gy + (pk.ry - pk.gy) * (p[0] - X0) / (geo.rx - X0))) < rad) return 'plank';
+      if ((stage === 1 || stage === 3) && !phase && Math.hypot(p[0] - geo.rw[0], p[1] - geo.rw[1]) < rad) return 'hand';
+      return null;
+    }
+    function start(what, p) {
+      quiet = 0;
+      if (what === 'hand') { grab = 'hand'; rec = { pts: [], t0: job.t }; aim = p; say('đang ghi…', 'recording…'); }
+      if (what === 'plank') { grab = 'plank'; pk.held = true; aim = p; }
+    }
+    function release() {
+      if (grab === 'hand') {
+        var pts = rec.pts, dur = pts.length ? pts[pts.length - 1].t : 0, len = 0;
+        for (var i = 1; i < pts.length; i++) len += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
+        if (dur < 0.6 || len < 14) { rec = null; say('ngắn quá. kéo thêm một đoạn nữa?', 'too short. a longer move?'); }
+        else { phase = 'think'; phaseT = 0; say('để tôi thử…', 'let me try…'); }
+      }
+      if (grab === 'plank') { pk.held = false; if (!pk.done) say('nặng quá hả? thử lại nhé.', 'too heavy? try again.'); }
+      grab = null; aim = null;
+    }
+    c.addEventListener('touchstart', function (e) { var t = e.touches[0]; if (t && hit(local(t.clientX, t.clientY))) e.preventDefault(); }, { passive: false });
+    c.addEventListener('pointerdown', function (e) {
+      var p = local(e.clientX, e.clientY), h = hit(p);
+      if (stage === 0) stay = Math.max(stay, 1.2);
+      if (h) { c.setPointerCapture(e.pointerId); start(h, p); e.preventDefault(); }
+    });
+    c.addEventListener('pointermove', function (e) { if (grab) aim = local(e.clientX, e.clientY); });
+    c.addEventListener('pointerup', release); c.addEventListener('pointercancel', release);
+    c.addEventListener('focus', function () { focused = true; }); c.addEventListener('blur', function () { focused = false; if (grab) release(); });
+    c.addEventListener('keydown', function (e) {
+      var k = e.key, dx = k === 'ArrowLeft' ? -3 : k === 'ArrowRight' ? 3 : 0, dy = k === 'ArrowUp' ? -3 : k === 'ArrowDown' ? 3 : 0;
+      if (dx || dy) {
+        e.preventDefault();
+        if (!grab && geo) { if (stage === 2 && !pk.done) start('plank', [geo.rx, pk.ry]); else if ((stage === 1 || stage === 3) && !phase) start('hand', geo.rw.slice()); }
+        if (aim) aim = [aim[0] + dx, aim[1] + dy];
+      }
+      if ((k === 'Enter' || k === ' ' || k === 'Escape') && grab) { e.preventDefault(); release(); }
+    });
+    document.getElementById('hu-reset').addEventListener('click', function () { reset(); c.focus(); });
+    if (reduce) { // nothing moves on its own; input wakes the scene for a few seconds
+      var until = 0, last = 0;
+      var loop = function (now) { var dt = Math.min(0.05, (now - (last || now)) / 1000); last = now; job.t += dt; draw(dt, job.t); if (now < until || grab) requestAnimationFrame(loop); else last = 0; };
+      ['pointerdown', 'pointermove', 'keydown', 'focus'].forEach(function (ev) { c.addEventListener(ev, function () { var idle = performance.now() > until; until = performance.now() + 4000; if (idle) requestAnimationFrame(loop); }); });
+    }
+
+    function draw(dt, t) {
       var f = fit(c), ctx = f.ctx, w = f.w, h = f.h; if (!w) return;
-      var u = h / 110, ox = w / 2, oy = h * 0.05;
+      var u = h / 110, ox = w * (0.5 - 0.15 * smooth(shift)), oy = h * 0.05;
       function P(x, y) { return [ox + x * u, oy + y * u]; }
-      stay = ptr.in ? stay + dt : 0;
-      var tgtLook = ptr.in ? Math.max(-1, Math.min(1, (ptr.x - ox) / (w * 0.4))) : Math.sin(t * 0.4) * 0.3;
+      phaseT += dt; quiet += dt;
+      var free = stage === 0 || (stage === 3 && !grab && !phase);
+      stay = ptr.in || focused ? stay + dt : 0;
+
+      // ---- story ----
+      if (stage === 0) {
+        if (!hailed && t > 0.8) { hailed = true; say('có ai ở đó không?', 'anyone there?'); }
+        if (stay > 1.2 && !phase) { phase = 'hi'; phaseT = 0; say('chào. thấy bạn rồi.', 'hi. I see you.'); }
+        if (phase === 'hi' && phaseT > 2.6) setStage(1);
+      }
+      if ((stage === 1 || stage === 3) && phase === 'think' && phaseT > 1.1) { phase = 'replay'; phaseT = 0; play = 0; say('thế này à?', 'like this?'); }
+      if (phase === 'replay') {
+        play += dt; var dur = rec.pts[rec.pts.length - 1].t;
+        if (play > dur + 0.5) { phase = 'learned'; phaseT = 0; say('hiểu rồi. tôi học bằng cách nhìn bạn làm.', 'got it. I learn by watching you.'); if (stage === 1) quest[1].className = 'done'; }
+      }
+      if (phase === 'learned' && phaseT > 3) { rec = null; if (stage === 1) setStage(2); else phase = ''; }
+      if (stage === 1 && !grab && !phase && quiet > 9) { quiet = 0; bub = null; say('vòng đỏ là tay tôi. nắm vào rồi kéo.', 'the red ring is my hand. grab it and drag.'); }
+      if (stage >= 2) shift = Math.min(1, shift + dt * 0.8);
+
+      // ---- arms ----
+      var la1 = 0.16 + Math.sin(t * 1.3) * 0.04, rest = [la1, la1 + 0.12], restR = [0.16 + Math.sin(t * 1.3 + 1) * 0.04, 0.28 + Math.sin(t * 1.3 + 1) * 0.04];
+      wv += ((free && stay > 1.2 ? 1 : 0) - wv) * Math.min(1, dt * 3);
+      var tl = rest, tr = [restR[0] * (1 - wv) + 2.25 * wv, restR[1] * (1 - wv) + (2.75 + Math.sin(t * 7) * 0.35) * wv], kArm = Math.min(1, dt * 6);
+      if (grab === 'hand' && aim) {
+        tr = ik(1, aim[0], aim[1]); kArm = Math.min(1, dt * 16);
+        var wr = wrist(1, arm.r), el = t - rec.t0; rec.pts.push({ t: el, x: wr[0], y: wr[1] });
+        say('đang ghi… ' + el.toFixed(1) + ' s', 'recording… ' + el.toFixed(1) + ' s', true);
+        if (el > 6) release();
+      }
+      if (phase === 'replay') { var pts = rec.pts, i = 0; while (i < pts.length - 1 && pts[i + 1].t < play) i++; tl = ik(-1, -pts[i].x, pts[i].y); kArm = Math.min(1, dt * 16); }
+      if (stage === 2 || (stage === 3 && pk.done && shift < 1)) {
+        if (!pk.done) {
+          var ry0 = pk.ry;
+          if (pk.held && aim) pk.ry += (Math.max(26, Math.min(REST, aim[1])) - pk.ry) * Math.min(1, dt * 18); else pk.ry += (REST - pk.ry) * Math.min(1, dt * 5);
+          pk.v = dt ? (pk.ry - ry0) / dt : 0;
+          pk.gy += (pk.ry - pk.gy) * Math.min(1, dt * 2.4); pk.gy = Math.max(30, Math.min(REST, pk.gy));
+          var near = Math.abs(pk.ry - GOAL) < 3.5 && Math.abs(pk.gy - GOAL) < 3.5;
+          pk.hold = near && pk.held ? pk.hold + dt : Math.max(0, pk.hold - dt * 2);
+          pk.msgT -= dt;
+          if (pk.held && pk.msgT <= 0) {
+            pk.msgT = 1.1;
+            if (Math.abs(pk.v) > 70) say('từ từ! tôi chưa theo kịp.', 'easy! I can\'t keep up.');
+            else if (near) say('rồi. giữ vậy…', 'that\'s it. hold…');
+            else if (pk.ry > GOAL) say('lên chút nữa.', 'a bit higher.');
+            else say('cao quá rồi.', 'too high.');
+          }
+          if (pk.hold > 1.1) { pk.done = true; pk.ry = pk.gy = GOAL; pk.held = false; grab = null; aim = null; quest[2].className = 'done'; say('được rồi. không ai nhấc một mình.', 'done. nobody lifts alone.'); stage = 3; phase = ''; qend.classList.add('on'); }
+        }
+        if (!pk.done) { tl = ik(-1, 0, pk.gy); tr = ik(1, 10, pk.gy); kArm = Math.min(1, dt * 10); }
+      }
+      ease(arm.l, tl, kArm); ease(arm.r, tr, kArm);
+
+      // ---- skeleton ----
+      var tgtLook = grab === 'hand' && aim ? Math.max(-1, Math.min(1, aim[0] / 30)) : phase === 'replay' ? -0.8 : grab === 'plank' ? 1 : ptr.in ? Math.max(-1, Math.min(1, (ptr.x - ox) / (w * 0.4))) : Math.sin(t * 0.4) * 0.3;
       look += (tgtLook - look) * Math.min(1, dt * 4);
-      wv += ((stay > 1.2 ? 1 : 0) - wv) * Math.min(1, dt * 3);
-      var la1 = 0.16 + Math.sin(t * 1.3) * 0.04, la2 = la1 + 0.12;
-      var ra1 = (0.16 + Math.sin(t * 1.3 + 1) * 0.04) * (1 - wv) + 2.25 * wv;
-      var ra2 = (ra1 + 0.12) * (1 - wv) + (2.75 + Math.sin(t * 7) * 0.35) * wv;
       var J = {}; J.lS = P(-14, 30); J.rS = P(14, 30);
-      J.lE = [J.lS[0] - Math.sin(la1) * 17 * u, J.lS[1] + Math.cos(la1) * 17 * u]; J.lW = [J.lE[0] - Math.sin(la2) * 15 * u, J.lE[1] + Math.cos(la2) * 15 * u];
-      J.rE = [J.rS[0] + Math.sin(ra1) * 17 * u, J.rS[1] + Math.cos(ra1) * 17 * u]; J.rW = [J.rE[0] + Math.sin(ra2) * 15 * u, J.rE[1] + Math.cos(ra2) * 15 * u];
+      J.lE = [J.lS[0] - Math.sin(arm.l[0]) * L1 * u, J.lS[1] + Math.cos(arm.l[0]) * L1 * u]; J.lW = [J.lE[0] - Math.sin(arm.l[1]) * L2 * u, J.lE[1] + Math.cos(arm.l[1]) * L2 * u];
+      J.rE = [J.rS[0] + Math.sin(arm.r[0]) * L1 * u, J.rS[1] + Math.cos(arm.r[0]) * L1 * u]; J.rW = [J.rE[0] + Math.sin(arm.r[1]) * L2 * u, J.rE[1] + Math.cos(arm.r[1]) * L2 * u];
       J.lH = P(-7, 58); J.rH = P(7, 58); J.lK = P(-8, 78); J.rK = P(8, 78); J.lA = P(-8, 97); J.rA = P(8, 97);
       var head = P(look * 2.4, 15), neck = P(0, 24), chest = P(0, 30), pelvis = P(0, 56);
-      ctx.strokeStyle = C['ink-2']; ctx.lineWidth = 1; var gy = J.lA[1] + 3 * u;
-      ctx.beginPath(); ctx.moveTo(ox - 30 * u, gy); ctx.lineTo(ox + 30 * u, gy); for (var k = -30; k < 30; k += 5) { ctx.moveTo(ox + k * u, gy); ctx.lineTo(ox + (k - 3) * u, gy + 3.5 * u); } ctx.stroke();
+      var rx = X0 + Math.sqrt(PL * PL - Math.pow(Math.max(-PL * 0.7, Math.min(PL * 0.7, pk.ry - pk.gy)), 2));
+      geo = { ox: ox, oy: oy, u: u, rx: rx, rw: [(J.rW[0] - ox) / u, (J.rW[1] - oy) / u] };
+
+      ctx.strokeStyle = C['ink-2']; ctx.lineWidth = 1; var gy = J.lA[1] + 3 * u, gx0 = Math.min(ox - 30 * u, 6), gx1 = stage >= 2 ? Math.min(w - 6, P(X0 + PL + 14, 0)[0]) : ox + 30 * u;
+      ctx.beginPath(); ctx.moveTo(gx0, gy); ctx.lineTo(gx1, gy); for (var g = gx0; g < gx1; g += 5 * u) { ctx.moveTo(g, gy); ctx.lineTo(g - 3 * u, gy + 3.5 * u); } ctx.stroke();
+
+      // plank stage: trestle, the phantom shelf it belongs on, and the plank itself
+      var pa = stage >= 2 ? Math.min(1, shift * 1.6) : 0;
+      if (pa) {
+        ctx.globalAlpha = pa;
+        var tx = P(X0 + PL - 2, REST + 1.5);
+        ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(tx[0] - 6 * u, gy); ctx.lineTo(tx[0], tx[1]); ctx.lineTo(tx[0] + 6 * u, gy); ctx.moveTo(tx[0] - 4 * u, tx[1]); ctx.lineTo(tx[0] + 4 * u, tx[1]); ctx.stroke();
+        var s0 = P(X0, GOAL + 1.5), s1 = P(X0 + PL, GOAL + 1.5);
+        ctx.strokeStyle = C.pen; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.2;
+        if (!pk.done) { ctx.strokeRect(s0[0], s0[1] - 3 * u, s1[0] - s0[0], 3 * u); }
+        ctx.beginPath(); ctx.moveTo(s0[0] - 2 * u, s0[1]); ctx.lineTo(s1[0] + 2 * u, s1[1]); [X0 + 6, X0 + PL - 6].forEach(function (bx) { var b = P(bx, GOAL + 1.5); ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0], b[1] + 5 * u); ctx.lineTo(b[0] + 4 * u, b[1]); }); ctx.stroke(); ctx.setLineDash([]);
+        if (!pk.done) { ctx.font = '600 10px "Reddit Mono", monospace'; ctx.fillStyle = C.pen; ctx.fillText(T('KỆ · ĐẶT CÙNG NHAU', 'SHELF · PLACE TOGETHER'), s0[0] + 2 * u, s0[1] - 3 * u - 6); }
+        ctx.globalAlpha = 1;
+      }
+
       ctx.setLineDash([9, 3, 2, 3]); ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5;
       function line(a, b) { ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); }
       ctx.beginPath(); ctx.arc(head[0], head[1], 9 * u, 0, 7); ctx.stroke();
@@ -1421,9 +1580,42 @@ window.PALang = function (buttons) {
       line(J.lH, J.lK); line(J.lK, J.lA); line(J.rH, J.rK); line(J.rK, J.rA);
       line(J.lA, [J.lA[0] - 6 * u, J.lA[1]]); line(J.rA, [J.rA[0] + 6 * u, J.rA[1]]);
       ctx.setLineDash([]);
-      // eyes: a visor line that slides with the gaze
       ctx.strokeStyle = C.pen; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(head[0] - 5 * u + look * 2.5 * u, head[1] - 1.5 * u); ctx.lineTo(head[0] + 5 * u + look * 2.5 * u, head[1] - 1.5 * u); ctx.stroke();
-      nextFire -= dt * (ptr.in ? 2 : 1);
+
+      if (pa) { // the plank, drawn in front of the body
+        var a0 = P(X0, pk.gy), a1 = P(rx, pk.ry), ang = Math.atan2(a1[1] - a0[1], a1[0] - a0[0]), len = Math.hypot(a1[0] - a0[0], a1[1] - a0[1]);
+        ctx.save(); ctx.globalAlpha = pa; ctx.translate(a0[0], a0[1]); ctx.rotate(ang);
+        ctx.fillStyle = C.sheet; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4; ctx.fillRect(0, -1.5 * u, len, 3 * u); ctx.strokeRect(0, -1.5 * u, len, 3 * u);
+        ctx.strokeStyle = C['ink-2']; ctx.lineWidth = 0.7; ctx.beginPath(); for (var gx = 6 * u; gx < len - 2 * u; gx += 7 * u) { ctx.moveTo(gx, -1.5 * u); ctx.quadraticCurveTo(gx + 2 * u, 0, gx, 1.5 * u); } ctx.stroke();
+        ctx.restore(); ctx.globalAlpha = 1;
+        if (!pk.done) {
+          var deg = Math.atan2(pk.ry - pk.gy, rx - X0) * 180 / Math.PI, mid = P((X0 + rx) / 2 + 6, (pk.gy + pk.ry) / 2 + 3.5);
+          ctx.font = MONO; ctx.fillStyle = Math.abs(deg) < 3 ? C.accent : C['ink-2']; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillText(T('nghiêng ', 'tilt ') + (deg > 0 ? '+' : '') + deg.toFixed(1) + '°', mid[0], mid[1]); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+          if (!pk.held) ring(a1, t);
+          if (pk.hold > 0) { ctx.strokeStyle = C.accent; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(a1[0], a1[1], 11, -Math.PI / 2, -Math.PI / 2 + Math.min(1, pk.hold / 1.1) * Math.PI * 2); ctx.stroke(); }
+        }
+      }
+      function ring(p, t) { var r = 9 + (Math.sin(t * 4) + 1) * 2.5; ctx.strokeStyle = C.pen; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, 7); ctx.stroke(); }
+
+      // the move being taught (pencil) and its mirror being tried (red)
+      if (rec && rec.pts.length > 1) {
+        var fade = phase === 'learned' ? Math.max(0, 1 - phaseT / 3) : 1;
+        ctx.globalAlpha = fade * 0.8; ctx.strokeStyle = C.pencil; ctx.lineWidth = 1.3; ctx.setLineDash([2, 3]); ctx.beginPath();
+        rec.pts.forEach(function (q, i) { var s = P(q.x, q.y); i ? ctx.lineTo(s[0], s[1]) : ctx.moveTo(s[0], s[1]); }); ctx.stroke();
+        if (phase === 'replay' || phase === 'learned') {
+          ctx.strokeStyle = C.pen; ctx.setLineDash([]); ctx.lineWidth = 1.6; ctx.beginPath(); var lim = phase === 'replay' ? play : 1e9;
+          rec.pts.forEach(function (q, i) { if (q.t > lim) return; var s = P(-q.x, q.y); i ? ctx.lineTo(s[0], s[1]) : ctx.moveTo(s[0], s[1]); }); ctx.stroke();
+        }
+        ctx.setLineDash([]); ctx.globalAlpha = 1;
+      }
+      if ((stage === 1 || stage === 3) && !grab && !phase && !(stage === 3 && wv > 0.3)) {
+        ring(J.rW, t);
+        if (stage === 1) { ctx.font = '19px ' + HAND; ctx.fillStyle = C.pen; ctx.fillText(T('nắm đây', 'grab here'), J.rW[0] + 14, J.rW[1] + 18); }
+      }
+
+      // neurons fire faster while it is thinking
+      var thinking = phase === 'think';
+      nextFire -= dt * (thinking ? 6 : ptr.in ? 2 : 1);
       if (nextFire <= 0 && dt) { nextFire = 0.35 + Math.random() * 0.4; net = 1; pulses.push({ j: JOINTS[(Math.random() * JOINTS.length) | 0], p: 0 }); }
       net = Math.max(0, net - dt * 2.2);
       var layers = [[-5, [-1, 2.5, 6]], [0, [-0.5, 2, 4.5, 7]], [5, [1, 5]]], nodes = layers.map(function (L) { return L[1].map(function (y) { return [head[0] + L[0] * u, head[1] + y * u * 0.75]; }); });
@@ -1431,16 +1623,33 @@ window.PALang = function (buttons) {
       for (var a = 0; a < 2; a++) nodes[a].forEach(function (p) { nodes[a + 1].forEach(function (q) { ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); }); });
       ctx.stroke(); ctx.globalAlpha = 1;
       nodes.forEach(function (L) { L.forEach(function (p) { ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(p[0], p[1], 1.4 + net * 0.8, 0, 7); ctx.fill(); }); });
-      function route(j) { var arm = 'SEW'.indexOf(j[1]) >= 0, r = [neck, arm ? chest : pelvis], ch = arm ? 'SEW' : 'HKA'; for (var i = 0; i < 3; i++) { r.push(J[j[0] + ch[i]]); if (ch[i] === j[1]) break; } return r; }
+      function route(j) { var isArm = 'SEW'.indexOf(j[1]) >= 0, r = [neck, isArm ? chest : pelvis], ch = isArm ? 'SEW' : 'HKA'; for (var i = 0; i < 3; i++) { r.push(J[j[0] + ch[i]]); if (ch[i] === j[1]) break; } return r; }
       pulses = pulses.filter(function (pl) { pl.p += dt * 1.6; if (pl.p >= 1) { glow[pl.j] = 1; return false; } var q = along(route(pl.j), pl.p); ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(q[0], q[1], 2.4, 0, 7); ctx.fill(); return true; });
       JOINTS.forEach(function (j) {
-        var g = glow[j] || 0; glow[j] = Math.max(0, g - dt * 1.5);
+        var gl = glow[j] || 0; glow[j] = Math.max(0, gl - dt * 1.5);
         ctx.fillStyle = C.sheet; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(J[j][0], J[j][1], 2.9, 0, 7); ctx.fill(); ctx.stroke();
-        if (g > 0) { ctx.globalAlpha = g; ctx.fillStyle = C.accent; ctx.strokeStyle = C.accent; ctx.beginPath(); ctx.arc(J[j][0], J[j][1], 2.9, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(J[j][0], J[j][1], 2.9 + (1 - g) * 9, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; }
+        if (gl > 0) { ctx.globalAlpha = gl; ctx.fillStyle = C.accent; ctx.strokeStyle = C.accent; ctx.beginPath(); ctx.arc(J[j][0], J[j][1], 2.9, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(J[j][0], J[j][1], 2.9 + (1 - gl) * 9, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; }
       });
-      if (wv > 0.6) { ctx.font = '22px ' + HAND; ctx.fillStyle = C.pen; ctx.globalAlpha = (wv - 0.6) / 0.4; ctx.fillText(lang === 'en' ? 'hi.' : 'chào.', J.rW[0] + 10, J.rW[1] - 6); ctx.globalAlpha = 1; }
+
+      // speech: typed out, wrapped, tail pointing at the head
+      if (bub) {
+        var txt = T(bub.vi, bub.en), shown = bub.live || reduce ? txt : txt.slice(0, Math.floor((t - bub.at) * 32)), fs = Math.max(16, Math.min(21, w / 26));
+        ctx.font = fs + 'px ' + HAND;
+        var bx = head[0] + 13 * u, by = Math.max(6, head[1] - 22 * u), maxW = Math.min(w - bx - 10, w * 0.44), words = txt.split(' '), lines = [''], k2 = 0;
+        if (maxW < 110) { bx = Math.max(8, w - 10 - Math.min(w * 0.44, 200)); maxW = w - bx - 10; }
+        words.forEach(function (wd) { var tryL = lines[lines.length - 1] ? lines[lines.length - 1] + ' ' + wd : wd; if (ctx.measureText(tryL).width > maxW - 16 && lines[lines.length - 1]) lines.push(wd); else lines[lines.length - 1] = tryL; });
+        var bw = Math.max.apply(null, lines.map(function (l) { return ctx.measureText(l).width; })) + 16, lh = fs * 1.1, bh = lines.length * lh + 10;
+        ctx.fillStyle = C.sheet; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.rect(bx, by, bw, bh); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(bx + 10, by + bh); ctx.lineTo(head[0] + 7 * u, head[1] - 5 * u); ctx.lineTo(bx + 22, by + bh); ctx.fillStyle = C.sheet; ctx.fill(); ctx.stroke();
+        ctx.fillStyle = C.sheet; ctx.fillRect(bx + 11, by + bh - 1.5, 10, 3);
+        ctx.fillStyle = C.ink; ctx.textBaseline = 'top';
+        lines.forEach(function (l, li) { var n = Math.max(0, Math.min(l.length, shown.length - k2)); ctx.fillText(l.slice(0, n), bx + 8, by + 6 + li * lh); k2 += l.length + 1; });
+        ctx.textBaseline = 'alphabetic';
+      }
+      c.style.cursor = grab ? 'grabbing' : ptr.in && hit([(ptr.x - ox) / u, (ptr.y - oy) / u]) ? 'grab' : '';
       ctx.font = MONO; ctx.fillStyle = C['ink-2']; ctx.fillText('PA-HX · REV ?', 10, h - 11);
-    });
+    }
   })();
 
   /* ---------- together: the visitor aligns the pins; once mated, signals run both ways and the 2022 error shrinks ---------- */
