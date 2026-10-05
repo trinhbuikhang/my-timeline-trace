@@ -18,9 +18,30 @@ Dựa trên [`01-analysis-and-design.md`](01-analysis-and-design.md). Concept đ
 
 ## Trạng thái (05/10/2026)
 
-**M1 — Homepage prototype: đã dựng xong bản đầu** (`site/`, chạy `pnpm dev`).
-Đã xong: F-01, F-02, F-03, F-04, I-01, I-03, N-01, N-02, N-03, H-01, H-02, H-03, H-04, H-05, H-06, H-07, H-09, S-05 (phần trang chủ). Có trang tạm "đang được ghi lại" cho các section chưa làm.
-Còn lại của M1: I-02 (fallback đầy đủ + test), H-08 (Lighthouse, ảnh chụp chuẩn).
+**Đã chọn giao diện D · Datasheet cơ điện tử** (xem `03-theme-directions.md`). A, B, C giữ lại làm tham khảo.
+Site `site/` đã được dựng lại theo D: font Archivo (trục width) + Reddit Mono, nền trắng/mực đen/màu đồng, có nền tối.
+
+**M1 — Homepage: đã dựng xong theo D** (`site/`, chạy `pnpm dev`).
+Đã xong: F-01, F-02, F-03 (font mới: Archivo + Reddit Mono, có subset tiếng Việt), F-04, I-01, I-03, N-01, N-02, N-03, H-01…H-07, H-09, H-10, H-11, S-05 (phần trang chủ: mood → dạng sóng). Có trang tạm "đang được viết" cho các section chưa làm.
+Còn lại của M1: I-02 (fallback đầy đủ + test), H-08 (Lighthouse, ảnh chụp chuẩn), EC-12.
+
+### H-10 · Dòng sản phẩm — tiến hoá — **M** · Dep: H-01
+- [x] Collection `lineage` (`src/content/lineage.yaml`): robot dò đường (REV A), UAV (REV B) — dự án sinh viên; robot hình người + AI (REV ?) — ước mơ
+- [x] Mỗi thế hệ một mô phỏng sống: robot dò đường có bộ điều khiển P thật đọc 5 cảm biến; UAV bay lơ lửng, cánh quạt quay ngược chiều, bóng đổ theo độ cao, thước trục z; robot hình người vẽ nét đứt, mạng nơ-ron trong đầu gửi xung xuống các khớp
+- [x] Logo tự vẽ lại theo vòng: robot dò đường → UAV → người máy; favicon là người máy
+- [x] "Rider" chạy trên đường kẻ của header theo tiến độ đọc, đổi hình theo ba thế hệ
+- [x] Sơ đồ chân thêm GND (gốc rễ → dòng sản phẩm) và DREAM (→ người máy)
+
+### H-11 · Chuyển động riêng cho từng mục — **M** · Dep: H-01
+- [x] Mặt trước: số hiệu PA-001 "ép" từ rộng sang hẹp trên trục width của font; tagline lộ dần
+- [x] Mỗi section: đường kẻ được khắc vào như mạch in, số mục nháy như đèn LED
+- [x] Sơ đồ chân: chân được cắm vào vỏ lần lượt. Sơ đồ khối: dây vẽ theo đường tín hiệu; đáp ứng bậc thang vọt lố ít dần qua mỗi lần lặp
+- [x] NOW: đầu dò quét bảng, số đọc "nhảy số" rồi ổn định như đồng hồ đo
+- [x] Systems: lộ ra bằng nhát cắt bậc (nhanh, gọn), đèn trạng thái nháy khi ĐANG XÂY
+- [x] Stories: máy hiện sóng bắt tín hiệu (nhiễu → TRIG'D), dạng sóng theo mood của câu chuyện
+- [x] Trace: giản đồ được "chụp" từ trái sang phải như máy phân tích logic; rê chuột đọc năm
+- [x] Support: pin của phòng lab đang yếu; rê vào một gói thì pin sạc lên
+- [x] `prefers-reduced-motion`: tắt toàn bộ, hiện trạng thái cuối
 
 ## Lộ trình
 
@@ -193,8 +214,8 @@ Là developer, tôi muốn một project Astro sạch để bắt đầu code.
 - [ ] `SupportCTA inline` cuối bài, rất kín đáo
 
 ### S-05 · Story moods — mỗi câu chuyện một thế giới — **M** · Dep: S-03
-- [x] Frontmatter `mood` (`ink | dusk | paper | field | ember`) + `accent` tuỳ chọn; preset trong `moods.css`
-- [x] Trang chủ: hover/focus chuyển dần nền sang mood (story voice, 1.1s); màn hình cảm ứng hiện dải màu mood
+- [x] Frontmatter `mood` (`ink | dusk | paper | field | ember`) + `accent` tuỳ chọn
+- [x] Trang chủ (theme D): mood chọn dạng sóng trên máy hiện sóng — dusk = sin, paper = vuông, ember = dao động tắt dần, field = tam giác, ink = răng cưa; rê chuột thì sóng chạy nhanh hơn
 - [ ] Trang story áp dụng toàn bộ mood: nền, chữ, màu nhấn, texture, ảnh bìa; chuyển mood mượt khi vào trang
 - [ ] Mood sáng `paper` đạt tương phản AA
 - [ ] Cho phép một story tự định nghĩa mood riêng (CSS variables trong frontmatter)
@@ -333,6 +354,7 @@ Không story nào trong code được phép tự viết các nội dung này.
 | EC-08 | Danh sách DREAM (kể cả các mục `????`) | P-03 |
 | EC-09 | 3–5 lab entries, ít nhất 1 ABANDONED | L-02 |
 | EC-11 | Toạ độ thành phố + các địa điểm dự án cho globe | H-09 |
+| EC-12 | Năm + một câu "điều học được" cho robot dò đường và UAV (`lineage.yaml`); ảnh/bản vẽ thật nếu còn giữ | H-10 |
 | EC-10 | 6 bước SOLVE — mỗi bước 1–2 câu bằng giọng của Khang | P-01 |
 
 ---

@@ -1,0 +1,36 @@
+# Product family: where the engineering started, and where it wants to go.
+# Student projects are real; the humanoid is a dream and stays drawn in phantom lines.
+# TODO(Khang): add the year and one sentence (note) for each student project.
+- id: line-follower
+  order: 1
+  rev: A
+  code: PA-LF
+  status: student
+  sim: line-follower
+  name: { vi: "Robot dò đường", en: "Line-following robot" }
+  year: null
+  facts:
+    - { k: { vi: "Không gian", en: "Space" }, v: { vi: "2D · mặt phẳng", en: "2D · a plane" } }
+    - { k: { vi: "Bám theo", en: "Follows" }, v: { vi: "vạch kẻ trên sàn", en: "a line on the floor" } }
+- id: uav
+  order: 2
+  rev: B
+  code: PA-UAV
+  status: student
+  sim: uav
+  name: { vi: "UAV", en: "UAV" }
+  year: null
+  facts:
+    - { k: { vi: "Không gian", en: "Space" }, v: { vi: "3D · không trung", en: "3D · the air" } }
+    - { k: { vi: "Giữ", en: "Holds" }, v: { vi: "thăng bằng của chính nó", en: "its own balance" } }
+- id: humanoid
+  order: 3
+  rev: "?"
+  code: PA-HX
+  status: dream
+  sim: humanoid
+  name: { vi: "Robot hình người + AI", en: "Humanoid robot + AI" }
+  year: null
+  facts:
+    - { k: { vi: "Không gian", en: "Space" }, v: { vi: "thế giới của con người", en: "the human world" } }
+    - { k: { vi: "Hiểu", en: "Understands" }, v: { vi: "điều nó thấy, rồi hành động", en: "what it sees, then acts" } }

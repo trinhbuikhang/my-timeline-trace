@@ -1,0 +1,43 @@
+---
+import Section from '../ds/Section.astro';
+import { href, tx, useT, type Lang } from '../../i18n/ui';
+import { getStories } from '../../lib/content';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const l = tx(lang);
+const t = useT(lang);
+const stories = (await getStories(lang)).slice(0, 3);
+---
+
+<Section id="stories" n={8} title={l('Ghi chú ứng dụng — câu chuyện', 'Application notes — stories')}>
+  <div class="notes">
+    {stories.map(({ entry, fallback }, i) => (
+      <a class="an" href={href(lang, 'stories')} data-scope data-mood={entry.data.mood}>
+        <canvas aria-hidden="true"></canvas>
+        <span class="meta">
+          <span>AN-{String(i + 1).padStart(3, '0')}</span>
+          <span>{entry.data.category}</span>
+          <span>CH{(i % 4) + 1}</span>
+          {entry.data.placeholder && <span class="ph">{t('placeholder').toUpperCase()}</span>}
+          {fallback && <span>VI</span>}
+        </span>
+        <h3 lang={entry.data.lang}>{entry.data.title}</h3>
+      </a>
+    ))}
+  </div>
+</Section>
+
+<script>
+  import '../../scripts/ds/scopes';
+</script>
+
+<style>
+  .notes { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+  .an { display: grid; gap: 10px; text-decoration: none; align-content: start; }
+  canvas { width: 100%; aspect-ratio: 5 / 3; display: block; background: var(--scope); border-radius: 3px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 2px 12px; font: 500 11.5px/1.3 var(--mono); color: var(--ink-2); }
+  .meta .ph { color: var(--accent); font-style: normal; }
+  h3 { margin: 0; font: 700 21px/1.18 var(--body); font-stretch: 90%; text-wrap: balance; }
+  .an:hover h3, .an:focus-visible h3 { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+</style>

@@ -1,0 +1,145 @@
+---
+import Section from '../ds/Section.astro';
+import { href, tx, type Lang } from '../../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const l = tx(lang);
+
+// DIP-10, top view. Pins 1–5 down the left side, 10–6 down the right. Each pin is a way into the document.
+const pins = [
+  { n: 1, lbl: 'SOLVE', fn: l('cách nghĩ', 'how I think'), to: '#pins' },
+  { n: 2, lbl: 'SYSTEMS', fn: l('đã xây', 'what I built'), to: '#systems' },
+  { n: 3, lbl: 'STORIES', fn: l('đã sống', 'what I lived'), to: '#stories' },
+  { n: 4, lbl: 'LAB', fn: l('thí nghiệm', 'experiments'), to: href(lang, 'lab') },
+  { n: 5, lbl: 'GND', fn: l('gốc rễ: robot đầu tiên', 'roots: first robots'), to: '#family' },
+  { n: 10, lbl: 'VCC ☕', fn: l('nuôi phòng lab', 'fuel the lab'), to: '#support' },
+  { n: 9, lbl: 'NOW', fn: l('trạng thái hiện tại', 'current state'), to: '#now' },
+  { n: 8, lbl: 'TRACE', fn: l('dòng thời gian', 'timeline'), to: '#trace' },
+  { n: 7, lbl: 'ABOUT', fn: l('tôi là ai', 'who I am'), to: href(lang, 'about') },
+  { n: 6, lbl: 'DREAM', fn: l('người máy + AI', 'humanoid + AI'), to: '#dream' },
+];
+const blocks = [
+  { x: 122, w: 112, lines: [l('Quan sát', 'Observe'), l('Hiểu', 'Understand')] },
+  { x: 264, w: 96, lines: [l('Đơn giản hoá', 'Simplify')] },
+  { x: 390, w: 76, lines: [l('Xây', 'Build')] },
+];
+---
+
+<Section id="pins" n={5} title={l('Cấu hình chân và chức năng', 'Pin configuration and functions')}>
+  <div class="two">
+    <figure class="pinout">
+      <svg viewBox="0 0 470 350" role="group" aria-label={l('Sơ đồ chân: mỗi chân là một mục của trang', 'Pin diagram: each pin is a part of the site')}>
+        <rect class="body" x="155" y="20" width="160" height="310" rx="2" />
+        <path class="notch" d="M220 20 a15 15 0 0 0 30 0" />
+        <circle cx="171" cy="40" r="4" fill="var(--ink)" />
+        <text class="chipname" x="235" y="172" text-anchor="middle">PA-001</text>
+        <text class="chipsub" x="235" y="190" text-anchor="middle">DIP-10</text>
+        {pins.map((p, i) => {
+          const left = i < 5, y = 45 + (i % 5) * 60;
+          return (
+            <a class:list={['pin', left ? 'l' : 'r']} style={`--i:${i}`} href={p.to}>
+              <rect x={left ? 133 : 315} y={y} width="22" height="16" />
+              <text class="num" x={left ? 165 : 305} y={y + 13} text-anchor={left ? undefined : 'end'}>{p.n}</text>
+              <text class="lbl" x={left ? 123 : 347} y={y + 7} text-anchor={left ? 'end' : undefined}>{p.lbl}</text>
+              <text class="fn" x={left ? 123 : 347} y={y + 21} text-anchor={left ? 'end' : undefined}>{p.fn}</text>
+            </a>
+          );
+        })}
+      </svg>
+      <figcaption><b>{l('Hình 2.', 'Figure 2.')}</b> {l('Vỏ DIP-10, nhìn từ trên', 'DIP-10 package, top view')}</figcaption>
+    </figure>
+
+    <figure class="loop">
+      <svg
+        data-loop
+        data-l-iteration={l('lần lặp', 'iteration')}
+        data-l-overshoot={l('vọt lố', 'overshoot')}
+        viewBox="0 0 520 370"
+        role="img"
+        aria-label={l(
+          'Sơ đồ khối vòng kín: vấn đề, quan sát và hiểu, đơn giản hoá, xây dựng, ra hệ thống; đo lường quay về để lặp lại. Bên dưới là đáp ứng bậc thang, mỗi lần lặp vọt lố ít hơn.',
+          'Closed-loop block diagram: problem, observe and understand, simplify, build, system; measurement feeds back to iterate. Below, a step response that overshoots less on every iteration.',
+        )}
+      >
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="arrow" d="M0 0 L10 5 L0 10 z" /></marker></defs>
+        <circle class="sig" data-sig r="4.5" cx="8" cy="100" />
+        <text x="6" y="74">{l('Vấn đề', 'Problem')}</text><text class="small" x="6" y="90">r(t)</text>
+        <path class="wire" style="--i:0" pathLength="1" d="M8 100 H58" marker-end="url(#ah)" />
+        <circle class="sum" style="--i:1" cx="72" cy="100" r="13" />
+        <path class="wire" style="--i:1" pathLength="1" d="M63 100 H81 M72 91 V109" />
+        <text class="small" x="52" y="132">−</text>
+        <path class="wire" style="--i:2" pathLength="1" d="M85 100 H120" marker-end="url(#ah)" />
+        {blocks.map((b, i) => (
+          <>
+            <rect class="blk" style={`--i:${i + 2}`} x={b.x} y="72" width={b.w} height="56" />
+            {b.lines.map((line, j) => (
+              <text x={b.x + b.w / 2} y={b.lines.length === 1 ? 105 : 96 + j * 18} text-anchor="middle">{line}</text>
+            ))}
+          </>
+        ))}
+        <path class="wire" style="--i:3" pathLength="1" d="M234 100 H262" marker-end="url(#ah)" />
+        <path class="wire" style="--i:4" pathLength="1" d="M360 100 H388" marker-end="url(#ah)" />
+        <path class="wire" style="--i:5" pathLength="1" d="M466 100 H514" marker-end="url(#ah)" />
+        <text x="516" y="74" text-anchor="end">{l('Hệ thống', 'System')}</text><text class="small" x="516" y="90" text-anchor="end">y(t)</text>
+        <path class="wire" style="--i:6" pathLength="1" d="M490 100 V200 H352" marker-end="url(#ah)" />
+        <rect class="blk" style="--i:6" x="250" y="176" width="100" height="48" />
+        <text x="300" y="205" text-anchor="middle">{l('Đo lường', 'Measure')}</text>
+        <path class="wire" style="--i:7" pathLength="1" d="M250 200 H72 V115" marker-end="url(#ah)" />
+        <text class="small" x="96" y="194">{l('lặp lại', 'iterate')}</text>
+        <g transform="translate(40 252)">
+          <path class="ax" d="M0 0 V100 H470" />
+          <path class="ref" d="M0 30 H470" />
+          <text class="small" x="474" y="34">r</text>
+          <path class="old" data-old2 /><path class="old" data-old1 />
+          <path class="resp" data-resp />
+          <text class="small" x="6" y="-6" data-iter>—</text>
+        </g>
+      </svg>
+      <figcaption><b>{l('Hình 3.', 'Figure 3.')}</b> {l('Sơ đồ khối chức năng và đáp ứng bậc thang: mỗi lần lặp vọt lố ít hơn', 'Functional block diagram and step response: each iteration overshoots less')}</figcaption>
+    </figure>
+  </div>
+</Section>
+
+<script>
+  import '../../scripts/ds/loop';
+</script>
+
+<style>
+  .two { display: grid; grid-template-columns: 1fr; gap: 28px 40px; }
+  .pinout svg { width: 100%; height: auto; display: block; max-width: 470px; margin: 0 auto; overflow: visible; }
+  .body { fill: var(--band); stroke: var(--ink); stroke-width: 1.5; }
+  .notch { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+  .pin rect { fill: var(--paper); stroke: var(--ink); stroke-width: 1.2; transition: fill 80ms; }
+  .pin text { fill: var(--ink); }
+  .pin .num { font: 500 11px var(--mono); fill: var(--ink-2); }
+  .pin .lbl { font: 700 13.5px var(--body); letter-spacing: 0.04em; }
+  .pin .fn { font: 400 11px var(--body); fill: var(--ink-2); }
+  .pin:hover rect, .pin:focus-visible rect { fill: var(--accent); stroke: var(--accent); }
+  .pin:hover .lbl, .pin:focus-visible .lbl { fill: var(--accent); }
+  .chipname { font: 800 15px var(--body); fill: var(--ink); letter-spacing: 0.06em; }
+  .chipsub { font: 500 10px var(--mono); fill: var(--ink-2); }
+  /* pins are inserted into the package one by one */
+  :global(.js) .pin { transition: transform 0.45s var(--ease), opacity 0.3s; transition-delay: calc(var(--i) * 70ms); }
+  :global(.js #pins:not(.on)) .pin.l { transform: translateX(26px); opacity: 0; }
+  :global(.js #pins:not(.on)) .pin.r { transform: translateX(-26px); opacity: 0; }
+
+  .loop svg { width: 100%; height: auto; display: block; }
+  .blk, .sum { fill: var(--paper); stroke: var(--ink); stroke-width: 1.4; }
+  .wire { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-dasharray: 1; stroke-dashoffset: 0; }
+  .arrow { fill: var(--ink); }
+  .loop text { font: 600 13px var(--body); fill: var(--ink); }
+  .loop .small { font: 500 11px var(--mono); fill: var(--ink-2); }
+  .sig { fill: var(--accent); }
+  .ax { stroke: var(--ink-2); stroke-width: 1; fill: none; }
+  .ref { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 4 3; fill: none; }
+  .resp { stroke: var(--accent); stroke-width: 1.8; fill: none; }
+  .old { stroke: var(--ink-2); stroke-width: 1; fill: none; opacity: 0.35; }
+  /* wires are drawn along the signal path, blocks appear as the signal reaches them */
+  :global(.js) .wire { transition: stroke-dashoffset 0.5s linear; transition-delay: calc(var(--i) * 140ms); }
+  :global(.js #pins:not(.on)) .wire { stroke-dashoffset: 1; }
+  :global(.js) .blk, :global(.js) .sum { transition: opacity 0.3s; transition-delay: calc(var(--i) * 140ms); }
+  :global(.js #pins:not(.on)) .blk, :global(.js #pins:not(.on)) .sum { opacity: 0; }
+
+  @media (min-width: 900px) { .two { grid-template-columns: 1fr 1fr; align-items: start; } }
+</style>

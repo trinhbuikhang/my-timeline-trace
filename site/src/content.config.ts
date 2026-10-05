@@ -7,7 +7,7 @@ const localized = z.object({ vi: z.string(), en: z.string().optional() });
 
 const lang = z.enum(['vi', 'en']);
 
-/** Every story gets its own visual world. See src/styles/moods.css. */
+/** Every story gets its own voice: on the homepage the mood picks the scope waveform. */
 export const MOODS = ['ink', 'dusk', 'paper', 'field', 'ember'] as const;
 
 const stories = defineCollection({
@@ -88,9 +88,26 @@ const places = defineCollection({
   }),
 });
 
+/** Product family — the evolution from student robots to the humanoid dream. */
+const lineage = defineCollection({
+  loader: file('./src/content/lineage.yaml'),
+  schema: z.object({
+    order: z.number().int(),
+    rev: z.string(),
+    code: z.string(),
+    status: z.enum(['student', 'dream']),
+    sim: z.enum(['line-follower', 'uav', 'humanoid']),
+    name: localized,
+    year: z.number().int().nullable(),
+    facts: z.array(z.object({ k: localized, v: localized })),
+    /** One sentence: what this project taught. Shown as a placeholder until written. */
+    note: localized.optional(),
+  }),
+});
+
 /** The yearly time capsules that already live in ../years. */
 const capsules = defineCollection({
   loader: glob({ pattern: '[0-9][0-9][0-9][0-9].md', base: '../years' }),
 });
 
-export const collections = { stories, systems, professional, trace, now, places, capsules };
+export const collections = { stories, systems, professional, trace, now, places, lineage, capsules };

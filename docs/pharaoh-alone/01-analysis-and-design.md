@@ -383,7 +383,7 @@ Site là một **phòng lab sạch sẽ**: nhiều khoảng trắng, nhãn mẫu
 
 ### Bổ sung hướng thiết kế
 
-**1. Hero = quả địa cầu GIS.** Phép chiếu orthographic vẽ bằng canvas; đất liền là ma trận điểm tính sẵn lúc build (`site/scripts/build-land-dots.mjs`, 4.661 điểm, ~16 KB gzip tính cả code). Lưới kinh vĩ 15°, các địa điểm là *survey point* hình vuông, kèm đường cong hành trình giữa các nơi. Góc hero có bảng đọc số kiểu GIS: `CENTER` (cập nhật trực tiếp), `PROJ ORTHOGRAPHIC · WGS84`, `LAND n PTS`. Kéo chuột/vuốt để xoay, phím mũi tên để xoay, có quán tính, tự quay chậm (2,4°/s), dừng khi ra khỏi màn hình. Dữ liệu: `site/src/content/places.yaml`, có thể thêm vị trí dự án.
+**1. Hero = quả địa cầu GIS.** Phép chiếu orthographic vẽ bằng canvas (d3-geo); theo giao diện D, đất liền vẽ dạng nét như hình trong datasheet, đường bờ biển lấy từ Natural Earth 110m (`site/scripts/build-land.mjs` → `site/public/land.json`, ~20 KB gzip, tải sau). Các địa điểm là điểm đo TP1, TP2… kèm toạ độ, đường hành trình nét đứt chạy giữa các nơi, ô đọc `TÂM` cập nhật trực tiếp. Kéo/vuốt hoặc phím mũi tên để xoay, có quán tính, tự quay chậm, dừng khi ra khỏi màn hình. Dữ liệu: `site/src/content/places.yaml`, có thể thêm vị trí dự án.
 
 **2. Hai giọng (two voices).** Thay cho một motion system chung:
 
@@ -395,7 +395,7 @@ Site là một **phòng lab sạch sẽ**: nhiều khoảng trắng, nhãn mẫu
 | Hover | Nền đổi dần sang *mood* riêng của câu chuyện | Hàng đảo màu tức thì (quét trái → phải) |
 | Bố cục | Thoáng, chữ lớn | Dày, dạng bảng, mã lưu trữ |
 
-**3. Mỗi câu chuyện một thế giới (story moods).** Frontmatter `mood: ink | dusk | paper | field | ember` (+ `accent` tuỳ chọn). Mood định nghĩa nền, màu chữ, màu nhấn, texture (`site/src/styles/moods.css`). Trang chủ cho xem trước mood khi hover; trang story (M2) dùng toàn bộ mood, kể cả mood sáng `paper`.
+**3. Mỗi câu chuyện một thế giới (story moods).** Frontmatter `mood: ink | dusk | paper | field | ember` (+ `accent` tuỳ chọn). Trong giao diện D, trên trang chủ mỗi story là một ghi chú ứng dụng với màn hình máy hiện sóng; mood chọn dạng sóng (dusk = sin, paper = vuông, ember = dao động tắt dần, field = tam giác, ink = răng cưa). Trang story (M2) sẽ dùng mood cho toàn bộ không gian đọc.
 
 ---
 

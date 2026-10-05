@@ -1,0 +1,73 @@
+---
+import { getCollection } from 'astro:content';
+import Section from '../ds/Section.astro';
+import { href, pick, tx, type Lang } from '../../i18n/ui';
+import { getSystems } from '../../lib/content';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const l = tx(lang);
+const systems = await getSystems(lang);
+const professional = await getCollection('professional');
+const STATUS = {
+  IDEA: l('Ý TƯỞNG', 'IDEA'), BUILDING: l('ĐANG XÂY', 'BUILDING'), WORKING: l('ĐANG CHẠY', 'WORKING'),
+  PAUSED: l('TẠM DỪNG', 'PAUSED'), ARCHIVED: l('LƯU TRỮ', 'ARCHIVED'),
+};
+const pn = (i: number) => `PA-SYS-${String(i + 1).padStart(3, '0')}`;
+---
+
+<Section id="systems" n={7} title={l('So sánh thiết bị — hệ thống', 'Device comparison — systems')}>
+  <div class="tw">
+    <table class="dev">
+      <thead><tr><th>{l('Mã', 'Part number')}</th><th>{l('Trạng thái', 'Status')}</th><th>{l('Năm', 'Year')}</th><th>{l('Chức năng', 'Function')}</th></tr></thead>
+      <tbody>
+        {systems.map(({ entry }, i) => (
+          <tr class="go">
+            <td><a class="pn" href={href(lang, 'systems')}>{entry.data.title}</a><br /><span class="mono id">{pn(i)}</span></td>
+            <td class="m"><span class:list={['led', { run: entry.data.status === 'BUILDING' || entry.data.status === 'WORKING' }]}></span>{STATUS[entry.data.status]}</td>
+            <td class="m">{entry.data.year ?? '—'}</td>
+            <td class:list={{ ph: entry.data.placeholder }}>{entry.data.problem}</td>
+          </tr>
+        ))}
+        <tr>
+          <td><span class="pn">????</span><br /><span class="mono id">{pn(systems.length)}</span></td>
+          <td class="m"><span class="led"></span>{STATUS.IDEA}</td>
+          <td class="m">—</td>
+          <td class="ph">{l('Để dành cho hệ thống tiếp theo.', 'Reserved for the next system.')}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="refd">
+    <h3>{l('Thiết kế tham chiếu — công việc chuyên môn', 'Reference designs — professional work')}<span class="restricted">{l('HẠN CHẾ', 'RESTRICTED')}</span></h3>
+    <ul>
+      {professional.map(({ data }) => <li><b>{pick(data.title, lang)}</b><span>{pick(data.summary, lang)}</span></li>)}
+    </ul>
+    <p class="note">{l('Công việc ở công ty, chỉ mô tả ở mức khái quát.', 'Company work, described at a high level only.')}</p>
+  </div>
+</Section>
+
+<style>
+  /* Fast: a hard stepped wipe on entry, instant inversion on hover. */
+  .dev tbody tr { transition: background 70ms linear, color 70ms linear; }
+  .dev tr.go { cursor: pointer; }
+  .dev tr.go:hover { background: var(--ink); color: var(--paper); }
+  .dev tr.go:hover td { border-color: var(--ink); }
+  .dev tr.go:hover .ph { color: var(--paper); }
+  .pn { font: 800 20px/1.1 var(--body); font-stretch: 75%; letter-spacing: 0.02em; text-transform: uppercase; text-decoration: none; }
+  .id { font-size: 12px; }
+  .led { display: inline-block; width: 8px; height: 8px; border: 1.5px solid currentColor; margin-right: 7px; }
+  .led.run { background: var(--accent); border-color: var(--accent); animation: blink 0.8s steps(2) infinite; }
+  :global(.js #systems:not(.on)) .dev tbody tr { clip-path: inset(0 100% 0 0); }
+  :global(.js #systems.on) .dev tbody tr { animation: snap 0.28s steps(4) both; }
+  :global(.js #systems.on) .dev tbody tr:nth-child(2) { animation-delay: 0.12s; }
+  :global(.js #systems.on) .dev tbody tr:nth-child(3) { animation-delay: 0.24s; }
+  @keyframes snap { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+  .refd { margin-top: 22px; }
+  .refd h3 { font: 700 15px/1.2 var(--body); margin: 0 0 8px; }
+  .refd ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0 28px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .refd li { padding: 8px 0; border-bottom: 1px solid var(--rule); display: grid; gap: 2px; }
+  .refd li span { font-size: 13.5px; color: var(--ink-2); }
+  .restricted { font: 600 10.5px/1 var(--mono); border: 1px solid var(--accent); color: var(--accent); padding: 2px 6px; margin-left: 8px; vertical-align: 2px; }
+</style>

@@ -1,11 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Hero from '../../components/home/Hero.astro';
-import NowSnapshot from '../../components/home/NowSnapshot.astro';
-import SelectedSystems from '../../components/home/SelectedSystems.astro';
-import LatestStories from '../../components/home/LatestStories.astro';
-import TraceStrip from '../../components/home/TraceStrip.astro';
-import SupportLine from '../../components/home/SupportLine.astro';
+import Front from '../../components/home/Front.astro';
+import Family from '../../components/home/Family.astro';
+import Pins from '../../components/home/Pins.astro';
+import Now from '../../components/home/Now.astro';
+import Systems from '../../components/home/Systems.astro';
+import Stories from '../../components/home/Stories.astro';
+import Trace from '../../components/home/Trace.astro';
+import Support from '../../components/home/Support.astro';
 import { LANGS, type Lang } from '../../i18n/ui';
 
 export const getStaticPaths = () => LANGS.map((lang) => ({ params: { lang } }));
@@ -13,10 +15,12 @@ const lang = Astro.params.lang as Lang;
 ---
 
 <BaseLayout lang={lang}>
-  <Hero lang={lang} />
-  <NowSnapshot lang={lang} />
-  <SelectedSystems lang={lang} />
-  <LatestStories lang={lang} />
-  <TraceStrip lang={lang} />
-  <SupportLine lang={lang} />
+  <Front lang={lang} />
+  <Family lang={lang} />
+  <Pins lang={lang} />
+  <Now lang={lang} />
+  <Systems lang={lang} />
+  <Stories lang={lang} />
+  <Trace lang={lang} />
+  <Support lang={lang} />
 </BaseLayout>

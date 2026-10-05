@@ -1,0 +1,116 @@
+---
+import { getCollection } from 'astro:content';
+import { pick, tx, type Lang } from '../../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const l = tx(lang);
+// TP1 is where it started; later places follow in the order they were reached.
+const places = (await getCollection('places')).sort((a, b) => (a.data.since ?? 0) - (b.data.since ?? 0)).map(({ id, data }) => ({
+  id, name: pick(data.name, lang), lat: data.lat, lon: data.lon, approx: data.precision === 'country',
+}));
+---
+
+<div class="front" id="top">
+  <div>
+    <h1 class="partno">PA-001<small>Pharaoh Alone</small></h1>
+    <p class="subtitle">
+      <span>{l('Vấn đề được giải.', 'Problems solved.')}</span>
+      <span>{l('Hệ thống được dựng.', 'Systems built.')}</span>
+      <span>{l('Câu chuyện còn ở lại.', 'Stories left behind.')}</span>
+    </p>
+
+    <div class="cols">
+      <div>
+        <h2><span class="n">1</span><span>{l('Đặc điểm', 'Features')}</span></h2>
+        <ul class="feat">
+          {lang === 'en' ? (
+            <>
+              <li><b>Mechatronics</b> core: mechanics, electronics, control</li>
+              <li>Origin: <b>line-following robot</b> and <b>UAV</b> student projects</li>
+              <li>Integrated <b>data</b> and <b>GIS</b> stages</li>
+              <li><b>Software</b> and <b>AI</b> outputs</li>
+              <li>Closed-loop operation: measure, then iterate</li>
+            </>
+          ) : (
+            <>
+              <li>Lõi <b>cơ điện tử</b>: cơ khí, điện tử, điều khiển</li>
+              <li>Gốc: dự án sinh viên <b>robot dò đường</b> và <b>UAV</b></li>
+              <li>Tích hợp tầng <b>dữ liệu</b> và <b>GIS</b></li>
+              <li>Đầu ra <b>phần mềm</b> và <b>AI</b></li>
+              <li>Hoạt động vòng kín: đo, rồi lặp lại</li>
+            </>
+          )}
+        </ul>
+      </div>
+      <div>
+        <h2><span class="n">2</span><span>{l('Ứng dụng', 'Applications')}</span></h2>
+        <ul class="feat">
+          <li>{l('Tự động hoá kỹ thuật', 'Engineering automation')}</li>
+          <li>{l('Hệ thống dữ liệu hiện trường', 'Field data systems')}</li>
+          <li>{l('Hệ thống không gian địa lý', 'Geospatial systems')}</li>
+          <li>{l('Sản phẩm độc lập', 'Independent products')}</li>
+          <li>{l('Tương lai: robot hình người kết hợp AI', 'Future: humanoid robots with AI')}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="desc">
+      <h2><span class="n">3</span><span>{l('Mô tả', 'Description')}</span></h2>
+      <p>{l(
+        'Pharaoh Alone là kho lưu trữ cá nhân của Khang, một kỹ sư cơ điện tử bắt đầu từ robot dò đường và UAV, rồi đi dần sang phần mềm, dữ liệu, GIS và AI. Nơi đây ghi lại những vấn đề đã giải, những hệ thống đã dựng và câu chuyện phía sau chúng.',
+        'Pharaoh Alone is the personal archive of Khang, a mechatronics engineer who started with line-following robots and UAVs, then moved into software, data, GIS and AI. It records the problems he solved, the systems he built and the stories behind them.',
+      )}</p>
+      <p>{l('Tôi giải quyết vấn đề bằng cách xây dựng hệ thống.', 'I solve problems by building systems.')}</p>
+    </div>
+  </div>
+
+  <figure class="globe">
+    <canvas
+      data-globe
+      data-places={JSON.stringify(places)}
+      tabindex="0"
+      role="img"
+      aria-label={l('Quả địa cầu chiếu trực giao, đánh dấu Việt Nam và New Zealand. Kéo để xoay.', 'Orthographic globe marking Vietnam and New Zealand. Drag to rotate.')}
+    ></canvas>
+    <div class="read"><span>{l('TÂM', 'CENTRE')}</span><span data-globe-center>—</span><span>{l('KÉO ĐỂ XOAY', 'DRAG TO ROTATE')}</span></div>
+    <figcaption><b>{l('Hình 1.', 'Figure 1.')}</b> {l('Vị trí hoạt động', 'Operating locations')}</figcaption>
+  </figure>
+</div>
+
+<script>
+  import '../../scripts/ds/globe';
+</script>
+
+<style>
+  .front { display: grid; grid-template-columns: 1fr; gap: 28px 40px; padding-block: 26px 10px; }
+  .partno { font: 900 clamp(76px, 15vw, 190px)/0.8 var(--body); font-stretch: 62%; letter-spacing: -0.01em; margin: 0; }
+  .partno small { display: block; font: 700 clamp(18px, 2.2vw, 26px)/1.1 var(--body); font-stretch: 112%; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 14px; }
+  .subtitle { margin: 12px 0 0; font: 600 clamp(20px, 2.4vw, 28px)/1.2 var(--body); font-stretch: 92%; max-width: 22em; }
+  .subtitle span { display: block; }
+  .subtitle span:last-child { color: var(--accent); }
+  .cols { display: grid; gap: 24px 36px; grid-template-columns: 1fr; margin-top: 26px; }
+  .feat { margin: 0; padding: 0 0 0 18px; display: grid; gap: 4px; }
+  .feat li::marker { color: var(--accent); }
+  .desc { margin-top: 24px; }
+  .desc p { margin: 0 0 10px; max-width: 62ch; }
+  .globe canvas { width: 100%; aspect-ratio: 1 / 0.9; display: block; cursor: grab; touch-action: pan-y; border: 1px solid var(--rule); }
+  .globe canvas:global(.is-dragging) { cursor: grabbing; }
+  .read { display: flex; justify-content: space-between; font: 500 11.5px/1 var(--mono); color: var(--ink-2); margin-top: 6px; }
+
+  /* Entry: the part number is pressed from wide to condensed on the width axis. */
+  :global(.js) .partno { animation: press 1.1s var(--ease) both; }
+  :global(.js) .partno small { animation: rise 0.6s 0.55s var(--ease) both; }
+  :global(.js) .subtitle span { animation: wipe 0.5s var(--ease) both; }
+  :global(.js) .subtitle span:nth-child(1) { animation-delay: 0.75s; }
+  :global(.js) .subtitle span:nth-child(2) { animation-delay: 0.9s; }
+  :global(.js) .subtitle span:nth-child(3) { animation-delay: 1.05s; }
+  @keyframes press { from { font-stretch: 125%; letter-spacing: 0.06em; opacity: 0; } 30% { opacity: 1; } to { font-stretch: 62%; letter-spacing: -0.01em; } }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+  @keyframes wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+  @media (min-width: 900px) {
+    .front { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
+    .cols { grid-template-columns: 1fr 1fr; }
+  }
+</style>

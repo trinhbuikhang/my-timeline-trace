@@ -1,0 +1,44 @@
+---
+/** The logo keeps redrawing itself: line follower → UAV → humanoid. Under reduced motion it rests on the humanoid. */
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+---
+
+<svg class:list={['mark', cls]} viewBox="0 0 32 32" aria-hidden="true">
+  <!-- 1 · line follower, top view: chassis, wheels, sensor bar, the line -->
+  <g class="g1">
+    <path pathLength="1" d="M10 9 H22 V25 H10 Z" />
+    <path pathLength="1" d="M6.5 15 V22 M25.5 15 V22" />
+    <path pathLength="1" class="acc" d="M8 5.5 H24" />
+    <path pathLength="1" d="M16 1 V31" style="stroke-width:.8" />
+  </g>
+  <!-- 2 · UAV, top view: X frame, four rotors -->
+  <g class="g2">
+    <path pathLength="1" d="M10 10 L22 22 M22 10 L10 22" />
+    <path pathLength="1" d="M8 3.5 a4.5 4.5 0 1 0 .01 0 M24 3.5 a4.5 4.5 0 1 0 .01 0 M8 19.5 a4.5 4.5 0 1 0 .01 0 M24 19.5 a4.5 4.5 0 1 0 .01 0" />
+    <path pathLength="1" class="acc" d="M13 13 H19 V19 H13 Z" />
+  </g>
+  <!-- 3 · humanoid, front view, with a mind -->
+  <g class="g3">
+    <path pathLength="1" class="acc" d="M16 2 a3.6 3.6 0 1 0 .01 0" />
+    <path pathLength="1" d="M11.5 11 H20.5 L19.5 20 H12.5 Z M11.5 11.5 L8 20 M20.5 11.5 L24 20 M14 20 L13 30 M18 20 L19 30" />
+  </g>
+</svg>
+
+<style>
+  .mark { width: 30px; height: 30px; flex: none; overflow: visible; }
+  g { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  g * { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 9s var(--ease) infinite backwards; }
+  .g2 * { animation-delay: 3s; }
+  .g3 * { animation-delay: 6s; }
+  .acc { stroke: var(--accent); }
+  @keyframes draw {
+    0% { stroke-dashoffset: 1; }
+    9%, 27% { stroke-dashoffset: 0; }
+    33.3%, 100% { stroke-dashoffset: -1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    g * { stroke-dashoffset: 0; }
+    .g1, .g2 { display: none; }
+  }
+</style>

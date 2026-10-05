@@ -1,13 +1,13 @@
 # pharaohalone.com
 
-Astro site for **Pharaoh Alone**. Plan and backlog: [`../docs/pharaoh-alone/`](../docs/pharaoh-alone/).
+Astro site for **Pharaoh Alone**, theme D (mechatronics datasheet). Plan and backlog: [`../docs/pharaoh-alone/`](../docs/pharaoh-alone/).
 
 ```bash
 pnpm install
 pnpm dev          # http://localhost:4321/vi/
 pnpm build        # static output in dist/
 pnpm check        # type check
-pnpm build:globe  # regenerate src/data/land-dots.json (only when changing the dot density)
+pnpm build:land   # regenerate public/land.json (globe coastline, Natural Earth 110m)
 ```
 
 ## Updating content
@@ -18,7 +18,8 @@ pnpm build:globe  # regenerate src/data/land-dots.json (only when changing the d
 | Trace milestones | `src/content/trace.yaml` |
 | Places on the globe | `src/content/places.yaml` |
 | Systems | `src/content/systems/{vi,en}/<slug>.md` |
-| Stories | `src/content/stories/{vi,en}/<slug>.md(x)` — pick a `mood` |
+| Stories | `src/content/stories/{vi,en}/<slug>.md(x)` — pick a `mood` (it sets the scope waveform) |
+| Product family (robots) | `src/content/lineage.yaml` — add the year and a one-sentence `note` |
 | Professional work | `src/content/professional.yaml` (high level only) |
 | Yearly capsules | `../years/YYYY.md` (unchanged, read at build time) |
 
