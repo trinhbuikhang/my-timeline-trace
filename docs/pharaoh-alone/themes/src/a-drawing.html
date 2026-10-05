@@ -1,0 +1,548 @@
+<title>Pharaoh Alone · Bản vẽ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one engineering drawing sheet. Zones A–F run down the left edge; the title block holds identity. */
+:root {
+  --paper: #f4f6f3;      /* drafting film */
+  --ink: #1f2b6e;        /* diazo blue line */
+  --ink-2: #4a5596;
+  --hair: rgb(31 43 110 / 0.16);
+  --wash: rgb(31 43 110 / 0.05);
+  --red: #c4122f;        /* redline markup */
+  --display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --body: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --paper: #173a74; --ink: #eaf0fb; --ink-2: #b8c6e6; --hair: rgb(234 240 251 / 0.2); --wash: rgb(234 240 251 / 0.06); --red: #ff9f8c; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --paper: #173a74; --ink: #eaf0fb; --ink-2: #b8c6e6; --hair: rgb(234 240 251 / 0.2); --wash: rgb(234 240 251 / 0.06); --red: #ff9f8c; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 16px/1.55 var(--body); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.mono { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+.cap { font-family: var(--display); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* ---------- Sheet frame ---------- */
+.page { padding: 10px; }
+.sheet { position: relative; border: 2px solid var(--ink); max-width: 1440px; margin: 0 auto; }
+.sheet::before { content: ''; position: absolute; inset: 5px; border: 0.75px solid var(--ink); pointer-events: none; }
+.ruler { display: grid; grid-template-columns: repeat(8, 1fr); border-bottom: 0.75px solid var(--ink); margin: 5px 5px 0; }
+.ruler span { text-align: center; font: 500 10px/18px var(--mono); border-left: 0.75px solid var(--hair); }
+.ruler span:first-child { border-left: 0; }
+.frame-draw { position: absolute; inset: -2px; width: calc(100% + 4px); height: calc(100% + 4px); pointer-events: none; overflow: visible; }
+.frame-draw rect { fill: none; stroke: var(--paper); stroke-width: 6; }
+
+/* Sheet index (navigation) */
+.index { display: flex; flex-wrap: wrap; align-items: stretch; margin: 0 5px; border-bottom: 0.75px solid var(--ink); position: sticky; top: env(safe-area-inset-top, 0px); background: var(--paper); z-index: 5; }
+.index .brand { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-right: 0.75px solid var(--ink); font: 700 15px/1 var(--display); letter-spacing: 0.12em; text-decoration: none; }
+.index nav { display: flex; flex-wrap: wrap; flex: 1; }
+.index nav a { display: flex; gap: 6px; align-items: baseline; padding: 11px 12px; text-decoration: none; font: 600 14px/1 var(--display); letter-spacing: 0.08em; border-right: 0.75px solid var(--hair); transition: background 90ms, color 90ms; }
+.index nav a b { font: 500 10px/1 var(--mono); color: var(--ink-2); }
+.index nav a:hover { background: var(--ink); color: var(--paper); }
+.index nav a:hover b { color: var(--paper); }
+
+/* ---------- Zones ---------- */
+.zone { display: grid; grid-template-columns: 34px 1fr; border-bottom: 0.75px solid var(--ink); margin: 0 5px; }
+.zone > .z { border-right: 0.75px solid var(--ink); font: 700 15px/1 var(--display); display: flex; justify-content: center; padding-top: 18px; }
+.zone > .zb { padding: clamp(18px, 3.2vw, 44px); min-width: 0; }
+.zone-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin: 0 0 22px; }
+.zone-head h2 { margin: 0; font: 700 clamp(28px, 4vw, 44px)/0.95 var(--display); text-transform: uppercase; letter-spacing: 0.01em; }
+.zone-head .mono { color: var(--ink-2); }
+
+/* ---------- Hero ---------- */
+.hero .zb { display: grid; gap: 28px; grid-template-columns: 1fr; padding-bottom: 0; }
+.hero-text { min-width: 0; }
+.dwg { color: var(--ink-2); margin: 0 0 18px; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.dwg .rec { color: var(--red); }
+h1 { margin: 0; font: 700 clamp(64px, 13vw, 176px)/0.82 var(--display); letter-spacing: -0.005em; text-transform: uppercase; }
+h1 .l { display: block; }
+.tag { margin: 26px 0 0; padding: 0; list-style: none; font: 500 clamp(20px, 2.4vw, 30px)/1.25 var(--body); counter-reset: n; }
+.tag li { display: flex; gap: 14px; align-items: baseline; }
+.tag li::before { counter-increment: n; content: counter(n) '.'; font: 500 12px/1 var(--mono); color: var(--ink-2); min-width: 18px; }
+.tag li:last-child { color: var(--red); }
+.disc { margin: 24px 0 0; display: flex; flex-wrap: wrap; gap: 6px 10px; }
+.disc span { border: 0.75px solid var(--ink); padding: 3px 8px; font: 600 13px/1 var(--display); letter-spacing: 0.1em; }
+
+.globe-fig { margin: 0; min-width: 0; }
+.globe-fig canvas { width: 100%; aspect-ratio: 1 / 0.92; display: block; cursor: grab; touch-action: pan-y; }
+.globe-fig canvas.is-dragging { cursor: grabbing; }
+.globe-fig figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; border-top: 0.75px solid var(--hair); padding-top: 8px; color: var(--ink-2); }
+.globe-fig figcaption b { color: var(--ink); font-weight: 500; }
+
+/* Title block */
+.tb { grid-column: 1 / -1; justify-self: end; width: min(100%, 640px); border: 1.5px solid var(--ink); border-bottom: 0; border-right: 0; display: grid; grid-template-columns: repeat(6, 1fr); margin-right: calc(-1 * clamp(18px, 3.2vw, 44px)); }
+.tb > div { border-right: 0.75px solid var(--ink); border-bottom: 0.75px solid var(--ink); padding: 5px 8px 6px; min-width: 0; }
+.tb .k { display: block; font: 500 9px/1.3 var(--mono); letter-spacing: 0.06em; color: var(--ink-2); text-transform: uppercase; }
+.tb .v { display: block; font: 600 15px/1.2 var(--display); letter-spacing: 0.05em; text-transform: uppercase; }
+.tb .title { grid-column: span 4; }
+.tb .title .v { font-size: 26px; font-weight: 700; letter-spacing: 0.06em; }
+.tb .s2 { grid-column: span 2; }
+.tb .proj svg { width: 46px; height: 22px; display: block; margin-top: 2px; }
+.lang { display: flex; gap: 4px; margin-top: 2px; }
+.lang button { font: 600 15px/1 var(--display); letter-spacing: 0.06em; padding: 2px 4px; color: var(--ink-2); }
+.lang button[aria-pressed="true"] { color: var(--paper); background: var(--ink); }
+
+/* ---------- NOW: revision cloud ---------- */
+.cloud { position: relative; padding: 30px 30px 26px; }
+.cloud svg.c { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.cloud svg.c path { fill: none; stroke: var(--red); stroke-width: 1.4; }
+.delta { position: absolute; top: -14px; right: 24px; display: flex; align-items: center; gap: 6px; background: var(--paper); padding: 0 6px; color: var(--red); }
+.delta svg { width: 22px; height: 20px; }
+.delta svg path { fill: none; stroke: var(--red); stroke-width: 1.4; }
+.now-grid { display: grid; gap: 18px 28px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+.now-grid dt { font: 500 10.5px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); padding-bottom: 8px; border-bottom: 0.75px solid var(--hair); margin-bottom: 8px; }
+.now-grid dd { margin: 0; font: 600 21px/1.25 var(--display); letter-spacing: 0.02em; }
+.q { margin: 26px 0 0; display: grid; gap: 4px; }
+.q .k { font: 500 10.5px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--red); }
+.q .v { font: italic 400 clamp(22px, 2.6vw, 30px)/1.25 var(--body); }
+
+/* ---------- SYSTEMS: parts list ---------- */
+.tbl-wrap { overflow-x: auto; }
+table.pl { width: 100%; border-collapse: collapse; border: 1.5px solid var(--ink); font-variant-numeric: tabular-nums; }
+.pl th { font: 500 10px/1.2 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); text-align: left; padding: 7px 10px; border: 0.75px solid var(--ink); background: var(--wash); }
+.pl td { padding: 12px 10px; border: 0.75px solid var(--ink); vertical-align: top; }
+.pl .item { font: 500 12px/1 var(--mono); text-align: center; width: 44px; }
+.pl .pn { font: 500 12px/1.4 var(--mono); white-space: nowrap; }
+.pl .name { font: 700 clamp(22px, 2.6vw, 30px)/1 var(--display); text-transform: uppercase; letter-spacing: 0.02em; }
+.pl .desc { display: block; font: 400 14px/1.45 var(--body); color: var(--ink-2); margin-top: 6px; text-transform: none; letter-spacing: 0; }
+.pl .st { font: 600 13px/1 var(--display); letter-spacing: 0.1em; white-space: nowrap; }
+.pl .yr { font: 500 12px/1 var(--mono); white-space: nowrap; }
+.pl tbody tr { transition: background 80ms linear, color 80ms linear; cursor: pointer; }
+.pl tbody tr:hover, .pl tbody tr:focus-within { background: var(--ink); color: var(--paper); }
+.pl tbody tr:hover .desc, .pl tbody tr:focus-within .desc { color: var(--paper); }
+.pl tbody tr.res { cursor: default; color: var(--ink-2); }
+.pl tbody tr.res:hover { background: transparent; color: var(--ink-2); }
+.pl a { text-decoration: none; }
+.pl a::after { content: ''; position: absolute; inset: 0; }
+.pl tr { position: relative; }
+
+.ref { position: relative; margin-top: 34px; }
+.ref h3 { margin: 0 0 10px; font: 600 15px/1.2 var(--display); letter-spacing: 0.1em; text-transform: uppercase; }
+.ref ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); border-top: 0.75px solid var(--ink); border-left: 0.75px solid var(--ink); }
+.ref li { border-right: 0.75px solid var(--ink); border-bottom: 0.75px solid var(--ink); padding: 10px 12px; }
+.ref li b { display: block; font: 600 16px/1.2 var(--display); letter-spacing: 0.04em; text-transform: uppercase; }
+.ref li span { font-size: 14px; color: var(--ink-2); }
+.stamp { position: absolute; right: 8px; top: -8px; transform: rotate(-4deg); border: 2px solid var(--red); color: var(--red); padding: 4px 10px; font: 700 13px/1.15 var(--display); letter-spacing: 0.12em; text-align: center; text-transform: uppercase; background: var(--paper); }
+.stamp small { display: block; font: 500 9px/1.2 var(--mono); letter-spacing: 0.08em; }
+
+/* ---------- STORIES: section views, one material each ---------- */
+.views { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.view { display: grid; grid-template-rows: auto 120px auto; border: 0.75px solid var(--ink); text-decoration: none; }
+.view header { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-bottom: 0.75px solid var(--ink); }
+.view header .cut { font: 700 17px/1 var(--display); letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px; }
+.view header .cut i { display: inline-block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 9px solid var(--ink); }
+.hatch { border-bottom: 0.75px solid var(--ink); background-color: var(--paper); transition: background-position 2400ms cubic-bezier(.2,.7,.2,1); background-position: 0 0; }
+.view:hover .hatch, .view:focus-visible .hatch { background-position: 60px 0; }
+.m-concrete .hatch { background-image: radial-gradient(circle at 30% 40%, var(--ink) 1.1px, transparent 1.6px), radial-gradient(circle at 70% 75%, var(--ink) 0.8px, transparent 1.3px), repeating-linear-gradient(45deg, transparent 0 22px, var(--ink-2) 22px 23px); background-size: 14px 14px, 23px 19px, auto; }
+.m-steel .hatch { background-image: repeating-linear-gradient(45deg, var(--ink) 0 1px, transparent 1px 9px); }
+.m-earth .hatch { background-image: repeating-linear-gradient(45deg, var(--ink) 0 1px, transparent 1px 13px), repeating-linear-gradient(-45deg, var(--ink-2) 0 0.75px, transparent 0.75px 13px); }
+.view .body { padding: 12px 12px 14px; display: grid; gap: 6px; }
+.view .meta { color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 2px 12px; }
+.view .meta .ph { color: var(--red); }
+.view h3 { margin: 0; font: 600 25px/1.08 var(--display); letter-spacing: 0.01em; text-wrap: balance; }
+.view .mat { color: var(--ink-2); }
+.view:hover h3, .view:focus-visible h3 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+
+/* ---------- TRACE: scale bar + revision history ---------- */
+.scalebar { display: flex; height: 12px; border: 0.75px solid var(--ink); margin: 6px 0 4px; }
+.scalebar span { border-right: 0.75px solid var(--ink); }
+.scalebar span:nth-child(odd) { background: var(--ink); }
+.scalebar span:last-child { border-right: 0; background: repeating-linear-gradient(90deg, var(--ink) 0 4px, transparent 4px 8px); }
+.scalelabels { position: relative; height: 18px; margin-bottom: 28px; }
+.scalelabels span { position: absolute; transform: translateX(-50%); font: 500 11px/1 var(--mono); white-space: nowrap; }
+.scalelabels span:first-child { transform: none; }
+.scalelabels span:last-child { transform: translateX(-100%); }
+@media (max-width: 760px) { .scalelabels span.dense { display: none; } }
+table.rev { width: 100%; border-collapse: collapse; border: 1.5px solid var(--ink); }
+.rev th { font: 500 10px/1.2 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); text-align: left; padding: 7px 10px; border: 0.75px solid var(--ink); background: var(--wash); }
+.rev td { padding: 9px 10px; border: 0.75px solid var(--ink); }
+.rev .r { font: 700 18px/1 var(--display); text-align: center; width: 54px; }
+.rev .y { font: 500 13px/1 var(--mono); width: 74px; }
+.rev .d { font: 500 17px/1.3 var(--body); }
+.rev .cur td { color: var(--red); }
+.rev .cur .r { position: relative; }
+.rev .pend td { color: var(--ink-2); font-style: italic; }
+.rev a { color: var(--red); font: 500 11px/1 var(--mono); }
+
+/* ---------- Approval / support ---------- */
+.approve { display: grid; gap: 18px; grid-template-columns: 1fr; align-items: end; }
+.approve p { margin: 0; max-width: 56ch; font-size: 15px; color: var(--ink-2); }
+.sig { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end; }
+.sig .line { flex: 1 1 200px; border-bottom: 0.75px solid var(--ink); height: 34px; position: relative; }
+.sig .line span { position: absolute; left: 0; bottom: -18px; font: 500 9.5px/1 var(--mono); letter-spacing: 0.06em; color: var(--ink-2); }
+.cups { display: flex; gap: 8px; }
+.cups a { border: 0.75px solid var(--ink); padding: 7px 10px; font: 600 14px/1 var(--display); letter-spacing: 0.06em; text-decoration: none; transition: background 80ms, color 80ms; }
+.cups a:hover { background: var(--ink); color: var(--paper); }
+
+.notes { margin: 0 5px; padding: 16px clamp(18px, 3.2vw, 44px) 18px calc(34px + clamp(18px, 3.2vw, 44px)); display: grid; gap: 4px; }
+.notes b { font: 600 13px/1 var(--display); letter-spacing: 0.12em; }
+.notes ol { margin: 6px 0 0; padding-left: 18px; font: 500 11px/1.7 var(--mono); letter-spacing: 0.04em; color: var(--ink-2); text-transform: uppercase; }
+
+/* ---------- Plotter intro (first paint only) ---------- */
+@keyframes plot { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes frame { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -1; } }
+.intro h1 .l { animation: plot 900ms steps(18) both; }
+.intro h1 .l + .l { animation-delay: 350ms; }
+.intro .tag li { animation: plot 700ms cubic-bezier(.3,.6,.2,1) both; }
+.intro .tag li:nth-child(1) { animation-delay: 900ms; }
+.intro .tag li:nth-child(2) { animation-delay: 1050ms; }
+.intro .tag li:nth-child(3) { animation-delay: 1200ms; }
+.intro .frame-draw rect { stroke-dasharray: 1 0; animation: none; }
+@media (prefers-reduced-motion: reduce) { .intro * { animation: none !important; } }
+
+/* ---------- Wide screens ---------- */
+@media (min-width: 980px) {
+  .hero .zb { grid-template-columns: 1.08fr 1fr; align-items: center; }
+  .approve { grid-template-columns: 1fr 1fr; }
+}
+/* ---------- Phones ---------- */
+@media (max-width: 640px) {
+  .page { padding: 6px; }
+  .zone { grid-template-columns: 22px 1fr; }
+  .zone > .z { font-size: 12px; }
+  .ruler span:nth-child(n+5) { display: none; }
+  .ruler { grid-template-columns: repeat(4, 1fr); }
+  .index .brand { width: 100%; border-right: 0; border-bottom: 0.75px solid var(--hair); }
+  .index nav { overflow-x: auto; flex-wrap: nowrap; }
+  .index nav a { white-space: nowrap; }
+  .tb { grid-template-columns: repeat(4, 1fr); }
+  .tb .title { grid-column: span 4; }
+  .tb .s2 { grid-column: span 2; }
+  .stamp { position: static; display: inline-block; margin-bottom: 12px; }
+  .notes { padding-left: 28px; }
+  /* Parts list stacks */
+  table.pl, .pl tbody, .pl tr, .pl td { display: block; width: 100%; }
+  .pl thead { display: none; }
+  .pl tr { border-bottom: 1.5px solid var(--ink); display: grid; grid-template-columns: auto 1fr auto; }
+  .pl td { border: 0; padding: 8px 10px; }
+  .pl .item { width: auto; }
+  .pl .nm { grid-column: 1 / -1; order: 5; }
+}
+</style>
+
+<div class="page">
+<div class="sheet" id="top">
+  <div class="ruler" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+
+  <header class="index">
+    <a class="brand" href="#top">PHARAOH ALONE</a>
+    <nav aria-label="Danh mục bản vẽ" data-en-label="Sheet index">
+      <a href="#solve"><b>01</b>SOLVE</a>
+      <a href="#systems"><b>02</b>SYSTEMS</a>
+      <a href="#stories"><b>03</b>STORIES</a>
+      <a href="#lab"><b>04</b>LAB</a>
+      <a href="#trace"><b>05</b>TRACE</a>
+      <a href="#now"><b>06</b>NOW</a>
+    </nav>
+  </header>
+
+  <!-- A · HERO -->
+  <section class="zone hero" aria-labelledby="t">
+    <div class="z" aria-hidden="true">A</div>
+    <div class="zb">
+      <div class="hero-text">
+        <p class="dwg mono"><span>DWG NO. PA-001</span><span data-en="SHEET 1 OF 7">TỜ 1 / 7</span><span class="rec" data-en="● REVISING">● ĐANG SỬA ĐỔI</span></p>
+        <h1 id="t"><span class="l">Pharaoh</span><span class="l">Alone</span></h1>
+        <ol class="tag">
+          <li data-en="Problems solved.">Vấn đề được giải.</li>
+          <li data-en="Systems built.">Hệ thống được dựng.</li>
+          <li data-en="Stories left behind.">Câu chuyện còn ở lại.</li>
+        </ol>
+        <p class="disc"><span>ENGINEERING</span><span>DATA</span><span>GIS</span><span>SOFTWARE</span><span>AI</span></p>
+      </div>
+
+      <figure class="globe-fig">
+        <canvas id="globe" tabindex="0" role="img" aria-label="Quả địa cầu chiếu trực giao, đánh dấu Việt Nam và New Zealand. Kéo để xoay."></canvas>
+        <figcaption class="mono">
+          <span data-en="VIEW A — ORTHOGRAPHIC PROJECTION">HÌNH CHIẾU A — CHIẾU TRỰC GIAO</span>
+          <span><span data-en="CENTRE">TÂM</span> <b id="center">—</b></span>
+          <span data-en="DRAG TO ROTATE">KÉO ĐỂ XOAY</span>
+        </figcaption>
+      </figure>
+
+      <div class="tb" role="group" aria-label="Khung tên">
+        <div class="title"><span class="k" data-en="Title">Tên bản vẽ</span><span class="v">Pharaoh Alone</span></div>
+        <div class="s2"><span class="k" data-en="Dwg no.">Số bản vẽ</span><span class="v">PA-001</span></div>
+        <div><span class="k" data-en="Drawn">Vẽ</span><span class="v">Khang</span></div>
+        <div><span class="k" data-en="Since">Từ</span><span class="v">1992</span></div>
+        <div><span class="k" data-en="Date">Ngày</span><span class="v">2026-10-05</span></div>
+        <div><span class="k" data-en="Rev">Sửa đổi</span><span class="v">2026.10</span></div>
+        <div class="proj"><span class="k" data-en="Proj.">Phép chiếu</span>
+          <svg viewBox="0 0 46 22" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1"><path d="M2 5 L18 8 L18 14 L2 17 Z"/><circle cx="34" cy="11" r="6"/><circle cx="34" cy="11" r="3"/><path d="M0 11 H46" stroke-dasharray="6 2 1 2" stroke-width=".6"/></g></svg>
+        </div>
+        <div><span class="k" data-en="Lang">Ngôn ngữ</span>
+          <div class="lang"><button type="button" data-lang="vi" aria-pressed="true">VI</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B · NOW -->
+  <section class="zone" id="now" aria-labelledby="now-t">
+    <div class="z" aria-hidden="true">B</div>
+    <div class="zb">
+      <div class="zone-head"><h2 id="now-t">Now</h2><span class="mono" data-en="REVISION NOTE · UPDATED 2026-10">GHI CHÚ SỬA ĐỔI · CẬP NHẬT 2026-10</span></div>
+      <div class="cloud" data-cloud>
+        <span class="delta mono"><svg viewBox="0 0 22 20" aria-hidden="true"><path d="M11 2 L20 18 L2 18 Z"/></svg>2026.10</span>
+        <dl class="now-grid">
+          <div><dt data-en="Building">Đang xây</dt><dd>GeoNote</dd><dd data-en="Personal software systems">Hệ thống phần mềm cá nhân</dd></div>
+          <div><dt data-en="Exploring">Đang khám phá</dt><dd data-en="AI · Data">AI · Dữ liệu</dd><dd>Rust</dd><dd data-en="Geospatial systems">Hệ thống không gian địa lý</dd></div>
+          <div><dt data-en="Thinking about">Đang nghĩ về</dt><dd data-en="Independent products">Sản phẩm độc lập</dd><dd data-en="Engineering automation">Tự động hoá kỹ thuật</dd></div>
+        </dl>
+        <p class="q"><span class="k" data-en="Open question">Câu hỏi đang mở</span><span class="v" data-en="What should I build next?">Tiếp theo mình nên xây gì?</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- C · SYSTEMS -->
+  <section class="zone" id="systems" aria-labelledby="sys-t">
+    <div class="z" aria-hidden="true">C</div>
+    <div class="zb">
+      <div class="zone-head"><h2 id="sys-t">Systems</h2><span class="mono" data-en="PARTS LIST · I SOLVE PROBLEMS BY BUILDING SYSTEMS">BẢNG KÊ CHI TIẾT · TÔI GIẢI QUYẾT VẤN ĐỀ BẰNG CÁCH XÂY HỆ THỐNG</span></div>
+      <div class="tbl-wrap">
+        <table class="pl">
+          <thead><tr><th data-en="Item">Mục</th><th data-en="Part no.">Mã</th><th class="nm" data-en="Description">Mô tả</th><th data-en="Status">Trạng thái</th><th data-en="Year">Năm</th></tr></thead>
+          <tbody>
+            <tr><td class="item">1</td><td class="pn">PA-SYS-001</td>
+              <td class="nm"><a class="name" href="#systems">GeoNote</a><span class="desc" data-en="[To be written] One sentence: what problem does GeoNote solve?">[Chờ Khang viết] Một câu: GeoNote giải quyết vấn đề gì?</span></td>
+              <td class="st" data-en="BUILDING">ĐANG XÂY</td><td class="yr">2026</td></tr>
+            <tr class="res"><td class="item">2</td><td class="pn">PA-SYS-002</td>
+              <td class="nm"><span class="name">????</span><span class="desc" data-en="Reserved for the next system.">Để dành cho hệ thống tiếp theo.</span></td>
+              <td class="st" data-en="IDEA">Ý TƯỞNG</td><td class="yr">20––</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ref">
+        <span class="stamp">Reference only<small data-en="NOT FOR CONSTRUCTION">KHÔNG DÙNG ĐỂ THI CÔNG</small></span>
+        <h3 data-en="Selected professional work">Công việc chuyên môn</h3>
+        <ul>
+          <li><b data-en="Pavement data processing">Xử lý dữ liệu mặt đường</b><span data-en="Pipelines for large-scale pavement survey data.">Đường ống xử lý dữ liệu khảo sát mặt đường quy mô lớn.</span></li>
+          <li><b data-en="Field data systems">Hệ thống dữ liệu hiện trường</b><span data-en="Collecting and checking data in the field.">Thu thập và kiểm tra dữ liệu ngoài hiện trường.</span></li>
+          <li><b data-en="Computer vision / ML">Thị giác máy tính / ML</b><span data-en="Machine learning on field imagery.">Học máy trên hình ảnh hiện trường.</span></li>
+          <li><b data-en="Engineering automation">Tự động hoá kỹ thuật</b><span data-en="Replacing repetitive manual workflows.">Thay quy trình thủ công lặp lại bằng phần mềm.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- D · STORIES -->
+  <section class="zone" id="stories" aria-labelledby="st-t">
+    <div class="z" aria-hidden="true">D</div>
+    <div class="zb">
+      <div class="zone-head"><h2 id="st-t">Stories</h2><span class="mono" data-en="SECTION VIEWS · EACH STORY CUT FROM ITS OWN MATERIAL">MẶT CẮT · MỖI CÂU CHUYỆN MỘT VẬT LIỆU</span></div>
+      <div class="views">
+        <a class="view m-concrete" href="#stories">
+          <header><span class="cut"><i></i>A–A</span><span class="mono mat" data-en="CONCRETE">BÊ TÔNG</span></header>
+          <div class="hatch" aria-hidden="true"></div>
+          <div class="body"><span class="meta mono"><span>LIFE</span><span>····-··-··</span><span class="ph" data-en="PLACEHOLDER">CHỜ NỘI DUNG</span></span>
+            <h3 data-en="The Things I Never Put on My CV">Những điều tôi chưa bao giờ ghi vào CV</h3></div>
+        </a>
+        <a class="view m-steel" href="#stories">
+          <header><span class="cut"><i></i>B–B</span><span class="mono mat" data-en="STEEL">THÉP</span></header>
+          <div class="hatch" aria-hidden="true"></div>
+          <div class="body"><span class="meta mono"><span>ENGINEERING</span><span>····-··-··</span><span class="ph" data-en="PLACEHOLDER">CHỜ NỘI DUNG</span></span>
+            <h3 data-en="How a Mechanical Engineer Ended Up Writing Software">Một kỹ sư cơ khí đã đi đến phần mềm như thế nào</h3></div>
+        </a>
+        <a class="view m-earth" href="#stories">
+          <header><span class="cut"><i></i>C–C</span><span class="mono mat" data-en="EARTH">ĐẤT</span></header>
+          <div class="hatch" aria-hidden="true"></div>
+          <div class="body"><span class="meta mono"><span>THOUGHTS</span><span>····-··-··</span><span class="ph" data-en="PLACEHOLDER">CHỜ NỘI DUNG</span></span>
+            <h3 data-en="The Years I Didn’t Know Where I Was Going">Những năm tôi không biết mình đang đi đâu</h3></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- E · TRACE -->
+  <section class="zone" id="trace" aria-labelledby="tr-t">
+    <div class="z" aria-hidden="true">E</div>
+    <div class="zb">
+      <div class="zone-head"><h2 id="tr-t">Trace</h2><span class="mono" data-en="REVISION HISTORY · SCALE: 1 SEGMENT = 1 CHAPTER">LỊCH SỬ SỬA ĐỔI · TỶ LỆ: 1 ĐOẠN = 1 CHƯƠNG</span></div>
+      <div class="scalebar" aria-hidden="true" id="scalebar"></div>
+      <div class="scalelabels" aria-hidden="true" id="scalelabels"></div>
+      <div class="tbl-wrap">
+        <table class="rev">
+          <thead><tr><th>Rev</th><th data-en="Year">Năm</th><th data-en="Description">Mô tả</th></tr></thead>
+          <tbody>
+            <tr><td class="r">A</td><td class="y">1992</td><td class="d" data-en="Born">Ra đời</td></tr>
+            <tr><td class="r">B</td><td class="y">2019</td><td class="d" data-en="Turning point">Bước ngoặt</td></tr>
+            <tr><td class="r">C</td><td class="y">2024</td><td class="d" data-en="New Zealand · Engineering">New Zealand · Kỹ thuật</td></tr>
+            <tr><td class="r">D</td><td class="y">2025</td><td class="d" data-en="Data · GIS">Dữ liệu · GIS</td></tr>
+            <tr class="cur"><td class="r">E Δ</td><td class="y">2026</td><td class="d"><span data-en="Software · AI">Phần mềm · AI</span> &nbsp;<a href="#trace" data-en="CAPSULE 2026 →">CAPSULE 2026 →</a></td></tr>
+            <tr class="pend"><td class="r">F</td><td class="y">20––</td><td class="d" data-en="Pending">Đang chờ</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- F · SUPPORT -->
+  <section class="zone" id="support" aria-labelledby="sp-t">
+    <div class="z" aria-hidden="true">F</div>
+    <div class="zb approve">
+      <div>
+        <div class="zone-head"><h2 id="sp-t">Fuel the lab</h2><span class="mono" data-en="APPROVAL">PHÊ DUYỆT</span></div>
+        <p data-en="Pharaoh Alone is an independent project. If something here helped you think, learn or build, you can sign it off with a coffee.">Pharaoh Alone là một dự án độc lập. Nếu điều gì đó ở đây giúp bạn nghĩ, học hay xây, bạn có thể ký duyệt bằng một ly cà phê.</p>
+      </div>
+      <div class="sig">
+        <div class="line"><span data-en="APPROVED BY">PHÊ DUYỆT BỞI</span></div>
+        <div class="cups"><a href="#support">☕ $5</a><a href="#support">☕☕ $10</a><a href="#support">☕☕☕ $25</a></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="notes">
+    <b data-en="GENERAL NOTES">GHI CHÚ CHUNG</b>
+    <ol>
+      <li data-en="All dimensions in years.">Mọi kích thước tính bằng năm.</li>
+      <li data-en="Do not scale drawing.">Không đo trên bản vẽ.</li>
+      <li data-en="This drawing is still under revision.">Bản vẽ này vẫn đang được sửa đổi.</li>
+    </ol>
+  </footer>
+</div>
+</div>
+
+<!--GLOBE-->
+<script>
+(function () {
+  var root = document.documentElement;
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var seen = false;
+  try { seen = sessionStorage.getItem('pa-a') === '1'; sessionStorage.setItem('pa-a', '1'); } catch (e) {}
+  if (!seen && !reduce) document.body.classList.add('intro');
+
+  var lang = 'vi';
+  var setLang = PALang([].slice.call(document.querySelectorAll('.lang button')));
+  document.addEventListener('pa:lang', function (e) { lang = e.detail; });
+
+  /* Revision cloud: scalloped red outline sized to its box */
+  document.querySelectorAll('[data-cloud]').forEach(function (box) {
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', 'c'); svg.setAttribute('aria-hidden', 'true');
+    var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    svg.appendChild(p); box.prepend(svg);
+    function draw() {
+      var w = box.clientWidth, h = box.clientHeight, r = 11, d = '';
+      function edge(x0, y0, x1, y1, sweep) {
+        var len = Math.hypot(x1 - x0, y1 - y0), n = Math.max(1, Math.round(len / (r * 2)));
+        for (var i = 1; i <= n; i++) {
+          var x = x0 + (x1 - x0) * i / n, y = y0 + (y1 - y0) * i / n;
+          d += ' A ' + (len / n / 2) + ' ' + (len / n / 2) + ' 0 0 ' + sweep + ' ' + x.toFixed(1) + ' ' + y.toFixed(1);
+        }
+      }
+      var m = 3;
+      d = 'M ' + m + ' ' + m;
+      edge(m, m, w - m, m, 1); edge(w - m, m, w - m, h - m, 1); edge(w - m, h - m, m, h - m, 1); edge(m, h - m, m, m, 1);
+      p.setAttribute('d', d);
+    }
+    new ResizeObserver(draw).observe(box);
+  });
+
+  /* Trace scale bar: segment widths follow the years between milestones */
+  var years = [1992, 2019, 2024, 2025, 2026, 2027];
+  var bar = document.getElementById('scalebar'), lab = document.getElementById('scalelabels');
+  var span = years[years.length - 1] - years[0], acc = 0;
+  years.forEach(function (y, i) {
+    var left = (y - years[0]) / span * 100;
+    var s = document.createElement('span'); s.className = 'mono'; s.style.left = left + '%';
+    s.textContent = i === years.length - 1 ? '→' : y;
+    if (i > 0 && years[i] - years[i - 1] < 2 && i < years.length - 1) s.classList.add('dense');
+    lab.appendChild(s);
+    if (i < years.length - 1) { var seg = document.createElement('span'); seg.style.width = ((years[i + 1] - y) / span * 100) + '%'; bar.appendChild(seg); }
+  });
+
+  /* Globe — orthographic line drawing */
+  var css = getComputedStyle(root);
+  function col(n) { return getComputedStyle(root).getPropertyValue(n).trim(); }
+  var grat = d3.geoGraticule10();
+  var journey = (function () { var a = PAGlobe.places[0], b = PAGlobe.places[1], f = d3.geoInterpolate([a.lon, a.lat], [b.lon, b.lat]), c = []; for (var i = 0; i <= 48; i++) c.push(f(i / 48)); return { type: 'LineString', coordinates: c }; })();
+  var hatch = null, hatchFor = '';
+  function hatchPattern(ctx, ink) {
+    if (hatchFor === ink && hatch) return hatch;
+    var c = document.createElement('canvas'); c.width = c.height = 8;
+    var x = c.getContext('2d'); x.strokeStyle = ink; x.globalAlpha = 0.28; x.lineWidth = 0.8;
+    x.beginPath(); x.moveTo(0, 8); x.lineTo(8, 0); x.stroke();
+    hatch = ctx.createPattern(c, 'repeat'); hatchFor = ink; return hatch;
+  }
+
+  PAGlobe(document.getElementById('globe'), {
+    start: [-140, 14], speed: 2.2, scale: 0.4, introDuration: 2.2,
+    intro: document.body.classList.contains('intro'),
+    onCenter: function (lat, lon) { document.getElementById('center').textContent = PAGlobe.fmt(lat, lon); },
+    render: function (g) {
+      var ctx = g.ctx, ink = col('--ink'), ink2 = col('--ink-2'), red = col('--red'), hair = col('--hair'), paper = col('--paper');
+      var R = g.proj.scale(), cx = g.w / 2, cy = g.h / 2;
+      ctx.lineJoin = 'round';
+
+      // centre lines (chain: long dash, short dash)
+      ctx.setLineDash([22, 4, 3, 4]); ctx.strokeStyle = ink2; ctx.lineWidth = 0.6;
+      ctx.beginPath(); ctx.moveTo(cx - R - 24, cy); ctx.lineTo(cx + R + 24, cy); ctx.moveTo(cx, cy - R - 24); ctx.lineTo(cx, cy + R + 24); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // graticule
+      ctx.beginPath(); g.path(grat); ctx.strokeStyle = hair; ctx.lineWidth = 0.6; ctx.stroke();
+
+      // land: section hatch + outline drawn like a pen plotter
+      ctx.beginPath(); g.path(LAND); ctx.fillStyle = hatchPattern(ctx, ink); ctx.globalAlpha = g.intro; ctx.fill(); ctx.globalAlpha = 1;
+      var L = 9000 * g.intro;
+      ctx.setLineDash(g.intro < 1 ? [L, 1e6] : []);
+      ctx.beginPath(); g.path(LAND); ctx.strokeStyle = ink; ctx.lineWidth = 1; ctx.stroke();
+      ctx.setLineDash([]);
+
+      // sphere outline
+      ctx.beginPath(); g.path({ type: 'Sphere' }); ctx.strokeStyle = ink; ctx.lineWidth = 1.6; ctx.stroke();
+
+      // diameter dimension
+      var y = cy + R + 30;
+      ctx.strokeStyle = ink; ctx.fillStyle = ink; ctx.lineWidth = 0.75;
+      ctx.beginPath(); ctx.moveTo(cx - R, cy + 6); ctx.lineTo(cx - R, y + 6); ctx.moveTo(cx + R, cy + 6); ctx.lineTo(cx + R, y + 6); ctx.moveTo(cx - R, y); ctx.lineTo(cx + R, y); ctx.stroke();
+      [[cx - R, 1], [cx + R, -1]].forEach(function (a) { ctx.beginPath(); ctx.moveTo(a[0], y); ctx.lineTo(a[0] + 9 * a[1], y - 2.6); ctx.lineTo(a[0] + 9 * a[1], y + 2.6); ctx.closePath(); ctx.fill(); });
+      ctx.font = '500 11px "IBM Plex Mono", monospace'; ctx.textAlign = 'center';
+      var label = 'Ø 12 742 km';
+      var tw = ctx.measureText(label).width + 10; ctx.fillStyle = paper; ctx.fillRect(cx - tw / 2, y - 8, tw, 16); ctx.fillStyle = ink; ctx.fillText(label, cx, y + 4);
+
+      if (g.intro < 1) return;
+
+      // journey: phantom line
+      ctx.setLineDash([16, 3, 3, 3, 3, 3]); ctx.lineDashOffset = g.reduce ? 0 : -g.t * 14;
+      ctx.beginPath(); g.path(journey); ctx.strokeStyle = red; ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.setLineDash([]); ctx.lineDashOffset = 0;
+
+      // places: point + balloon callout (A, B …)
+      PAGlobe.places.forEach(function (pl, i) {
+        var center = g.center, d = d3.geoDistance([pl.lon, pl.lat], center);
+        if (d > Math.PI / 2 - 0.05) return;
+        var p = g.proj([pl.lon, pl.lat]);
+        ctx.strokeStyle = red; ctx.fillStyle = paper; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.arc(p[0], p[1], 4, 0, 7); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(p[0] - 8, p[1]); ctx.lineTo(p[0] + 8, p[1]); ctx.moveTo(p[0], p[1] - 8); ctx.lineTo(p[0], p[1] + 8); ctx.lineWidth = 0.6; ctx.stroke();
+        var title = (lang === 'en' ? 'DETAIL ' : 'CHI TIẾT ') + String.fromCharCode(65 + i) + ' — ' + pl[lang].toUpperCase();
+        var small = g.w < 480;
+        ctx.font = '700 ' + (small ? 12 : 14) + 'px "Barlow Condensed", sans-serif';
+        var room = 64 + ctx.measureText(title).width;
+        var dir = p[0] > cx ? 1 : -1;
+        if (dir > 0 && p[0] + room > g.w) dir = -1;
+        if (dir < 0 && p[0] - room < 0) dir = 1;
+        var bx = p[0] + dir * 46, by = p[1] - 40;
+        ctx.strokeStyle = ink; ctx.lineWidth = 0.75;
+        ctx.beginPath(); ctx.moveTo(p[0] + dir * 5, p[1] - 5); ctx.lineTo(bx - dir * 11, by + 6); ctx.stroke();
+        ctx.beginPath(); ctx.arc(bx, by, 11, 0, 7); ctx.fillStyle = paper; ctx.fill(); ctx.stroke();
+        ctx.fillStyle = ink; ctx.font = '700 13px "Barlow Condensed", sans-serif'; ctx.textAlign = 'center'; ctx.fillText(String.fromCharCode(65 + i), bx, by + 4.5);
+        ctx.textAlign = dir > 0 ? 'left' : 'right';
+        ctx.font = '700 ' + (small ? 12 : 14) + 'px "Barlow Condensed", sans-serif';
+        ctx.fillText(title, bx + dir * 16, by - 2);
+        ctx.font = '500 ' + (small ? 9.5 : 10.5) + 'px "IBM Plex Mono", monospace'; ctx.fillStyle = ink2;
+        ctx.fillText((pl.approx ? '≈ ' : '') + PAGlobe.fmt(pl.lat, pl.lon) + (pl.since ? ' · ' + pl.since : ''), bx + dir * 16, by + 12);
+      });
+    }
+  });
+})();
+</script>

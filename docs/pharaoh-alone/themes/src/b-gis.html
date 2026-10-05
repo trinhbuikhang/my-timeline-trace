@@ -1,0 +1,487 @@
+<title>Pharaoh Alone · GIS Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans+Condensed:wght@500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: the site is a desktop GIS project. Layers panel = navigation, map canvas = hero,
+   properties panel = NOW, attribute table = systems / stories / trace, status bar = live coordinates. */
+:root {
+  --chrome: #e6e7e3;     /* window chrome */
+  --panel: #f6f6f3;      /* docked panels */
+  --field: #ffffff;
+  --line: #c8c9c2;
+  --text: #1d201e;
+  --muted: #5f655f;
+  --ocean: #cddbe0;
+  --land: #fbfaf5;
+  --coast: #73817c;
+  --grid: rgb(29 32 30 / 0.12);
+  --sel: #ffe100;        /* GIS selection yellow */
+  --sel-text: #1d201e;
+  --point: #d1293d;
+  --route: #2c6e8f;
+  --ui: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --cond: 'IBM Plex Sans Condensed', 'Arial Narrow', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --chrome: #1f2326; --panel: #272c30; --field: #1b1f22; --line: #3a4146; --text: #e4e7e4; --muted: #9aa29d; --ocean: #0f1a21; --land: #2b3438; --coast: #7c8b8f; --grid: rgb(228 231 228 / 0.1); --point: #ff5a6a; --route: #6db4d6; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --chrome: #1f2326; --panel: #272c30; --field: #1b1f22; --line: #3a4146; --text: #e4e7e4; --muted: #9aa29d; --ocean: #0f1a21; --land: #2b3438; --coast: #7c8b8f; --grid: rgb(228 231 228 / 0.1); --point: #ff5a6a; --route: #6db4d6; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--chrome); color: var(--text); font: 400 14px/1.45 var(--ui); -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--route); outline-offset: 1px; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+.app { max-width: 1520px; margin: 0 auto; padding-block: 0; padding-inline: 0; display: grid; grid-template-columns: minmax(0, 1fr); border-inline: 1px solid var(--line); background: var(--chrome); min-height: 100%; }
+
+/* Title + menu bars */
+.titlebar { display: flex; align-items: center; gap: 12px; padding: 7px 12px; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.lights { display: flex; gap: 6px; }
+.lights i { width: 11px; height: 11px; border-radius: 50%; background: var(--line); }
+.titlebar .file { flex: 1; text-align: center; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.titlebar .file b { color: var(--text); font-weight: 600; }
+.lang { display: flex; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+.lang button { padding: 2px 8px; font-size: 12px; font-weight: 600; color: var(--muted); }
+.lang button[aria-pressed="true"] { background: var(--text); color: var(--panel); }
+
+.menubar { display: flex; align-items: center; gap: 2px; padding: 3px 6px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.menubar a { padding: 5px 10px; border-radius: 3px; text-decoration: none; font-weight: 500; white-space: nowrap; transition: background 60ms; }
+.menubar a:hover { background: var(--text); color: var(--panel); }
+.menubar .sep { width: 1px; align-self: stretch; background: var(--line); margin: 3px 6px; }
+.tools { display: flex; gap: 2px; margin-left: auto; }
+.tools button { width: 30px; height: 28px; border-radius: 3px; display: grid; place-items: center; }
+.tools button[aria-pressed="true"] { background: var(--panel); box-shadow: inset 0 0 0 1px var(--line); }
+.tools svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+
+/* Work area */
+.work { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1px; background: var(--line); }
+.dock { background: var(--panel); min-width: 0; }
+.dock > h2 { margin: 0; padding: 6px 10px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); background: var(--chrome); display: flex; justify-content: space-between; }
+
+/* Layers tree */
+.tree { list-style: none; margin: 0; padding: 6px 0; }
+.tree li { list-style: none; }
+.tree .row { display: flex; align-items: center; gap: 8px; padding: 3px 10px; min-height: 28px; cursor: default; }
+.tree .row:hover { background: var(--field); }
+.tree .group > .row { font-weight: 600; }
+.tree ul { margin: 0; padding: 0 0 0 22px; }
+.tree input { accent-color: var(--route); margin: 0; }
+.tree .count { margin-left: auto; color: var(--muted); font-size: 12px; }
+.patch { width: 16px; height: 12px; flex: none; border: 1px solid var(--coast); }
+.patch.pt { width: 10px; height: 10px; border-radius: 50%; background: var(--point); border: 1.5px solid var(--field); box-shadow: 0 0 0 1px var(--point); }
+.patch.ln { border: 0; height: 2px; background: var(--route); }
+.patch.gr { background: repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 4px), repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 4px); }
+.patch.ld { background: var(--land); }
+/* story symbology: every story has its own style */
+.patch.s-dusk { background: #7b5fb0; border-color: #4e3a7a; }
+.patch.s-paper { background: repeating-linear-gradient(45deg, #b2402a 0 1.5px, #f1e9da 1.5px 4px); border-color: #b2402a; }
+.patch.s-ember { background: radial-gradient(circle, #e0703a 2px, transparent 2.5px) 0 0 / 5px 5px, #3a1d12; border-color: #e0703a; }
+.tree .story { cursor: pointer; }
+.tree .story span.t { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tree .story[aria-selected="true"] { background: var(--sel); color: var(--sel-text); }
+
+/* Map */
+.map { position: relative; background: var(--field); min-height: 420px; overflow: hidden; }
+.map canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: crosshair; touch-action: pan-y; }
+.map canvas.is-dragging { cursor: grabbing; }
+.cartouche { position: absolute; left: 14px; top: 14px; max-width: min(380px, calc(100% - 28px)); padding: 14px 16px 12px; background: color-mix(in srgb, var(--field) 88%, transparent); border: 1px solid var(--text); pointer-events: none; }
+.cartouche h1 { margin: 0; font: 700 clamp(34px, 4.4vw, 56px)/0.9 var(--cond); letter-spacing: -0.01em; text-transform: uppercase; }
+.cartouche p { margin: 10px 0 0; font-size: clamp(15px, 1.5vw, 18px); line-height: 1.35; }
+.cartouche p span { display: block; }
+.cartouche .sub { margin-top: 10px; font: 500 11.5px/1.3 var(--mono); color: var(--muted); letter-spacing: 0.02em; }
+.mapfoot { position: absolute; left: 14px; bottom: 12px; display: flex; align-items: flex-end; gap: 16px; pointer-events: none; font: 500 10.5px/1 var(--mono); }
+.north { display: grid; justify-items: center; gap: 2px; }
+.north svg { width: 18px; height: 26px; }
+.north svg path { fill: var(--text); }
+.scale { display: grid; gap: 3px; }
+.scale .bar { width: 120px; height: 6px; border: 1px solid var(--text); background: linear-gradient(90deg, var(--text) 0 25%, transparent 25% 50%, var(--text) 50% 75%, transparent 75%); }
+.scale .ticks { display: flex; justify-content: space-between; width: 128px; }
+
+/* Properties / identify */
+.props { display: flex; flex-direction: column; }
+.props .section { padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.props h3 { margin: 0 0 6px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.kv { display: grid; grid-template-columns: 7.5em 1fr; gap: 4px 10px; margin: 0; font-size: 13.5px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; font-weight: 500; min-width: 0; }
+.kv.list { grid-template-columns: 1.8em 1fr; }
+.kv.list dt { font-family: var(--mono); font-size: 12px; padding-top: 2px; }
+.q { font-size: 17px; font-style: italic; margin: 2px 0 0; }
+.ident-empty { color: var(--muted); font-size: 13px; margin: 0; }
+
+/* Attribute table */
+.table-dock { background: var(--panel); }
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); background: var(--chrome); overflow-x: auto; }
+.tabs button { padding: 7px 14px; font-size: 13px; font-weight: 500; border-right: 1px solid var(--line); white-space: nowrap; color: var(--muted); }
+.tabs button[aria-selected="true"] { background: var(--panel); color: var(--text); font-weight: 600; box-shadow: inset 0 2px 0 var(--route); }
+.tabs .info { margin-left: auto; padding: 7px 12px; color: var(--muted); font-size: 12px; white-space: nowrap; }
+.tbl { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th { text-align: left; font-weight: 600; font-size: 12px; padding: 6px 10px; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); background: var(--chrome); white-space: nowrap; }
+td { padding: 7px 10px; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); vertical-align: top; }
+td.id { color: var(--muted); font-family: var(--mono); font-size: 12px; width: 1%; white-space: nowrap; }
+td.big { font: 700 18px/1.15 var(--cond); text-transform: uppercase; letter-spacing: 0.01em; }
+td.mono, .mono-cell { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
+td.ph { color: var(--muted); font-style: italic; }
+tbody tr { cursor: pointer; transition: background 50ms linear; }
+tbody tr:hover { background: var(--field); }
+tbody tr[aria-selected="true"] { background: var(--sel); color: var(--sel-text); }
+tbody tr[aria-selected="true"] td.ph, tbody tr[aria-selected="true"] td.id { color: var(--sel-text); }
+.null { color: var(--muted); font-family: var(--mono); font-size: 12px; }
+.panel-tab[hidden] { display: none; }
+.story-title { font-family: var(--ui); font-weight: 600; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11.5px; }
+
+/* Status bar */
+.status { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.status > * { padding: 5px 10px; border-right: 1px solid var(--line); white-space: nowrap; }
+.status b { color: var(--text); font-weight: 500; font-family: var(--mono); }
+.status .msg { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.progress { display: inline-block; width: 80px; height: 6px; border: 1px solid var(--line); vertical-align: middle; margin-left: 6px; }
+.progress i { display: block; height: 100%; background: var(--route); width: 0; }
+.fuel { border-right: 0; margin-left: auto; }
+.fuel a { text-decoration: none; color: var(--text); font-weight: 500; }
+.fuel a:hover { text-decoration: underline; }
+
+/* Desktop layout */
+@media (min-width: 1000px) {
+  .work { grid-template-columns: 250px minmax(0, 1fr) 290px; grid-template-rows: minmax(560px, 66vh) auto; }
+  .layers { grid-row: 1; }
+  .map { grid-row: 1; min-height: 0; }
+  .props { grid-row: 1; overflow: auto; }
+  .table-dock { grid-column: 1 / -1; }
+}
+@media (max-width: 999px) {
+  .map { aspect-ratio: 1 / 1.05; min-height: 0; }
+  .cartouche { position: relative; left: auto; top: auto; margin: 10px; }
+  .mapfoot { display: none; }
+  .work { display: flex; flex-direction: column; }
+  .map { order: 1; } .props { order: 2; } .table-dock { order: 3; } .layers { order: 4; }
+  .tools { display: none; }
+  .status .rot, .status .epsg { display: none; }
+}
+@media (max-width: 999px) {
+  .map { aspect-ratio: auto; display: flex; flex-direction: column; }
+  .map canvas { position: relative; width: 100%; aspect-ratio: 1 / 0.95; height: auto; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="app">
+  <div class="titlebar">
+    <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="file"><b>Pharaoh Alone</b> — pharaohalone.qgz</span>
+    <span class="lang"><button type="button" data-lang="vi" aria-pressed="true">VI</button><button type="button" data-lang="en" aria-pressed="false">EN</button></span>
+  </div>
+
+  <nav class="menubar" aria-label="Điều hướng">
+    <a href="#map" data-en="Project">Dự án</a><span class="sep" aria-hidden="true"></span>
+    <a href="#">Solve</a><a href="#systems-tab">Systems</a><a href="#stories-tab">Stories</a><a href="#">Lab</a><a href="#trace-tab">Trace</a><a href="#now">Now</a>
+    <span class="tools" role="toolbar" aria-label="Công cụ bản đồ">
+      <button type="button" aria-pressed="true" title="Pan" data-tool="pan"><svg viewBox="0 0 20 20"><path d="M10 2v16M2 10h16M10 2l-2.5 2.5M10 2l2.5 2.5M10 18l-2.5-2.5M10 18l2.5-2.5M2 10l2.5-2.5M2 10l2.5 2.5M18 10l-2.5-2.5M18 10l-2.5 2.5"/></svg></button>
+      <button type="button" aria-pressed="false" title="Identify" data-tool="identify"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6v.5"/></svg></button>
+      <button type="button" aria-pressed="false" title="Reset view" data-tool="home"><svg viewBox="0 0 20 20"><path d="M3 9.5 10 3l7 6.5M5 8v9h10V8"/></svg></button>
+    </span>
+  </nav>
+
+  <div class="work">
+    <!-- Layers -->
+    <section class="dock layers" aria-labelledby="layers-h">
+      <h2 id="layers-h"><span data-en="Layers">Lớp dữ liệu</span><span class="mono">7</span></h2>
+      <ul class="tree">
+        <li class="group"><div class="row"><input type="checkbox" checked data-layer="places" id="ly-places"><span class="patch pt" aria-hidden="true"></span><label for="ly-places" data-en="Places">Địa điểm</label><span class="count">2</span></div></li>
+        <li class="group"><div class="row"><input type="checkbox" checked data-layer="route" id="ly-route"><span class="patch ln" aria-hidden="true"></span><label for="ly-route" data-en="Journey">Hành trình</label><span class="count">1</span></div></li>
+        <li class="group"><div class="row"><input type="checkbox" checked id="ly-stories" disabled><span class="patch" aria-hidden="true" style="background:var(--field)"></span><label for="ly-stories" data-en="Stories">Câu chuyện</label><span class="count">3</span></div>
+          <ul role="listbox" aria-label="Câu chuyện">
+            <li class="row story" role="option" tabindex="0" aria-selected="false" data-story="0"><span class="patch s-dusk" aria-hidden="true"></span><span class="t" data-en="The Things I Never Put on My CV">Những điều tôi chưa bao giờ ghi vào CV</span></li>
+            <li class="row story" role="option" tabindex="0" aria-selected="false" data-story="1"><span class="patch s-paper" aria-hidden="true"></span><span class="t" data-en="How a Mechanical Engineer Ended Up Writing Software">Một kỹ sư cơ khí đã đi đến phần mềm như thế nào</span></li>
+            <li class="row story" role="option" tabindex="0" aria-selected="false" data-story="2"><span class="patch s-ember" aria-hidden="true"></span><span class="t" data-en="The Years I Didn’t Know Where I Was Going">Những năm tôi không biết mình đang đi đâu</span></li>
+          </ul>
+        </li>
+        <li class="group"><div class="row"><input type="checkbox" checked data-layer="grid" id="ly-grid"><span class="patch gr" aria-hidden="true"></span><label for="ly-grid" data-en="Graticule 10°">Lưới kinh vĩ 10°</label></div></li>
+        <li class="group"><div class="row"><input type="checkbox" checked data-layer="land" id="ly-land"><span class="patch ld" aria-hidden="true"></span><label for="ly-land" data-en="Land · Natural Earth 1:110m">Đất liền · Natural Earth 1:110m</label></div></li>
+      </ul>
+    </section>
+
+    <!-- Map canvas -->
+    <section class="dock map" id="map" aria-label="Bản đồ">
+      <canvas id="globe" tabindex="0" role="img" aria-label="Bản đồ quả địa cầu: Việt Nam và New Zealand, nối bằng đường hành trình. Kéo để xoay, bấm vào điểm để xem thông tin."></canvas>
+      <div class="cartouche">
+        <h1>Pharaoh Alone</h1>
+        <p><span data-en="Problems solved.">Vấn đề được giải.</span><span data-en="Systems built.">Hệ thống được dựng.</span><span data-en="Stories left behind.">Câu chuyện còn ở lại.</span></p>
+        <p class="sub">ENGINEERING × DATA × GIS × SOFTWARE × AI</p>
+      </div>
+      <div class="mapfoot" aria-hidden="true">
+        <span class="north"><svg viewBox="0 0 18 26"><path d="M9 0 L17 22 L9 17 L1 22 Z"/></svg>N</span>
+        <span class="scale"><span class="bar"></span><span class="ticks"><span>0</span><span id="scale-km">—</span></span></span>
+      </div>
+    </section>
+
+    <!-- Properties: NOW + identify -->
+    <section class="dock props" id="now" aria-labelledby="props-h">
+      <h2 id="props-h"><span data-en="Project properties · Now">Thuộc tính dự án · Now</span><span class="mono">2026-10</span></h2>
+      <div class="section">
+        <h3 data-en="Building">Đang xây</h3>
+        <dl class="kv list"><dt>01</dt><dd>GeoNote</dd><dt>02</dt><dd data-en="Personal software systems">Hệ thống phần mềm cá nhân</dd></dl>
+      </div>
+      <div class="section">
+        <h3 data-en="Exploring">Đang khám phá</h3>
+        <dl class="kv list"><dt>01</dt><dd data-en="AI · Data">AI · Dữ liệu</dd><dt>02</dt><dd>Rust</dd><dt>03</dt><dd data-en="Geospatial systems">Hệ thống không gian địa lý</dd></dl>
+      </div>
+      <div class="section">
+        <h3 data-en="Thinking about">Đang nghĩ về</h3>
+        <dl class="kv list"><dt>01</dt><dd data-en="Independent products">Sản phẩm độc lập</dd><dt>02</dt><dd data-en="Engineering automation">Tự động hoá kỹ thuật</dd></dl>
+      </div>
+      <div class="section">
+        <h3 data-en="Open question">Câu hỏi đang mở</h3>
+        <p class="q" data-en="What should I build next?">Tiếp theo mình nên xây gì?</p>
+      </div>
+      <div class="section" aria-live="polite">
+        <h3 data-en="Identify results">Kết quả nhận dạng</h3>
+        <div id="ident"><p class="ident-empty" data-en="Click a point on the map or a row in the table.">Bấm vào một điểm trên bản đồ hoặc một dòng trong bảng.</p></div>
+      </div>
+    </section>
+
+    <!-- Attribute table -->
+    <section class="dock table-dock" aria-label="Bảng thuộc tính">
+      <div class="tabs" role="tablist">
+        <button role="tab" id="systems-tab" aria-selected="true" aria-controls="t-sys" data-en="Systems · 2">Hệ thống · 2</button>
+        <button role="tab" id="stories-tab" aria-selected="false" aria-controls="t-st" data-en="Stories · 3">Câu chuyện · 3</button>
+        <button role="tab" id="trace-tab" aria-selected="false" aria-controls="t-tr" data-en="Trace · 6">Dấu vết · 6</button>
+        <button role="tab" id="pro-tab" aria-selected="false" aria-controls="t-pro" data-en="Professional work · 4">Công việc chuyên môn · 4</button>
+        <span class="info mono" id="selinfo">0 / 2 selected</span>
+      </div>
+
+      <div class="tbl panel-tab" id="t-sys" role="tabpanel" aria-labelledby="systems-tab">
+        <table>
+          <thead><tr><th>fid</th><th>name</th><th>status</th><th>year</th><th>problem</th></tr></thead>
+          <tbody>
+            <tr data-kind="system" data-i="0" tabindex="0"><td class="id">PA·SYS·001</td><td class="big">GeoNote</td><td class="mono">BUILDING</td><td class="mono">2026</td><td class="ph" data-en="[To be written] One sentence: what problem does GeoNote solve?">[Chờ Khang viết] Một câu: GeoNote giải quyết vấn đề gì?</td></tr>
+            <tr data-kind="system" data-i="1" tabindex="0"><td class="id">PA·SYS·002</td><td class="big">????</td><td class="mono">IDEA</td><td class="null">NULL</td><td class="ph" data-en="Reserved for the next system.">Để dành cho hệ thống tiếp theo.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tbl panel-tab" id="t-st" role="tabpanel" aria-labelledby="stories-tab" hidden>
+        <table>
+          <thead><tr><th>fid</th><th>title</th><th>category</th><th>date</th><th>symbology</th></tr></thead>
+          <tbody>
+            <tr data-kind="story" data-i="0" tabindex="0"><td class="id">PA·STR·001</td><td class="story-title" data-en="The Things I Never Put on My CV">Những điều tôi chưa bao giờ ghi vào CV</td><td class="mono">LIFE</td><td class="null">NULL</td><td><span class="chip"><span class="patch s-dusk"></span>dusk</span></td></tr>
+            <tr data-kind="story" data-i="1" tabindex="0"><td class="id">PA·STR·002</td><td class="story-title" data-en="How a Mechanical Engineer Ended Up Writing Software">Một kỹ sư cơ khí đã đi đến phần mềm như thế nào</td><td class="mono">ENGINEERING</td><td class="null">NULL</td><td><span class="chip"><span class="patch s-paper"></span>paper</span></td></tr>
+            <tr data-kind="story" data-i="2" tabindex="0"><td class="id">PA·STR·003</td><td class="story-title" data-en="The Years I Didn’t Know Where I Was Going">Những năm tôi không biết mình đang đi đâu</td><td class="mono">THOUGHTS</td><td class="null">NULL</td><td><span class="chip"><span class="patch s-ember"></span>ember</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tbl panel-tab" id="t-tr" role="tabpanel" aria-labelledby="trace-tab" hidden>
+        <table>
+          <thead><tr><th>fid</th><th>year</th><th>label</th><th>kind</th><th>link</th></tr></thead>
+          <tbody>
+            <tr tabindex="0"><td class="id">1</td><td class="mono">1992</td><td data-en="Born">Ra đời</td><td class="mono">life</td><td class="null">NULL</td></tr>
+            <tr tabindex="0"><td class="id">2</td><td class="mono">2019</td><td data-en="Turning point">Bước ngoặt</td><td class="mono">turning-point</td><td class="null">NULL</td></tr>
+            <tr tabindex="0"><td class="id">3</td><td class="mono">2024</td><td data-en="New Zealand · Engineering">New Zealand · Kỹ thuật</td><td class="mono">place</td><td class="null">NULL</td></tr>
+            <tr tabindex="0"><td class="id">4</td><td class="mono">2025</td><td data-en="Data · GIS">Dữ liệu · GIS</td><td class="mono">work</td><td class="null">NULL</td></tr>
+            <tr tabindex="0"><td class="id">5</td><td class="mono">2026</td><td data-en="Software · AI">Phần mềm · AI</td><td class="mono">work</td><td class="mono"><a href="#">capsule/2026</a></td></tr>
+            <tr tabindex="0"><td class="id">6</td><td class="null">NULL</td><td>?</td><td class="mono">future</td><td class="null">NULL</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tbl panel-tab" id="t-pro" role="tabpanel" aria-labelledby="pro-tab" hidden>
+        <table>
+          <thead><tr><th>fid</th><th>domain</th><th>summary</th><th>access</th></tr></thead>
+          <tbody>
+            <tr tabindex="0"><td class="id">1</td><td data-en="Pavement data processing">Xử lý dữ liệu mặt đường</td><td data-en="Pipelines for large-scale pavement survey data.">Đường ống xử lý dữ liệu khảo sát mặt đường quy mô lớn.</td><td class="mono">restricted</td></tr>
+            <tr tabindex="0"><td class="id">2</td><td data-en="Field data systems">Hệ thống dữ liệu hiện trường</td><td data-en="Collecting and checking data in the field.">Thu thập và kiểm tra dữ liệu ngoài hiện trường.</td><td class="mono">restricted</td></tr>
+            <tr tabindex="0"><td class="id">3</td><td data-en="Computer vision / ML">Thị giác máy tính / ML</td><td data-en="Machine learning on field imagery.">Học máy trên hình ảnh hiện trường.</td><td class="mono">restricted</td></tr>
+            <tr tabindex="0"><td class="id">4</td><td data-en="Engineering automation">Tự động hoá kỹ thuật</td><td data-en="Replacing repetitive manual workflows.">Thay quy trình thủ công lặp lại bằng phần mềm.</td><td class="mono">restricted</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <footer class="status">
+    <span class="msg" id="msg" data-en="Ready">Sẵn sàng</span>
+    <span><span data-en="Coordinate">Toạ độ</span> <b id="coord">—</b></span>
+    <span><span data-en="Scale">Tỷ lệ</span> <b id="scale">—</b></span>
+    <span class="rot"><span data-en="Rotation">Xoay</span> <b id="rot">0.0°</b></span>
+    <span class="epsg"><b>EPSG:4326</b></span>
+    <span class="fuel"><a href="#">☕ <span data-en="Plugins ▸ Fuel the lab">Plugin ▸ Fuel the lab</span></a></span>
+  </footer>
+</div>
+
+<!--GLOBE-->
+<script>
+(function () {
+  var root = document.documentElement;
+  var lang = 'vi';
+  PALang([].slice.call(document.querySelectorAll('.lang button')));
+  document.addEventListener('pa:lang', function (e) { lang = e.detail; g && g.redraw(); renderIdent(); });
+
+  function col(n) { return getComputedStyle(root).getPropertyValue(n).trim(); }
+  var layers = { places: true, route: true, grid: true, land: true };
+  var selected = null; // { kind, i }
+  var grat = d3.geoGraticule10();
+  var journey = (function () { var a = PAGlobe.places[0], b = PAGlobe.places[1], f = d3.geoInterpolate([a.lon, a.lat], [b.lon, b.lat]), c = []; for (var i = 0; i <= 48; i++) c.push(f(i / 48)); return { type: 'LineString', coordinates: c }; })();
+  var stories = [
+    { vi: 'Những điều tôi chưa bao giờ ghi vào CV', en: 'The Things I Never Put on My CV', cat: 'LIFE', mood: 'dusk' },
+    { vi: 'Một kỹ sư cơ khí đã đi đến phần mềm như thế nào', en: 'How a Mechanical Engineer Ended Up Writing Software', cat: 'ENGINEERING', mood: 'paper' },
+    { vi: 'Những năm tôi không biết mình đang đi đâu', en: 'The Years I Didn’t Know Where I Was Going', cat: 'THOUGHTS', mood: 'ember' }
+  ];
+  var systems = [
+    { name: 'GeoNote', status: 'BUILDING', year: 2026 },
+    { name: '????', status: 'IDEA', year: null }
+  ];
+  var msg = document.getElementById('msg');
+  var steps = [[0.15, 'Lưới kinh vĩ', 'graticule'], [0.45, 'Đất liền', 'land'], [0.7, 'Hành trình', 'journey'], [0.9, 'Địa điểm', 'places']];
+
+  var canvas = document.getElementById('globe');
+  var lastProj = null, lastCenter = [0, 0];
+  var g = PAGlobe(canvas, {
+    start: [-140, 14], speed: 2, scale: 0.42, introDuration: 2.4,
+    offset: function (w, h) { return w > 640 && w / h > 1.2 ? [0.64, 0.54] : [0.5, 0.5]; },
+    onCenter: function (lat, lon) { lastCenter = [lat, lon]; },
+    render: function (s) {
+      var ctx = s.ctx; lastProj = s.proj;
+      var it = s.intro;
+      // status bar: layers rendering one by one
+      if (it < 1) {
+        var done = steps.filter(function (x) { return it >= x[0]; }).length;
+        msg.innerHTML = (lang === 'en' ? 'Rendering layers ' : 'Đang vẽ lớp ') + done + '/4 <span class="progress"><i style="width:' + Math.round(it * 100) + '%"></i></span>';
+      } else if (msg.dataset.done !== '1') { msg.dataset.done = '1'; msg.textContent = lang === 'en' ? 'Project loaded · 7 layers' : 'Đã tải dự án · 7 lớp'; }
+
+      ctx.beginPath(); s.path({ type: 'Sphere' }); ctx.fillStyle = col('--ocean'); ctx.fill();
+      if (layers.grid && it >= 0.15) { ctx.beginPath(); s.path(grat); ctx.strokeStyle = col('--grid'); ctx.lineWidth = 0.7; ctx.stroke(); }
+      if (layers.land && it >= 0.45) { ctx.beginPath(); s.path(LAND); ctx.fillStyle = col('--land'); ctx.fill(); ctx.strokeStyle = col('--coast'); ctx.lineWidth = 0.7; ctx.stroke(); }
+      ctx.beginPath(); s.path({ type: 'Sphere' }); ctx.strokeStyle = col('--coast'); ctx.lineWidth = 1; ctx.stroke();
+      if (layers.route && it >= 0.7) {
+        ctx.beginPath(); s.path(journey); ctx.strokeStyle = col('--route'); ctx.lineWidth = 2.2; ctx.setLineDash([]); ctx.stroke();
+        // direction arrow at mid-route
+        var m1 = s.proj(journey.coordinates[24]), m0 = s.proj(journey.coordinates[22]);
+        if (m1 && m0 && d3.geoDistance(journey.coordinates[24], s.center) < 1.45) {
+          var a = Math.atan2(m1[1] - m0[1], m1[0] - m0[0]);
+          ctx.save(); ctx.translate(m1[0], m1[1]); ctx.rotate(a); ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(-5, -5); ctx.lineTo(-5, 5); ctx.closePath(); ctx.fillStyle = col('--route'); ctx.fill(); ctx.restore();
+        }
+      }
+      if (layers.places && it >= 0.9) {
+        var field = col('--field'), text = col('--text'), point = col('--point'), sel = col('--sel');
+        ctx.font = '600 13px "IBM Plex Sans", sans-serif';
+        PAGlobe.places.forEach(function (pl, i) {
+          if (d3.geoDistance([pl.lon, pl.lat], s.center) > Math.PI / 2 - 0.04) return;
+          var p = s.proj([pl.lon, pl.lat]);
+          var isSel = selected && selected.kind === 'place' && selected.i === i;
+          ctx.beginPath(); ctx.arc(p[0], p[1], isSel ? 8 : 6, 0, 7);
+          ctx.fillStyle = isSel ? sel : point; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = isSel ? text : field; ctx.stroke();
+          // label with halo, the GIS way
+          var label = pl[lang];
+          ctx.font = '500 10.5px "IBM Plex Mono", monospace';
+          var subW = ctx.measureText('2024 · ≈ 41.30°S 174.00°E').width;
+          ctx.font = '600 13px "IBM Plex Sans", sans-serif';
+          var right = p[0] + subW + 20 < s.w;
+          ctx.textAlign = right ? 'left' : 'right';
+          var lx = p[0] + (right ? 11 : -11), ly = p[1] - 9;
+          ctx.lineJoin = 'round'; ctx.lineWidth = 4; ctx.strokeStyle = field;
+          ctx.strokeText(label, lx, ly); ctx.fillStyle = text; ctx.fillText(label, lx, ly);
+          ctx.font = '500 10.5px "IBM Plex Mono", monospace';
+          var sub = (pl.since ? pl.since + ' · ' : '') + (pl.approx ? '≈ ' : '') + PAGlobe.fmt(pl.lat, pl.lon);
+          ctx.strokeText(sub, lx, ly + 14); ctx.fillStyle = col('--muted'); ctx.fillText(sub, lx, ly + 14);
+          ctx.font = '600 13px "IBM Plex Sans", sans-serif';
+        });
+      }
+      // status bar
+      var km = Math.round(6371 * Math.PI / 2 / s.proj.scale() * 120 / 1000) * 1000;
+      document.getElementById('scale-km').textContent = km.toLocaleString('en-US') + ' km';
+      var denom = Math.round(6371000 / (s.proj.scale() * 0.000264) / 1e6);
+      document.getElementById('scale').textContent = '1:' + denom + ',000,000';
+      document.getElementById('rot').textContent = ((-s.proj.rotate()[0] % 360 + 540) % 360 - 180).toFixed(1) + '°';
+    }
+  });
+
+  // live cursor coordinate
+  canvas.addEventListener('pointermove', function (e) {
+    if (!lastProj) return;
+    var r = canvas.getBoundingClientRect(), ll = lastProj.invert([e.clientX - r.left, e.clientY - r.top]);
+    var inside = ll && d3.geoDistance(ll, [-lastProj.rotate()[0], -lastProj.rotate()[1]]) < Math.PI / 2;
+    document.getElementById('coord').textContent = inside ? PAGlobe.fmt(ll[1], ll[0]) : '—';
+  });
+  canvas.addEventListener('pointerleave', function () { document.getElementById('coord').textContent = PAGlobe.fmt(lastCenter[0], lastCenter[1]); });
+
+  // identify on click
+  var downAt = null;
+  canvas.addEventListener('pointerdown', function (e) { downAt = [e.clientX, e.clientY]; });
+  canvas.addEventListener('click', function (e) {
+    if (!lastProj || !downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 4) return;
+    var r = canvas.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, hit = null;
+    PAGlobe.places.forEach(function (pl, i) { var p = lastProj([pl.lon, pl.lat]); if (p && Math.hypot(p[0] - x, p[1] - y) < 14) hit = i; });
+    select(hit == null ? null : { kind: 'place', i: hit });
+  });
+
+  // layer toggles
+  document.querySelectorAll('[data-layer]').forEach(function (cb) {
+    cb.addEventListener('change', function () { layers[cb.dataset.layer] = cb.checked; g.redraw(); });
+  });
+
+  // tabs
+  var tabs = [].slice.call(document.querySelectorAll('[role=tab]'));
+  function openTab(t) {
+    tabs.forEach(function (b) { var on = b === t; b.setAttribute('aria-selected', on); document.getElementById(b.getAttribute('aria-controls')).hidden = !on; });
+    updateInfo();
+  }
+  tabs.forEach(function (t) { t.addEventListener('click', function () { openTab(t); }); });
+  document.querySelectorAll('.menubar a[href$="-tab"]').forEach(function (a) {
+    a.addEventListener('click', function (e) { e.preventDefault(); var t = document.querySelector(a.getAttribute('href')); openTab(t); t.scrollIntoView({ block: 'nearest' }); t.focus(); });
+  });
+
+  // selection: rows, story layer entries, map points
+  function select(s) {
+    selected = s;
+    document.querySelectorAll('tbody tr, .tree .story').forEach(function (el) {
+      var on = !!s && ((el.dataset.kind === s.kind && +el.dataset.i === s.i) || (s.kind === 'story' && el.dataset.story != null && +el.dataset.story === s.i));
+      el.setAttribute('aria-selected', on);
+    });
+    g.redraw(); renderIdent(); updateInfo();
+  }
+  document.querySelectorAll('tbody tr[data-kind]').forEach(function (tr) {
+    function go() { select({ kind: tr.dataset.kind, i: +tr.dataset.i }); }
+    tr.addEventListener('click', go);
+    tr.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  });
+  document.querySelectorAll('.tree .story').forEach(function (li) {
+    function go() { select({ kind: 'story', i: +li.dataset.story }); openTab(document.getElementById('stories-tab')); }
+    li.addEventListener('click', go);
+    li.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  });
+  document.querySelectorAll('[data-tool="home"]').forEach(function (b) { b.addEventListener('click', function () { g.rotateTo(140, -14); }); });
+
+  function updateInfo() {
+    var open = document.querySelector('.panel-tab:not([hidden])');
+    var rows = open.querySelectorAll('tbody tr').length, sel = open.querySelectorAll('tbody tr[aria-selected="true"]').length;
+    document.getElementById('selinfo').textContent = sel + ' / ' + rows + (lang === 'en' ? ' selected' : ' đã chọn');
+  }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
+  function renderIdent() {
+    var box = document.getElementById('ident');
+    if (!selected) { box.innerHTML = '<p class="ident-empty">' + (lang === 'en' ? 'Click a point on the map or a row in the table.' : 'Bấm vào một điểm trên bản đồ hoặc một dòng trong bảng.') + '</p>'; return; }
+    var rows = [];
+    if (selected.kind === 'place') {
+      var pl = PAGlobe.places[selected.i];
+      rows = [['layer', lang === 'en' ? 'Places' : 'Địa điểm'], ['name', pl[lang]], ['lat', pl.lat.toFixed(2)], ['lon', pl.lon.toFixed(2)], ['since', pl.since || 'NULL'], ['precision', pl.approx ? 'country ≈' : 'city']];
+    } else if (selected.kind === 'story') {
+      var st = stories[selected.i];
+      rows = [['layer', lang === 'en' ? 'Stories' : 'Câu chuyện'], ['title', st[lang]], ['category', st.cat], ['mood', st.mood], ['status', lang === 'en' ? 'placeholder' : 'chờ nội dung']];
+    } else {
+      var sy = systems[selected.i];
+      rows = [['layer', lang === 'en' ? 'Systems' : 'Hệ thống'], ['name', sy.name], ['status', sy.status], ['year', sy.year || 'NULL']];
+    }
+    box.innerHTML = '<dl class="kv list">' + rows.map(function (r) { return '<dt class="mono">' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd>'; }).join('') + '</dl>';
+  }
+  updateInfo();
+  document.getElementById('coord').textContent = PAGlobe.fmt(14, 140);
+})();
+</script>
