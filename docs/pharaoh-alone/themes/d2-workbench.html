@@ -235,6 +235,75 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 footer.foot { margin-top: 40px; padding-top: 10px; border-top: 3px solid var(--ink); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px; font: 500 12px/1.4 var(--mono); color: var(--ink-2); }
 
+/* pitch: SOLDIER, with DI struck out in red pen and a v written above → SOLVER */
+.pitch { display: grid; gap: 18px 56px; align-items: center; }
+.sv { font: 900 clamp(64px, 13vw, 168px)/.9 var(--body); font-stretch: 62%; letter-spacing: -.01em; white-space: nowrap; padding-top: .35em; }
+.sv .del { position: relative; display: inline-block; }
+.sv .del > svg { position: absolute; inset: 18% -6% 14%; width: 112%; height: 68%; overflow: visible; }
+.sv .del > svg path { fill: none; stroke: var(--pen); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.sv .del > svg path:nth-child(2) { stroke-width: 3.6; }
+.sv .ins { position: absolute; left: 50%; top: -.62em; transform: translateX(-50%) rotate(-6deg); font: 400 .78em/1 var(--hand); color: var(--pen); opacity: 0; display: grid; justify-items: center; }
+.sv .ins svg { width: .5em; height: .22em; overflow: visible; margin-top: .02em; }
+.sv .ins svg path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.js .on .sv .del > svg path { stroke-dashoffset: 0; transition: stroke-dashoffset .5s var(--ease) .7s; }
+.js .on .sv .del > svg path:nth-child(2) { transition-delay: 1.05s; }
+.js .on .sv .ins { opacity: 1; transition: opacity .5s 1.5s; }
+html:not(.js) .sv .del > svg path { stroke-dashoffset: 0; } html:not(.js) .sv .ins { opacity: 1; }
+.pitchtext { max-width: 44ch; }
+.pitchtext .kicker { margin: 0; }
+.golink { font-size: 23px; text-decoration: none; }
+.golink:hover { text-decoration: underline; }
+@media (min-width: 900px) { .pitch { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+@media (max-width: 899px) { .sv { font-size: 22vw; } }
+
+/* 2022 */
+.sub { margin: 0; font: 800 clamp(24px, 3vw, 36px)/1.08 var(--body); font-stretch: 84%; }
+.aar-row { margin-top: 64px; }
+.aar { background: #fffef9; color: #1d1b17; border: 1px solid #d8d3c8; padding: 18px 20px 16px; box-shadow: 0 14px 30px -20px rgb(0 0 0 / .5); transform: rotate(-.7deg); font: 500 12.5px/1.4 var(--mono); position: relative;
+  background-image: repeating-linear-gradient(transparent 0 31px, #e6e1d6 31px 32px); }
+.aar-head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-weight: 700; letter-spacing: .06em; border-bottom: 2px solid #1d1b17; padding-bottom: 8px; }
+.aar-meta { display: flex; justify-content: space-between; gap: 6px 14px; flex-wrap: wrap; color: #6c665d; padding: 6px 0 4px; }
+.aar ol { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 12px; }
+.aar li { display: grid; gap: 3px; }
+.aar .q { color: #6c665d; }
+.aar .a { font: 22px/1.25 var(--hand); color: #1f3a8a; filter: url(#inkbleed); }
+.aar-sign { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 16px; padding-top: 8px; border-top: 1px dashed #b9b2a5; color: #6c665d; }
+.aar-sign svg { width: 110px; height: 28px; }
+.aar-sign svg path { fill: none; stroke: #1f3a8a; stroke-width: 1.7; stroke-linecap: round; }
+.stamp2 { margin-left: auto; font: 700 13px/1 var(--mono); color: var(--pen); border: 2.5px solid var(--pen); padding: 7px 9px; letter-spacing: .06em; opacity: 0; transform: rotate(-9deg) scale(1.8); }
+.js .on .stamp2 { animation: stamp .35s cubic-bezier(.5, 0, .7, 1) 1.2s forwards; }
+html:not(.js) .stamp2 { opacity: .85; transform: rotate(-9deg); }
+@keyframes stamp { to { opacity: .85; transform: rotate(-9deg) scale(1); } }
+.clips { display: grid; gap: 30px 26px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); margin-top: 30px; }
+.clip { position: relative; background: #ece5d3; color: #2b2720; padding: 18px 18px 14px; box-shadow: 0 10px 20px -14px rgb(0 0 0 / .5); font: 400 16.5px/1.5 var(--serif); }
+.clip:nth-child(1) { transform: rotate(-1deg); } .clip:nth-child(2) { transform: rotate(1.3deg); }
+.clip p { margin: 10px 0 8px; column-width: 220px; column-gap: 20px; column-rule: 1px solid #cbc2ad; }
+.clip-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; border-bottom: 3px double #2b2720; padding-bottom: 6px; }
+.clip-h b { font: 900 22px/1 var(--body); font-stretch: 66%; letter-spacing: .03em; }
+.clip-h span, .clip .src { font: 500 11px/1 var(--mono); color: #6f6758; }
+.clip .src { text-decoration: none; } .clip .src:hover { text-decoration: underline; }
+.clip .src::before { content: '↗ '; }
+.debts { display: grid; gap: 16px 26px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 34px; }
+.debt { border: 2px solid var(--ink); padding: 14px 16px; background: var(--sheet); }
+.debt p { margin: 6px 0 12px; font: 400 21px/1.35 var(--serif); }
+.lbl2 { font: 700 12px/1 var(--mono); letter-spacing: .06em; color: var(--accent); }
+.meter { display: block; height: 10px; border: 1px solid var(--ink); position: relative; overflow: hidden; }
+.meter i { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 9px); transform-origin: left; transform: scaleX(.001); }
+.js .on .meter i { transform: scaleX(1); transition: transform 2.4s steps(24) .4s; }
+html:not(.js) .meter i { transform: none; }
+.meter.inf i { background: linear-gradient(90deg, var(--accent), transparent); transform: none; animation: none; opacity: .5; }
+.meter.inf::after { content: '∞'; position: absolute; right: 4px; top: 50%; transform: translateY(-52%); font: 600 13px var(--mono); color: var(--ink); }
+.js .on .meter.inf i { animation: drift 3.2s var(--ease) infinite; }
+@keyframes drift { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+.spine { margin-top: 80px; }
+.spine .line1, .spine .line2, .spine .line3 { margin: 18px 0 0; font: 400 clamp(26px, 3.4vw, 42px)/1.22 var(--serif); max-width: 30ch; }
+.spine .line2 { font-style: italic; color: var(--pen); }
+.spine .line3 { color: var(--ink-2); font-size: clamp(22px, 2.6vw, 32px); }
+.pencilnote { font-size: 17px; margin: 6px 0 0; }
+.solver { margin-top: 70px; }
+.ledger li::before { display: none; }
+.ledger u { text-decoration: none; display: inline-block; min-width: 2.2em; text-align: center; border-bottom: 1.6px solid var(--pencil); color: var(--ink-2); }
+
 /* reveal: chapters ease in; prose lines follow */
 .js .rv { opacity: 0; transform: translateY(18px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
 .js .on .rv, .js .rv.on { opacity: 1; transform: none; }
@@ -247,6 +316,8 @@ footer.foot { margin-top: 40px; padding-top: 10px; border-top: 3px solid var(--i
   .js .rv { opacity: 1; transform: none; }
   .mk path { stroke-dashoffset: 0 !important; }
   .mark g * { stroke-dashoffset: 0; } .mark .g1, .mark .g2 { display: none; }
+  .sv .del > svg path { stroke-dashoffset: 0 !important; } .sv .ins { opacity: 1 !important; }
+  .stamp2 { opacity: .85 !important; transform: rotate(-9deg) !important; } .meter i { transform: none !important; }
 }
 </style>
 
@@ -267,7 +338,7 @@ footer.foot { margin-top: 40px; padding-top: 10px; border-top: 3px solid var(--i
       Pharaoh Alone
     </a>
     <span class="right">
-      <nav aria-label="Mục lục"><a href="#ch-student">Robots</a><a href="#ch-work">Systems</a><a href="#stories">Stories</a><a href="#trace">Trace</a><a href="#now">Now</a><a href="#someday">Dream</a></nav>
+      <nav aria-label="Mục lục"><a href="#pitch">Soldier → Solver</a><a href="#ch-student">Robots</a><a href="#ch-work">Systems</a><a href="#stories">Stories</a><a href="#trace">Trace</a><a href="#now">Now</a><a href="#someday">Dream</a></nav>
       <span class="lang"><button type="button" data-lang="vi" aria-pressed="true">VI</button><button type="button" data-lang="en" aria-pressed="false">EN</button></span>
     </span>
     <div class="rider" aria-hidden="true"><div class="bot" id="bot">
@@ -285,7 +356,7 @@ footer.foot { margin-top: 40px; padding-top: 10px; border-top: 3px solid var(--i
   <!-- HERO -->
   <section class="hero on" id="top">
     <div>
-      <div class="kicker" data-en="PA-001 · KHANG · MECHATRONICS ENGINEER · 1992 →">PA-001 · KHANG · KỸ SƯ CƠ ĐIỆN TỬ · 1992 →</div>
+      <div class="kicker" data-en="PA-001 · KHANG · FORMER OFFICER · MECHATRONICS ENGINEER · 1992 →">PA-001 · KHANG · CỰU SĨ QUAN · KỸ SƯ CƠ ĐIỆN TỬ · 1992 →</div>
       <h1 data-en="I solve problems by <span class='scrib'>building systems</span>.">Tôi giải quyết vấn đề bằng cách <span class="scrib">xây hệ thống</span>.</h1>
       <p class="tag"><span data-en="Problems solved.">Vấn đề được giải.</span><span data-en="Systems built.">Hệ thống được dựng.</span><span data-en="Stories left behind.">Câu chuyện còn ở lại.</span></p>
       <a class="cue" href="#ch-student">
@@ -298,6 +369,22 @@ footer.foot { margin-top: 40px; padding-top: 10px; border-top: 3px solid var(--i
       <div class="read"><span data-en="CENTRE">TÂM</span><span id="center">—</span><span>EPSG:4326</span></div>
       <div class="try hand red"><span data-en="go on, drag it">kéo thử đi — nó xoay được</span><svg viewBox="0 0 70 38"><path d="M4 4 C20 4 40 10 60 30 M50 30 L61 31 L59 20"/></svg></div>
     </figure>
+  </section>
+
+  <!-- PITCH: the 30-second version -->
+  <section class="ch" id="pitch">
+    <div class="pitch">
+      <div class="sv rv" aria-label="soldier → solver"><span>SOL</span><span class="del">DI<svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M4 40 C30 30 60 26 96 18"/><path pathLength="1" d="M6 22 C34 28 66 36 94 44"/></svg><b class="ins">v<svg viewBox="0 0 40 16" aria-hidden="true"><path d="M4 14 L20 3 L36 14"/></svg></b></span><span>ER</span></div>
+      <div class="prose pitchtext">
+        <p class="kicker rv" data-en="THE 30-SECOND VERSION">BẢN 30 GIÂY</p>
+        <p class="rv d1 big" data-en="I used to be an officer.">Tôi từng là sĩ quan.</p>
+        <p class="rv d1" data-en="In 2022 I left the army. Not in glory. I was bankrupt. I had deceived friends who trusted me, disappointed my family, and left my children to carry the cost of my choices.">Năm 2022 tôi ra quân. Không phải trong vinh quang. Tôi phá sản. Tôi đã lừa dối những người bạn tin mình, làm người thân thất vọng, và để các con gánh hậu quả từ lựa chọn của tôi.</p>
+        <p class="rv d2" data-en="I don’t say this for sympathy. I say it because it is the real starting point.">Tôi không kể để được thương hại. Tôi kể vì đó là điểm xuất phát thật.</p>
+        <p class="rv d2 big" data-en="The uniform came off. The discipline stayed.">Quân phục thì cởi rồi. <span class="circ">Kỷ luật</span> thì tôi giữ lại.</p>
+        <p class="rv d3" data-en="Now I solve problems by building systems, starting with fixing myself.">Giờ tôi giải quyết vấn đề bằng cách xây hệ thống, bắt đầu từ việc sửa chính mình.</p>
+        <p class="rv d3"><a class="hand red golink" href="#ch-2022" data-en="the full story → 2022">đọc đầy đủ → 2022</a></p>
+      </div>
+    </div>
   </section>
 
   <!-- STUDENT YEARS: LINE FOLLOWER -->
@@ -362,6 +449,98 @@ footer.foot { margin-top: 40px; padding-top: 10px; border-top: 3px solid var(--i
     <div class="prose" style="max-width:52ch">
       <p class="rv d1" data-en="Something turned that year. It is a long story and it will be told on its own page.">Năm đó có một thứ đã rẽ hướng. Chuyện dài, sẽ được kể ở một trang riêng.</p>
       <p class="rv d2"><a href="#stories" data-en="→ The years I didn’t know where I was going">→ Những năm tôi không biết mình đang đi đâu</a></p>
+    </div>
+  </section>
+
+  <!-- 2022: TAKING OFF THE UNIFORM -->
+  <section class="ch" id="ch-2022">
+    <div class="when rv"><b>2022</b><span data-en="left the army · bankrupt">ra quân · phá sản</span></div>
+    <div class="grid2">
+      <div>
+        <h2 class="rv" data-en="The biggest error">Sai số lớn nhất</h2>
+        <div class="prose">
+          <p class="rv d1 big" data-en="A system doesn’t fail because it has error. It fails when someone pretends the error is zero.">Hệ thống không hỏng vì có sai số. Nó hỏng khi người ta giả vờ <span class="circ">sai số bằng không</span>.</p>
+          <p class="rv d2" data-en="In 2022 my error could no longer be hidden. The money was gone. The trust of my friends was gone too, and I lost that myself, because I hadn’t told them the truth. My family was disappointed. My children grew up through months when their father should have been shielding them.">Năm 2022, sai số của tôi không còn giấu được nữa. Tiền mất. Lòng tin của bạn bè cũng mất, và cái đó tôi tự làm mất, vì tôi đã không nói thật với họ. Gia đình thất vọng. Các con lớn lên qua những tháng ngày mà lẽ ra người cha phải che chắn cho chúng.</p>
+          <p class="rv d3" data-en="That is how I took off the uniform.">Tôi cởi quân phục trong hoàn cảnh đó.</p>
+        </div>
+      </div>
+      <div class="rv d1">
+        <div class="bench tape">
+          <canvas id="err" style="aspect-ratio:16/10" role="img" aria-label="Đồ thị sai số e(t) của chính tác giả: vọt lên năm 2022, rồi dao động nhỏ dần nhưng chưa về không. Đường vẽ tiến theo nhịp cuộn trang."></canvas>
+          <div class="figcap"><span><b>e(t)</b> · <span data-en="my own error signal">sai số của chính mình</span></span><span data-en="scroll to draw">cuộn để vẽ tiếp</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid2 flip aar-row">
+      <div>
+        <h3 class="sub rv" data-en="The longest after-action review of my life">Buổi rút kinh nghiệm dài nhất đời</h3>
+        <div class="prose">
+          <p class="rv d1" data-en="In the army, every exercise ends with an after-action review. Nobody assigns blame. Everyone answers three questions: what happened, why, and what we do differently next time.">Trong quân đội, sau mỗi đợt huấn luyện đều có một buổi rút kinh nghiệm. Ở đó không ai đổ lỗi. Mọi người chỉ trả lời ba câu: chuyện gì đã xảy ra, vì sao, và lần sau làm gì khác đi.</p>
+          <p class="rv d2" data-en="I never thought I would have to hold one for my own life. The answers were not easy to hear.">Tôi chưa bao giờ nghĩ có ngày mình phải tự rút kinh nghiệm cho chính đời mình. Câu trả lời không dễ nghe.</p>
+        </div>
+        <div class="photo" style="--r:-3deg">
+          <div class="img"><svg viewBox="0 0 100 100" aria-hidden="true"><g class="sketch"><path d="M14 40 L30 28 H70 L86 40 V82 H14 Z"/><path d="M30 28 L50 46 L70 28"/><path d="M50 46 V82"/><path d="M20 34 L36 30 L38 38 L22 42 Z"/><path d="M64 30 L80 34 L78 42 L62 38 Z"/><path d="M27 35.5 l1.2 2.4 2.6.4-1.9 1.8.5 2.6-2.4-1.3-2.3 1.3.4-2.6-1.9-1.8 2.6-.4z" stroke-width="1.2"/><path d="M58 56 H76 V64 H58 Z"/></g></svg></div>
+          <div class="cap" data-en="the uniform, folded in 2022 — a real photo only if Khang wants">quân phục, gấp lại năm 2022 — ảnh thật nếu Khang muốn</div>
+        </div>
+      </div>
+      <div class="aar rv d1">
+        <div class="aar-head"><span data-en="AFTER-ACTION REVIEW">BIÊN BẢN RÚT KINH NGHIỆM</span><span>PA-AAR-2022</span></div>
+        <div class="aar-meta"><span data-en="Unit: myself">Đơn vị: bản thân</span><span data-en="Blame assigned: none">Đổ lỗi cho người khác: không</span></div>
+        <ol>
+          <li><span class="q" data-en="1. What happened?">1. Chuyện gì đã xảy ra?</span><span class="a" data-en="Bankrupt. Lost the money. Lost the trust.">Phá sản. Mất tiền. Mất lòng tin.</span></li>
+          <li><span class="q" data-en="2. Why?">2. Vì sao?</span><span class="a" data-en="I chose to hide instead of face it. I borrowed other people’s trust to put off the truth.">Tôi đã chọn che giấu thay vì đối mặt. Tôi vay niềm tin của người khác để trì hoãn sự thật.</span></li>
+          <li><span class="q" data-en="3. What do I do differently?">3. Lần sau làm gì khác?</span><span class="a" data-en="Tell the truth early. Measure the error every day. Keep my word.">Nói thật sớm. Đo sai số mỗi ngày. Giữ lời.</span></li>
+        </ol>
+        <div class="aar-sign"><span data-en="Written by: Khang">Người viết: Khang</span><svg viewBox="0 0 120 30" aria-hidden="true"><path d="M4 20 C14 4 22 4 20 18 C18 28 30 10 38 14 C44 17 40 24 48 20 C60 12 66 8 72 18 C76 24 84 12 96 14 C104 15 110 18 116 12"/></svg><span class="stamp2" data-en="OWNED">ĐÃ NHẬN LỖI</span></div>
+      </div>
+    </div>
+
+    <h3 class="sub rv" style="margin-top:64px" data-en="Others have been at the bottom too">Người khác cũng từng ở đáy</h3>
+    <div class="clips">
+      <article class="clip tape rv">
+        <div class="clip-h"><b>U. S. GRANT</b><span>1854 · 1884–1885</span></div>
+        <p data-en="Left the US Army in 1854. Failed at farming, and at times sold firewood on the muddy streets of St. Louis to feed his family. Decades later he went bankrupt again when a partner turned their firm into a fraud: he and his wife were left with $210 in cash. In his last year, dying of throat cancer, he wrote his memoirs to pay his debts and provide for his wife. He finished days before he died.">Rời quân đội Mỹ năm 1854. Làm nông thất bại, có lúc phải bán củi trên những con phố lầy lội ở St. Louis để nuôi gia đình. Nhiều năm sau, ông phá sản thêm lần nữa vì người cộng sự biến công ty thành một vụ lừa đảo: hai vợ chồng còn 210 đô la tiền mặt. Năm cuối đời, khi đang chết dần vì ung thư vòm họng, ông viết hồi ký để trả nợ và lo cho vợ. Ông viết xong vài ngày trước khi mất.</p>
+        <a class="src" href="https://www.nps.gov/articles/000/the-failure-of-grant-ward-a-cautionary-tale.htm" target="_blank" rel="noopener">nps.gov</a>
+      </article>
+      <article class="clip tape rv d1">
+        <div class="clip-h"><b>MARK TWAIN</b><span>1894 · 1895</span></div>
+        <p data-en="His publishing company went bankrupt in 1894. The law did not require him to pay all of it back. He treated it as a debt of honour anyway, went on a lecture tour around the world, and paid to the last cent.">Công ty xuất bản phá sản năm 1894. Luật không buộc ông trả hết. Ông vẫn coi đó là món nợ danh dự, đi diễn thuyết vòng quanh thế giới, và trả đến đồng cuối cùng.</p>
+        <a class="src" href="https://librivox.org/following-the-equator-by-mark-twain/" target="_blank" rel="noopener">Following the Equator, 1897</a>
+      </article>
+    </div>
+    <div class="debts">
+      <div class="debt rv"><span class="lbl2" data-en="DEBT OF MONEY">NỢ TIỀN</span><p data-en="Has a number. Paid off, it’s done.">Có số. Trả xong là hết.</p><span class="meter"><i></i></span></div>
+      <div class="debt rv d1"><span class="lbl2" data-en="DEBT OF TRUST">NỢ LÒNG TIN</span><p data-en="Has no number. Paid only in time, and in keeping your word.">Không có số. Chỉ trả được bằng <span class="circ">thời gian</span> và việc giữ lời.</p><span class="meter inf"><i></i></span></div>
+    </div>
+
+    <div class="spine">
+      <h3 class="sub rv" data-en="Where the mettle lives">Bản lĩnh nằm ở đâu</h3>
+      <p class="rv d1 line1" data-en="The officer in me did not die the day I took off the uniform.">Người sĩ quan trong tôi không mất đi vào ngày tôi cởi quân phục.</p>
+      <p class="rv d2 line2" data-en="It died the moment I started lying.">Nó mất đi vào lúc tôi bắt đầu <span class="scrib">nói dối</span>.</p>
+      <p class="rv d3 line3" data-en="And it comes back, a little at a time, every time I tell the truth, every time I pay something back, every time I do what I promised.">Và nó quay lại, từng chút một, mỗi lần tôi nói thật, mỗi lần tôi trả được một khoản, mỗi lần tôi làm đúng điều đã hứa.</p>
+      <div class="prose" style="max-width:46ch">
+        <p class="rv d3" data-en="I don’t command anyone any more. But I still get up at 5 a.m., still finish the mission before talking about it, and still believe a soldier leaves no one behind, including the people he once hurt.">Tôi không còn chỉ huy ai nữa. Nhưng tôi vẫn dậy lúc 5 giờ sáng, vẫn hoàn thành nhiệm vụ trước khi nói về nó, và vẫn tin rằng người lính không bỏ lại ai, kể cả những người mình từng làm tổn thương.</p>
+        <p class="hand rv d3 pencilnote" data-en="↑ Khang: is 5 a.m. right? swap in your real habit">↑ Khang: 5 giờ có đúng không? thay bằng thói quen thật</p>
+      </div>
+    </div>
+
+    <div class="grid2 solver">
+      <div>
+        <h3 class="sub rv" data-en="From soldier to solver">Từ soldier thành solver</h3>
+        <div class="prose">
+          <p class="rv d1" data-en="The skills didn’t change: read the situation, make a plan, own it to the end. Only the objective did. It used to be holding a position. Now it is solving a problem, and the first problem is repairing what I broke.">Kỹ năng thì không đổi: đọc tình huống, lập kế hoạch, chịu trách nhiệm đến cùng. Chỉ có mục tiêu là đổi. Trước kia là giữ một vị trí. Bây giờ là giải một bài toán, và bài toán đầu tiên là sửa những gì tôi đã làm hỏng.</p>
+        </div>
+      </div>
+      <div class="pad ledger rv d1">
+        <h3 data-en="Repair log">Sổ sửa sai</h3>
+        <ul>
+          <li><span data-en="Met again and apologised to">Đã gặp lại và xin lỗi</span> <u>&nbsp;?&nbsp;</u> <span data-en="people">người</span></li>
+          <li><span data-en="Paid back">Đã trả</span> <u>&nbsp;?&nbsp;</u> / <u>&nbsp;?&nbsp;</u> <span data-en="debts">khoản</span></li>
+          <li><span data-en="Days I kept my word">Số ngày giữ đúng lời</span> <u>&nbsp;?&nbsp;</u></li>
+        </ul>
+        <p class="hand red" style="margin:0" data-en="Khang fills in real numbers, or this page goes.">Khang điền số thật — hoặc bỏ trang này.</p>
+      </div>
     </div>
   </section>
 
@@ -485,7 +664,7 @@ footer.foot { margin-top: 40px; padding-top: 10px; border-top: 3px solid var(--i
   <!-- TRACE -->
   <section class="ch" id="trace">
     <div class="when rv"><b data-en="Trace">Dấu vết</b><span data-en="hover to read a year">rê chuột để đọc năm</span></div>
-    <figure class="timing rv d1" style="margin:20px 0 0"><svg id="timing" role="img" aria-label="Giản đồ thời gian các mốc 1992, 2019, 2024, 2025, 2026 và tương lai chưa xác định"></svg></figure>
+    <figure class="timing rv d1" style="margin:20px 0 0"><svg id="timing" role="img" aria-label="Giản đồ thời gian các mốc 1992, 2019, 2022, 2024, 2025, 2026 và tương lai chưa xác định"></svg></figure>
   </section>
 
   <!-- SUPPORT -->
@@ -881,6 +1060,53 @@ window.PALang = function (buttons) {
     });
   })();
 
+  /* ---------- 2022: my own error signal, drawn as the reader scrolls ---------- */
+  (function () {
+    var c = document.getElementById('err'), sec = document.getElementById('ch-2022'), shown = reduce ? 1 : 0;
+    var noise = []; for (var i = 0; i < 400; i++) noise.push(Math.sin(i * 12.9898) * 43758.5453 % 1);
+    // e(u), u in 0..1: calm, a spike in 2022, then a slow, noisy settling that has not reached zero
+    function e(u) {
+      var k = 0.14; if (u < k) return 0.06 * Math.sin(u * 60);
+      var v = (u - k) / (1 - k);
+      return Math.exp(-v * 2.6) * Math.cos(v * 26) * 0.92 + 0.11 * (1 - v * 0.4) + noise[Math.floor(u * 399)] * 0.05 * Math.exp(-v * 1.5);
+    }
+    animate(c, function (dt) {
+      var r = sec.getBoundingClientRect(), vh = innerHeight;
+      var target = reduce ? 1 : Math.max(0, Math.min(1, (vh * 0.9 - r.top) / Math.max(1, r.height * 0.32)));
+      shown += (Math.max(shown, target) - shown) * Math.min(1, dt * 4 || 1);
+      var f = fit(c), ctx = f.ctx, w = f.w, h = f.h; if (!w) return;
+      var L = 34, R = w - 14, T = 18, B = h - 30, z = (T + B) / 2 + (B - T) * 0.12, A = (B - T) * 0.5;
+      var X = function (u) { return L + u * (R - L); }, Y = function (v) { return z - v * A; };
+      ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.setLineDash([2, 4]); ctx.beginPath();
+      [0.14, 0.42, 0.62, 0.82].forEach(function (u) { ctx.moveTo(X(u), T); ctx.lineTo(X(u), B); });
+      ctx.stroke();
+      ctx.strokeStyle = C['ink-2']; ctx.beginPath(); ctx.moveTo(L, z); ctx.lineTo(R, z); ctx.stroke(); ctx.setLineDash([]);
+      ctx.font = MONO; ctx.fillStyle = C['ink-2']; ctx.textAlign = 'right'; ctx.fillText('0', L - 8, z + 4);
+      ctx.fillText('e', L - 8, T + 8); ctx.textAlign = 'left';
+      [[0.14, '2022'], [0.42, '2023'], [0.62, '2024'], [0.82, '2025']].forEach(function (m) { ctx.fillText(m[1], X(m[0]) - 14, B + 18); });
+      ctx.textAlign = 'right'; ctx.fillText(lang === 'en' ? 'now' : 'nay', R, B + 18); ctx.textAlign = 'left';
+      // trace
+      var p = shown, n = Math.max(2, Math.floor((R - L) * p / 2));
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 1.8; ctx.lineJoin = 'round'; ctx.beginPath();
+      for (var j = 0; j <= n; j++) { var u = j / n * p; j ? ctx.lineTo(X(u), Y(e(u))) : ctx.moveTo(X(u), Y(e(u))); }
+      ctx.stroke();
+      if (p > 0.16) { // red pen at the spike
+        ctx.strokeStyle = C.pen; ctx.fillStyle = C.pen; ctx.lineWidth = 1.6; ctx.beginPath();
+        ctx.ellipse(X(0.145), Y(e(0.14)) + 4, 16, 22, -0.2, 0, Math.PI * 2 * Math.min(1, (p - 0.16) * 8)); ctx.stroke();
+        ctx.font = '20px ' + HAND; ctx.fillText(lang === 'en' ? 'here.' : 'ở đây.', X(0.145) + 22, Y(e(0.14)) - 8);
+      }
+      var u1 = p, ex = X(u1), ey = Y(e(u1));
+      ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(ex, ey, 3.5, 0, 7); ctx.fill();
+      if (p > 0.92) {
+        var a = Math.min(1, (p - 0.92) * 14); ctx.globalAlpha = a;
+        ctx.fillStyle = C.pen; ctx.strokeStyle = C.pen; ctx.font = '20px ' + HAND; ctx.textAlign = 'right';
+        ctx.fillText(lang === 'en' ? 'not at zero yet. still fixing.' : 'chưa về 0. vẫn đang sửa.', R - 4, T + 18);
+        ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(R - 40, T + 26); ctx.quadraticCurveTo(R - 30, ey - 30, ex - 4, ey - 8); ctx.stroke();
+        ctx.textAlign = 'left'; ctx.globalAlpha = 1;
+      }
+    });
+  })();
+
   /* ---------- 2024: pencil route map ---------- */
   var distKm = Math.round(d3.geoDistance([A.lon, A.lat], [B.lon, B.lat]) * 6371 / 100) * 100;
   function setDistance() { document.getElementById('dist').textContent = distKm.toLocaleString(lang === 'en' ? 'en-US' : 'vi-VN') + ' km'; marks(); }
@@ -1011,7 +1237,7 @@ window.PALang = function (buttons) {
   });
 
   /* ---------- trace: timing diagram with a red-pen "you are here" ---------- */
-  var tm = [[1992, 'Ra đời', 'Born'], [2019, 'Bước ngoặt', 'Turning point'], [2024, 'New Zealand', 'New Zealand'], [2025, 'Dữ liệu · GIS', 'Data · GIS'], [2026, 'Phần mềm · AI', 'Software · AI']];
+  var tm = [[1992, 'Ra đời', 'Born'], [2019, 'Bước ngoặt', 'Turning point'], [2022, 'Ra quân', 'Left the army'], [2024, 'New Zealand', 'New Zealand'], [2025, 'Dữ liệu · GIS', 'Data · GIS'], [2026, 'Phần mềm · AI', 'Software · AI']];
   var tsvg = document.getElementById('timing'), segs = [], TW = 900, futureX = 1e9;
   function drawTiming() {
     TW = tsvg.getBoundingClientRect().width || 900;
