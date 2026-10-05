@@ -1,0 +1,32 @@
+---
+// Temporary page for sections that are not built yet (M2/M3).
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { LANGS, SECTIONS, href, useT, type Lang, type Section } from '../../../i18n/ui';
+
+export const getStaticPaths = () =>
+  LANGS.flatMap((lang) => SECTIONS.map((section) => ({ params: { lang, section } })));
+
+const lang = Astro.params.lang as Lang;
+const section = Astro.params.section as Section;
+const t = useT(lang);
+---
+
+<BaseLayout lang={lang} title={section.toUpperCase()} active={section}>
+  <div class="container wip">
+    <p class="meta">PA·{section.slice(0, 3).toUpperCase()}·000 · <span class="rec">{t('recording')}</span></p>
+    <h1>{section.toUpperCase()}</h1>
+    <p class="title">{t('wip.title')}<span class="cursor" aria-hidden="true">_</span></p>
+    <p class="body">{t('wip.body')}</p>
+    <a class="link" href={href(lang)}>← {t('wip.back')}</a>
+  </div>
+</BaseLayout>
+
+<style>
+  .wip { min-height: 70svh; display: grid; align-content: center; gap: var(--s-4); padding-block: var(--s-9); }
+  h1 { font-size: var(--fs-display); font-weight: 800; letter-spacing: -0.045em; line-height: 0.85; }
+  .title { font-family: var(--font-serif); font-size: var(--fs-h2); font-style: italic; }
+  .body { color: var(--text-muted); max-width: 32em; }
+  .rec { color: var(--signal); }
+  .cursor { animation: blink 1.1s steps(1) infinite; color: var(--signal); }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>

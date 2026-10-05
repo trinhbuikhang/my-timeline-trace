@@ -1,0 +1,23 @@
+# Points on the hero globe.
+# precision: country = approximate country centroid (until Khang confirms a city).
+# TODO(Khang): replace with real city coordinates and add project sites:
+#   - id: project-xxx
+#     name: { vi: "...", en: "..." }
+#     lat: -00.00
+#     lon: 000.00
+#     kind: project
+#     since: 2025
+#     precision: city
+- id: vietnam
+  name: { vi: "Việt Nam", en: "Vietnam" }
+  lat: 16.05
+  lon: 107.8
+  kind: life
+  precision: country
+- id: new-zealand
+  name: { vi: "New Zealand", en: "New Zealand" }
+  lat: -41.3
+  lon: 174.0
+  kind: life
+  since: 2024
+  precision: country

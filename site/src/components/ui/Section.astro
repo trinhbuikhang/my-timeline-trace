@@ -1,0 +1,36 @@
+---
+/** Archive section: index label on the left (4/12), content on the right (8/12). */
+interface Props { index: string; title: string; meta?: string; id?: string; voice?: 'system' | 'story'; }
+const { index, title, meta, id, voice = 'story' } = Astro.props;
+---
+
+<section class:list={['section', `voice-${voice}`]} id={id} aria-labelledby={id && `${id}-title`}>
+  <div class="container grid">
+    <header class="label" data-reveal>
+      <p class="meta"><span class="idx">{index}</span> / <span id={id && `${id}-title`}>{title}</span></p>
+      {meta && <p class="meta sub">{meta}</p>}
+      <slot name="aside" />
+    </header>
+    <div class="body">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .section { border-top: 1px solid var(--line); padding-block: var(--s-8) var(--s-8); }
+  .label { grid-column: 1 / -1; margin-bottom: var(--s-6); }
+  .label .meta { color: var(--text); }
+  .idx { color: var(--signal); }
+  .sub { margin-top: var(--s-2); color: var(--text-muted) !important; }
+  .body { grid-column: 1 / -1; min-width: 0; }
+
+  @media (min-width: 1024px) {
+    .section { padding-block: var(--s-9); }
+    .label { grid-column: 1 / span 4; margin-bottom: 0; position: sticky; top: 100px; align-self: start; }
+    .body { grid-column: 5 / -1; }
+  }
+
+  /* System voice reveals faster and without drift. */
+  .voice-system :global([data-reveal]) { --t-reveal: 360ms; transform: translateY(6px); }
+</style>

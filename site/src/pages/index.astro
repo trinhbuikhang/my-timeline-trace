@@ -1,0 +1,21 @@
+---
+// Root: send visitors to their last language, Vietnamese by default.
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pharaoh Alone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="canonical" href="https://pharaohalone.com/vi/" />
+    <script is:inline>
+      var lang = 'vi';
+      try { if (localStorage.getItem('pa-lang') === 'en') lang = 'en'; } catch (e) {}
+      location.replace('/' + lang + '/');
+    </script>
+    <noscript><meta http-equiv="refresh" content="0; url=/vi/" /></noscript>
+    <style>html { background: #0a0a09; }</style>
+  </head>
+  <body></body>
+</html>

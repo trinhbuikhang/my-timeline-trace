@@ -1,0 +1,90 @@
+---
+import Section from '../ui/Section.astro';
+import { href, useT, type Lang } from '../../i18n/ui';
+import { getStories, readingMinutes } from '../../lib/content';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useT(lang);
+const stories = (await getStories(lang)).slice(0, 3);
+const date = (d?: Date) => (d ? d.toISOString().slice(0, 10) : '····-··-··');
+---
+
+<Section index="03" title="STORIES" id="stories" voice="story">
+  {stories.length === 0 && <p class="meta">{t('stories.empty')}</p>}
+  <ol class="stories">
+    {stories.map(({ entry, fallback }, i) => (
+      <li data-reveal style={`--i:${i}${entry.data.accent ? `;--mood-accent:${entry.data.accent}` : ''}`} class={`mood-${entry.data.mood}`}>
+        <a class="story" href={href(entry.data.lang, `stories/${entry.data.translationKey}`)} hreflang={entry.data.lang}>
+          <span class="meta line1">
+            <span>{date(entry.data.date)}</span>
+            <span>{entry.data.category}</span>
+            <span>{readingMinutes(entry.body)} {t('stories.min')}</span>
+            {entry.data.placeholder && <span class="tag">{t('placeholder')}</span>}
+            {fallback && <span class="tag">{t('vionly')}</span>}
+          </span>
+          <span class="title" lang={entry.data.lang}>{entry.data.title}</span>
+          <span class="summary">{entry.data.summary}</span>
+          <span class="mood-name meta" aria-hidden="true">{entry.data.mood}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+  <a class="link all" href={href(lang, 'stories')}>{t('stories.all')} <span class="arrow" aria-hidden="true">→</span></a>
+</Section>
+
+<style>
+  .stories { list-style: none; padding: 0; display: grid; gap: var(--s-3); }
+
+  /* Story voice: slow, warm. Each story previews its own mood. */
+  .story {
+    position: relative;
+    display: grid; gap: var(--s-3);
+    padding: var(--s-6) var(--s-5) var(--s-6);
+    border: 1px solid var(--line);
+    isolation: isolate;
+    overflow: hidden;
+    transition: color var(--t-story) var(--ease-out), border-color var(--t-story) var(--ease-out);
+  }
+  .story::before, .story::after {
+    content: ''; position: absolute; inset: 0; z-index: -1;
+    opacity: 0;
+    transition: opacity var(--t-story) var(--ease-out);
+  }
+  .story::before { background: var(--mood-bg); }
+  .story::after { background: var(--mood-texture); }
+
+  .line1 { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4); transition: color var(--t-story) var(--ease-out); }
+  .tag { color: var(--signal); transition: color var(--t-story); }
+
+  .title {
+    font-family: var(--font-serif);
+    font-size: var(--fs-h2);
+    font-weight: 500;
+    line-height: 1.18;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+    max-width: 22em;
+  }
+  .summary { color: var(--text-muted); max-width: 40em; transition: color var(--t-story); }
+  .mood-name {
+    position: absolute; right: var(--s-5); top: var(--s-6);
+    color: var(--mood-accent); opacity: 0;
+    transition: opacity var(--t-story) var(--ease-out);
+  }
+
+  .story:hover, .story:focus-visible { color: var(--mood-ink); border-color: transparent; }
+  .story:hover::before, .story:focus-visible::before,
+  .story:hover::after, .story:focus-visible::after,
+  .story:hover .mood-name, .story:focus-visible .mood-name { opacity: 1; }
+  .story:hover :is(.line1, .summary), .story:focus-visible :is(.line1, .summary) { color: color-mix(in srgb, var(--mood-ink) 65%, transparent); }
+  .story:hover .tag, .story:focus-visible .tag { color: var(--mood-accent); }
+  .story:hover .title, .story:focus-visible .title { color: var(--mood-ink); }
+
+  /* On touch screens there is no hover: show a thin mood strip instead. */
+  @media (hover: none) {
+    .story { border-left: 3px solid var(--mood-accent); }
+  }
+
+  .all { margin-top: var(--s-6); }
+</style>

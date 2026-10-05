@@ -1,0 +1,26 @@
+# Main public milestones only. Add one line per real milestone.
+- id: "1992"
+  year: 1992
+  label: { vi: "Ra đời", en: "Born" }
+  kind: life
+- id: "2019"
+  year: 2019
+  label: { vi: "Bước ngoặt", en: "Turning point" }
+  kind: turning-point
+- id: "2024"
+  year: 2024
+  label: { vi: "New Zealand · Kỹ thuật", en: "New Zealand · Engineering" }
+  kind: place
+- id: "2025"
+  year: 2025
+  label: { vi: "Dữ liệu · GIS", en: "Data · GIS" }
+  kind: work
+- id: "2026"
+  year: 2026
+  label: { vi: "Phần mềm · AI", en: "Software · AI" }
+  kind: work
+  capsule: true
+- id: next
+  year: null
+  label: { vi: "?", en: "?" }
+  kind: future

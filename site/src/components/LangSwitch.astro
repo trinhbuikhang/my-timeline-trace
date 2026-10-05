@@ -1,0 +1,24 @@
+---
+import type { Lang } from '../i18n/ui';
+interface Props { lang: Lang; alternate: string; }
+const { lang, alternate } = Astro.props;
+const here = Astro.url.pathname;
+---
+
+<nav class="lang meta" aria-label="Language">
+  {(['vi', 'en'] as const).map((l, i) => (
+    <>
+      {i > 0 && <span aria-hidden="true">|</span>}
+      <a href={l === lang ? here : alternate} hreflang={l} lang={l} aria-current={l === lang ? 'true' : undefined}>
+        {l.toUpperCase()}
+      </a>
+    </>
+  ))}
+</nav>
+
+<style>
+  .lang { display: inline-flex; gap: var(--s-2); align-items: center; color: var(--text-faint); }
+  a { color: var(--text-muted); padding: var(--s-1) 2px; transition: color var(--t-snap); }
+  a:hover { color: var(--text); }
+  a[aria-current] { color: var(--text); box-shadow: inset 0 -1px 0 var(--signal); }
+</style>

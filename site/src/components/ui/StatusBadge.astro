@@ -1,0 +1,19 @@
+---
+interface Props { status: string; tone?: 'signal' | 'muted'; }
+const { status, tone = 'muted' } = Astro.props;
+const glyph: Record<string, string> = {
+  IDEA: '○', EXPERIMENT: '◐', PROTOTYPE: '◑', BUILDING: '◑', WORKING: '●', PAUSED: '‖', ABANDONED: '✕', ARCHIVED: '□',
+};
+---
+
+<span class:list={['badge', tone]}><span aria-hidden="true">{glyph[status] ?? '·'}</span>{status}</span>
+
+<style>
+  .badge {
+    display: inline-flex; gap: 6px; align-items: center;
+    font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase;
+    border: 1px solid var(--line-strong); padding: 2px 6px; border-radius: 2px;
+    color: var(--text-muted); white-space: nowrap;
+  }
+  .signal { color: var(--signal); border-color: var(--signal-dim); }
+</style>

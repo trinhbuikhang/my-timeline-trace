@@ -371,7 +371,42 @@ Site là một **phòng lab sạch sẽ**: nhiều khoảng trắng, nhãn mẫu
 
 ---
 
-## Câu hỏi mở cho Khang
+## Quyết định đã chốt (05/10/2026)
+
+| # | Câu hỏi | Quyết định |
+|---|---|---|
+| 1 | Website đặt ở đâu | `site/` trong repo này (đọc trực tiếp `years/*.md`) |
+| 2 | PaveVision / PaveFlow | **Dự án công ty** → chỉ nằm trong *Selected professional work*, mô tả theo lĩnh vực, **không nêu tên sản phẩm** |
+| 3 | Mốc TRACE | Chỉ mốc chính, đều công khai |
+| 4 | Toạ độ thật trên hero | Được. Hiện đang dùng tâm quốc gia (`≈`) cho tới khi Khang cho toạ độ thành phố |
+| 5 | Capsule năm công khai | Có → `/trace/[year]` (ẩn các mục còn `_Write here._`) |
+
+### Bổ sung hướng thiết kế
+
+**1. Hero = quả địa cầu GIS.** Phép chiếu orthographic vẽ bằng canvas; đất liền là ma trận điểm tính sẵn lúc build (`site/scripts/build-land-dots.mjs`, 4.661 điểm, ~16 KB gzip tính cả code). Lưới kinh vĩ 15°, các địa điểm là *survey point* hình vuông, kèm đường cong hành trình giữa các nơi. Góc hero có bảng đọc số kiểu GIS: `CENTER` (cập nhật trực tiếp), `PROJ ORTHOGRAPHIC · WGS84`, `LAND n PTS`. Kéo chuột/vuốt để xoay, phím mũi tên để xoay, có quán tính, tự quay chậm (2,4°/s), dừng khi ra khỏi màn hình. Dữ liệu: `site/src/content/places.yaml`, có thể thêm vị trí dự án.
+
+**2. Hai giọng (two voices).** Thay cho một motion system chung:
+
+| | Story voice | System voice |
+|---|---|---|
+| Dùng cho | Stories, Trace, Dream, About | Systems, Lab, code |
+| Font | Serif (Source Serif 4) | Sans 800 uppercase + mono |
+| Motion | Chậm, mềm: 700–1100ms, ease-out | Nhanh, gắt: 120–180ms, ease-snap |
+| Hover | Nền đổi dần sang *mood* riêng của câu chuyện | Hàng đảo màu tức thì (quét trái → phải) |
+| Bố cục | Thoáng, chữ lớn | Dày, dạng bảng, mã lưu trữ |
+
+**3. Mỗi câu chuyện một thế giới (story moods).** Frontmatter `mood: ink | dusk | paper | field | ember` (+ `accent` tuỳ chọn). Mood định nghĩa nền, màu chữ, màu nhấn, texture (`site/src/styles/moods.css`). Trang chủ cho xem trước mood khi hover; trang story (M2) dùng toàn bộ mood, kể cả mood sáng `paper`.
+
+---
+
+## Câu hỏi còn mở
+
+1. Toạ độ thành phố (Việt Nam, New Zealand) và vị trí các dự án muốn hiện trên globe — mỗi điểm: tên, lat/lon, năm.
+2. Nội dung trong bảng EC của backlog (About, GeoNote, story đầu tiên…).
+3. Nền tảng nhận support (Ko-fi, Buy Me a Coffee, GitHub Sponsors…).
+
+<details><summary>Câu hỏi ban đầu (đã trả lời)</summary>
+
 
 Cần trả lời trước hoặc trong Milestone 1 (không chặn việc dựng prototype — sẽ dùng placeholder):
 
@@ -381,3 +416,5 @@ Cần trả lời trước hoặc trong Milestone 1 (không chặn việc dựng
 4. Có muốn hiện toạ độ thật (thành phố) trên hero không, hay chỉ toạ độ "trừu tượng"?
 5. Có capsule năm nào (`years/*.md`) được phép công khai trên web không? (mặc định: không)
 6. Nền tảng nhận support sau này (Ko-fi, Buy Me a Coffee, GitHub Sponsors…)? Prototype chỉ dùng link placeholder.
+
+</details>

@@ -1,0 +1,55 @@
+---
+import '@fontsource-variable/inter-tight';
+import '@fontsource-variable/source-serif-4';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/moods.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { useT, type Lang, type Section } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title?: string;
+  description?: string;
+  active?: Section;
+}
+
+const { lang, title, description, active } = Astro.props;
+const t = useT(lang);
+const fullTitle = title ? `${title} — Pharaoh Alone` : 'Pharaoh Alone';
+const other: Lang = lang === 'vi' ? 'en' : 'vi';
+const alternate = Astro.url.pathname.replace(/^\/(vi|en)\//, `/${other}/`);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description ?? t('meta.description')} />
+    <meta name="theme-color" content="#0a0a09" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="alternate" hreflang={other} href={new URL(alternate, Astro.site)} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description ?? t('meta.description')} />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try { localStorage.setItem('pa-lang', document.documentElement.lang); } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t('skip')}</a>
+    <SiteHeader lang={lang} active={active} alternate={alternate} />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter lang={lang} alternate={alternate} />
+    <script>
+      import '../scripts/reveal';
+    </script>
+  </body>
+</html>

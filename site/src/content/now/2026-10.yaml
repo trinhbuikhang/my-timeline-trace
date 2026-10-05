@@ -1,0 +1,12 @@
+updated: "2026-10"
+building:
+  - { vi: "GeoNote", en: "GeoNote" }
+  - { vi: "Các hệ thống phần mềm cá nhân", en: "Personal software systems" }
+exploring:
+  - { vi: "AI · Dữ liệu", en: "AI · Data" }
+  - { vi: "Rust", en: "Rust" }
+  - { vi: "Hệ thống không gian địa lý", en: "Geospatial systems" }
+thinking:
+  - { vi: "Sản phẩm độc lập", en: "Independent products" }
+  - { vi: "Tự động hoá kỹ thuật", en: "Engineering automation" }
+question: { vi: "Tiếp theo mình nên xây gì?", en: "What should I build next?" }

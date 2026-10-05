@@ -16,6 +16,12 @@ Dựa trên [`01-analysis-and-design.md`](01-analysis-and-design.md). Concept đ
 
 ---
 
+## Trạng thái (05/10/2026)
+
+**M1 — Homepage prototype: đã dựng xong bản đầu** (`site/`, chạy `pnpm dev`).
+Đã xong: F-01, F-02, F-03, F-04, I-01, I-03, N-01, N-02, N-03, H-01, H-02, H-03, H-04, H-05, H-06, H-07, H-09, S-05 (phần trang chủ). Có trang tạm "đang được ghi lại" cho các section chưa làm.
+Còn lại của M1: I-02 (fallback đầy đủ + test), H-08 (Lighthouse, ảnh chụp chuẩn).
+
 ## Lộ trình
 
 | Milestone | Mục tiêu | Epics | Kết quả |
@@ -146,9 +152,18 @@ Là developer, tôi muốn một project Astro sạch để bắt đầu code.
 - [ ] Một dòng: `FUEL THE LAB ☕` + câu ngắn + `SUPPORT →`; cỡ chữ nhỏ, không màu nổi
 - [ ] Không popup, không sticky
 
+### H-09 · Quả địa cầu GIS trên hero — **L** · Dep: H-01
+- [x] Canvas orthographic, ma trận điểm đất liền tính sẵn lúc build (không có thư viện bản đồ phía client)
+- [x] Địa điểm từ `places.yaml`: điểm vuông + vòng pulse + nhãn toạ độ; đường cong hành trình có xung sáng chạy dọc
+- [x] Kéo/vuốt/phím mũi tên để xoay, quán tính, tự quay chậm; nhãn tự lật để không bị cắt mép màn hình
+- [x] Intro: đất liền hiện dần từ bắc xuống nam + boot log dùng số liệu thật, chỉ chạy lần đầu mỗi session
+- [x] Dừng vẽ khi ra khỏi viewport / tab ẩn; reduced-motion → khung tĩnh, chỉ vẽ khi người dùng kéo
+- [ ] Toạ độ thành phố + địa điểm dự án thật (EC-11)
+- [ ] Bấm vào một địa điểm → bay tới và mở story/system liên quan (M2)
+
 ### H-08 · Responsive & QA homepage — **M** · Dep: H-01..H-07, N-02
 - [ ] Soát riêng layout mobile theo wireframe mục B (không chỉ co desktop)
-- [ ] Lighthouse mobile: Performance ≥ 95, Accessibility 100, CLS < 0.05, JS trang chủ < 15 KB gzip
+- [ ] Lighthouse mobile: Performance ≥ 95, Accessibility 100, CLS < 0.05, JS trang chủ < 25 KB gzip (globe + dữ liệu đất liền ≈ 16 KB)
 - [ ] Chụp screenshot 360 / 768 / 1280 / 1920 (Playwright) lưu vào `docs/pharaoh-alone/screens/`
 - [ ] Bản VI và EN đều hoàn chỉnh
 
@@ -176,6 +191,13 @@ Là developer, tôi muốn một project Astro sạch để bắt đầu code.
 - [ ] Thanh tiến độ đọc mảnh 1px (tuỳ chọn, tắt khi reduced-motion)
 - [ ] Mobile: thử đọc một bài ≥ 2.000 chữ tiếng Việt trên điện thoại thật — dễ chịu, không zoom ngang
 - [ ] `SupportCTA inline` cuối bài, rất kín đáo
+
+### S-05 · Story moods — mỗi câu chuyện một thế giới — **M** · Dep: S-03
+- [x] Frontmatter `mood` (`ink | dusk | paper | field | ember`) + `accent` tuỳ chọn; preset trong `moods.css`
+- [x] Trang chủ: hover/focus chuyển dần nền sang mood (story voice, 1.1s); màn hình cảm ứng hiện dải màu mood
+- [ ] Trang story áp dụng toàn bộ mood: nền, chữ, màu nhấn, texture, ảnh bìa; chuyển mood mượt khi vào trang
+- [ ] Mood sáng `paper` đạt tương phản AA
+- [ ] Cho phép một story tự định nghĩa mood riêng (CSS variables trong frontmatter)
 
 ### S-04 · Typography cho prose tiếng Việt — **S** · Dep: S-03
 - [ ] Kiểm tra `hyphens`, `text-wrap: pretty`, khoảng cách dấu câu, trích dẫn `“ ”`
@@ -219,7 +241,8 @@ Là developer, tôi muốn một project Astro sạch để bắt đầu code.
 - [ ] Kết thúc bằng `2027 → ?` và câu "The machine keeps the clock. The human provides the meaning."
 - [ ] Thiết kế chịu được 50+ mốc (gom theo thập kỷ)
 
-### T-03 · Tích hợp capsule `years/*.md` (opt-in) — **M** · Dep: T-02
+### T-03 · Tích hợp capsule `years/*.md` — **M** · Dep: T-02
+> Khang đã đồng ý công khai capsule. Đã có collection `capsules` (đọc `../years`); trang tạo ở M2.
 - [ ] Đọc `../years/*.md` lúc build bằng glob loader
 - [ ] Chỉ render `/trace/[year]` cho năm có trong `publicCapsules` (mặc định rỗng)
 - [ ] Các mục còn `_Write here._` bị ẩn tự động
@@ -309,6 +332,7 @@ Không story nào trong code được phép tự viết các nội dung này.
 | EC-07 | 4 mục professional work (2–5 dòng, đã qua checklist SY-04) | SY-02 |
 | EC-08 | Danh sách DREAM (kể cả các mục `????`) | P-03 |
 | EC-09 | 3–5 lab entries, ít nhất 1 ABANDONED | L-02 |
+| EC-11 | Toạ độ thành phố + các địa điểm dự án cho globe | H-09 |
 | EC-10 | 6 bước SOLVE — mỗi bước 1–2 câu bằng giọng của Khang | P-01 |
 
 ---

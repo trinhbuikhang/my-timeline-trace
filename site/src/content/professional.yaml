@@ -1,0 +1,22 @@
+# Company work — a chapter of the career, not the identity.
+# High level only: no product names, customers, data, screenshots or internal architecture.
+- id: pavement-data
+  title: { vi: "Xử lý dữ liệu mặt đường", en: "Pavement data processing" }
+  summary:
+    vi: "Đường ống xử lý dữ liệu khảo sát mặt đường quy mô lớn."
+    en: "Processing pipelines for large-scale pavement survey data."
+- id: field-data
+  title: { vi: "Hệ thống dữ liệu hiện trường", en: "Field data systems" }
+  summary:
+    vi: "Công cụ thu thập và kiểm soát chất lượng dữ liệu ngoài hiện trường."
+    en: "Tools for collecting and quality-checking data in the field."
+- id: computer-vision
+  title: { vi: "Thị giác máy tính / ML", en: "Computer vision / ML" }
+  summary:
+    vi: "Ứng dụng học máy để nhận diện từ hình ảnh hiện trường."
+    en: "Machine learning applied to field imagery."
+- id: automation
+  title: { vi: "Tự động hoá kỹ thuật", en: "Engineering automation" }
+  summary:
+    vi: "Thay những quy trình thủ công lặp lại bằng phần mềm."
+    en: "Replacing repetitive manual engineering workflows with software."
