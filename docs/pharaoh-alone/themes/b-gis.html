@@ -199,7 +199,7 @@ tbody tr[aria-selected="true"] td.ph, tbody tr[aria-selected="true"] td.id { col
         <li class="group"><div class="row"><input type="checkbox" checked id="ly-stories" disabled><span class="patch" aria-hidden="true" style="background:var(--field)"></span><label for="ly-stories" data-en="Stories">Câu chuyện</label><span class="count">3</span></div>
           <ul role="listbox" aria-label="Câu chuyện">
             <li class="row story" role="option" tabindex="0" aria-selected="false" data-story="0"><span class="patch s-dusk" aria-hidden="true"></span><span class="t" data-en="The Things I Never Put on My CV">Những điều tôi chưa bao giờ ghi vào CV</span></li>
-            <li class="row story" role="option" tabindex="0" aria-selected="false" data-story="1"><span class="patch s-paper" aria-hidden="true"></span><span class="t" data-en="How a Mechanical Engineer Ended Up Writing Software">Một kỹ sư cơ khí đã đi đến phần mềm như thế nào</span></li>
+            <li class="row story" role="option" tabindex="0" aria-selected="false" data-story="1"><span class="patch s-paper" aria-hidden="true"></span><span class="t" data-en="How a Mechatronics Engineer Ended Up Writing Software">Một kỹ sư cơ điện tử đã đi đến phần mềm như thế nào</span></li>
             <li class="row story" role="option" tabindex="0" aria-selected="false" data-story="2"><span class="patch s-ember" aria-hidden="true"></span><span class="t" data-en="The Years I Didn’t Know Where I Was Going">Những năm tôi không biết mình đang đi đâu</span></li>
           </ul>
         </li>
@@ -272,7 +272,7 @@ tbody tr[aria-selected="true"] td.ph, tbody tr[aria-selected="true"] td.id { col
           <thead><tr><th>fid</th><th>title</th><th>category</th><th>date</th><th>symbology</th></tr></thead>
           <tbody>
             <tr data-kind="story" data-i="0" tabindex="0"><td class="id">PA·STR·001</td><td class="story-title" data-en="The Things I Never Put on My CV">Những điều tôi chưa bao giờ ghi vào CV</td><td class="mono">LIFE</td><td class="null">NULL</td><td><span class="chip"><span class="patch s-dusk"></span>dusk</span></td></tr>
-            <tr data-kind="story" data-i="1" tabindex="0"><td class="id">PA·STR·002</td><td class="story-title" data-en="How a Mechanical Engineer Ended Up Writing Software">Một kỹ sư cơ khí đã đi đến phần mềm như thế nào</td><td class="mono">ENGINEERING</td><td class="null">NULL</td><td><span class="chip"><span class="patch s-paper"></span>paper</span></td></tr>
+            <tr data-kind="story" data-i="1" tabindex="0"><td class="id">PA·STR·002</td><td class="story-title" data-en="How a Mechatronics Engineer Ended Up Writing Software">Một kỹ sư cơ điện tử đã đi đến phần mềm như thế nào</td><td class="mono">ENGINEERING</td><td class="null">NULL</td><td><span class="chip"><span class="patch s-paper"></span>paper</span></td></tr>
             <tr data-kind="story" data-i="2" tabindex="0"><td class="id">PA·STR·003</td><td class="story-title" data-en="The Years I Didn’t Know Where I Was Going">Những năm tôi không biết mình đang đi đâu</td><td class="mono">THOUGHTS</td><td class="null">NULL</td><td><span class="chip"><span class="patch s-ember"></span>ember</span></td></tr>
           </tbody>
         </table>
@@ -387,7 +387,14 @@ window.PAGlobe = function (canvas, opts) {
     if (!m) return;
     e.preventDefault(); rot[0] -= m[0]; rot[1] = clamp(rot[1] + m[1]); idle = performance.now(); draw();
   });
-  new IntersectionObserver(function (en) { onScreen = en[0].isIntersecting; onScreen ? start() : stop(); }).observe(canvas);
+  var firstSeen = true;
+  new IntersectionObserver(function (en) {
+    onScreen = en[0].isIntersecting;
+    // Below the fold at load: skip the intro so the globe is complete whenever it is reached.
+    if (firstSeen && !onScreen) { intro = 1; draw(); }
+    firstSeen = false;
+    onScreen ? start() : stop();
+  }).observe(canvas);
   document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
   new ResizeObserver(size).observe(canvas);
   size();
@@ -435,7 +442,7 @@ window.PALang = function (buttons) {
   var journey = (function () { var a = PAGlobe.places[0], b = PAGlobe.places[1], f = d3.geoInterpolate([a.lon, a.lat], [b.lon, b.lat]), c = []; for (var i = 0; i <= 48; i++) c.push(f(i / 48)); return { type: 'LineString', coordinates: c }; })();
   var stories = [
     { vi: 'Những điều tôi chưa bao giờ ghi vào CV', en: 'The Things I Never Put on My CV', cat: 'LIFE', mood: 'dusk' },
-    { vi: 'Một kỹ sư cơ khí đã đi đến phần mềm như thế nào', en: 'How a Mechanical Engineer Ended Up Writing Software', cat: 'ENGINEERING', mood: 'paper' },
+    { vi: 'Một kỹ sư cơ điện tử đã đi đến phần mềm như thế nào', en: 'How a Mechatronics Engineer Ended Up Writing Software', cat: 'ENGINEERING', mood: 'paper' },
     { vi: 'Những năm tôi không biết mình đang đi đâu', en: 'The Years I Didn’t Know Where I Was Going', cat: 'THOUGHTS', mood: 'ember' }
   ];
   var systems = [

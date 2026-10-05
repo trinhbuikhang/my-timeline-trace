@@ -66,7 +66,14 @@ window.PAGlobe = function (canvas, opts) {
     if (!m) return;
     e.preventDefault(); rot[0] -= m[0]; rot[1] = clamp(rot[1] + m[1]); idle = performance.now(); draw();
   });
-  new IntersectionObserver(function (en) { onScreen = en[0].isIntersecting; onScreen ? start() : stop(); }).observe(canvas);
+  var firstSeen = true;
+  new IntersectionObserver(function (en) {
+    onScreen = en[0].isIntersecting;
+    // Below the fold at load: skip the intro so the globe is complete whenever it is reached.
+    if (firstSeen && !onScreen) { intro = 1; draw(); }
+    firstSeen = false;
+    onScreen ? start() : stop();
+  }).observe(canvas);
   document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
   new ResizeObserver(size).observe(canvas);
   size();

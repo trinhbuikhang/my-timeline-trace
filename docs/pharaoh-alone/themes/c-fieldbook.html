@@ -254,7 +254,7 @@ a.tape:hover, a.tape:focus-visible { transform: translateY(-2px) rotate(-0.4deg)
       </a>
       <a class="sheet p-lined" href="#stories">
         <span class="pm"><span>ENGINEERING</span><span>··/··/····</span><span class="ph" data-en="Placeholder">Chờ nội dung</span></span>
-        <h3 data-en="How a Mechanical Engineer Ended Up Writing Software">Một kỹ sư cơ khí đã đi đến phần mềm như thế nào</h3>
+        <h3 data-en="How a Mechatronics Engineer Ended Up Writing Software">Một kỹ sư cơ điện tử đã đi đến phần mềm như thế nào</h3>
         <span class="paper" data-en="RULED PAPER · BLUE PEN">GIẤY KẺ DÒNG · BÚT XANH</span>
       </a>
       <a class="sheet p-blank" href="#stories">
@@ -359,7 +359,14 @@ window.PAGlobe = function (canvas, opts) {
     if (!m) return;
     e.preventDefault(); rot[0] -= m[0]; rot[1] = clamp(rot[1] + m[1]); idle = performance.now(); draw();
   });
-  new IntersectionObserver(function (en) { onScreen = en[0].isIntersecting; onScreen ? start() : stop(); }).observe(canvas);
+  var firstSeen = true;
+  new IntersectionObserver(function (en) {
+    onScreen = en[0].isIntersecting;
+    // Below the fold at load: skip the intro so the globe is complete whenever it is reached.
+    if (firstSeen && !onScreen) { intro = 1; draw(); }
+    firstSeen = false;
+    onScreen ? start() : stop();
+  }).observe(canvas);
   document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
   new ResizeObserver(size).observe(canvas);
   size();

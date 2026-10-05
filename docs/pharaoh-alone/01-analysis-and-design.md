@@ -154,7 +154,7 @@ pharaohalone.com
 │                          │ The Things I Never Put on My CV       [placeh.] │
 │                          │ ─────────────────────────────────────────────── │
 │                          │ 2026-xx · ENGINEERING · 6 MIN                   │
-│                          │ How a Mechanical Engineer Ended Up…   [placeh.] │
+│                          │ How a Mechatronics Engineer Ended Up…   [placeh.] │
 │                          │                                    ALL STORIES →│
 ├──────────────────────────┴─────────────────────────────────────────────────┤
 │ 04 / TRACE                                                                 │
