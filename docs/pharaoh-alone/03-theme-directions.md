@@ -1,6 +1,10 @@
 # Bốn hướng giao diện thay thế (05/10/2026)
 
 > **Đã chọn: D · Datasheet cơ điện tử.** Site `site/` được dựng lại theo D. A, B, C giữ lại để tham khảo và có thể đổi sau.
+> **D2 · Datasheet trên bàn làm việc** (`themes/d2-workbench.html`, đang chờ Khang duyệt): giữ khung D nhưng viết cho người đọc chứ không phải cho máy —
+> kể theo chương có thật (sinh viên → 2019 → 2024 → 2025 → bây giờ → một ngày nào đó) thay cho mục đánh số; demo tự tay chỉnh được (Kp của robot dò đường, thổi gió vào UAV, người máy nhìn theo con trỏ và vẫy tay);
+> "bẩn" có chủ đích: hạt giấy, ghi chú viết tay (Patrick Hand), vòng bút đỏ, băng dính, vết cà phê, thẻ lên máy bay, thông tin công ty bị bôi đen; văn xuôi dùng serif Newsreader; khung ảnh polaroid chờ ảnh thật.
+> Lời kể trong D2 là bản nháp dựa trên các mốc Khang đã đưa, Khang sẽ viết lại.
 > Bổ sung cho D: mục **4 · Dòng sản phẩm — tiến hoá** (robot dò đường → UAV → robot hình người + AI), logo tự vẽ lại theo ba thế hệ, và chuyển động riêng cho từng mục (chi tiết ở `02-backlog.md`, H-10 và H-11).
 
 > Nghề ban đầu của Khang là **kỹ sư cơ điện tử** (không phải cơ khí).

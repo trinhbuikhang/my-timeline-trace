@@ -1,0 +1,1053 @@
+<title>Pharaoh Alone · Workbench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..900;1,100,400&family=Reddit+Mono:wght@400;500;600&family=Patrick+Hand&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&display=swap">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+/* D2 · the datasheet, after it has lived on a workbench.
+   Same bones as D (part PA-001, Archivo + Reddit Mono, copper), but the page tells a story in chapters
+   and carries the marks of a person: pencil notes, red-pen circles, tape, a coffee ring, photo slots.
+   Prose is a serif (the slow voice); labels and readings stay mono (the fast voice). */
+:root {
+  --paper: #f5f3ee;
+  --sheet: #fbfaf7;
+  --ink: #161616;
+  --ink-2: #5d5b57;
+  --rule: #d6d2c9;
+  --band: #ebe7de;
+  --accent: #b5532a;   /* copper */
+  --pen: #c62f24;      /* red pen */
+  --pencil: #57534d;
+  --tape: rgb(236 222 160 / 0.62);
+  --scope: #0f1513;
+  --body: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'Reddit Mono', ui-monospace, Menlo, monospace;
+  --serif: 'Newsreader', Georgia, serif;
+  --hand: 'Patrick Hand', 'Comic Sans MS', cursive;
+  --ease: cubic-bezier(.2, .7, .1, 1);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --paper: #161513; --sheet: #1c1b18; --ink: #ecebe6; --ink-2: #a6a39b; --rule: #34322d; --band: #24221f; --accent: #e08a5c; --pen: #ff6b5a; --pencil: #b8b3a9; --tape: rgb(200 180 110 / 0.35); color-scheme: dark; }
+}
+:root[data-theme="dark"] { --paper: #161513; --sheet: #1c1b18; --ink: #ecebe6; --ink-2: #a6a39b; --rule: #34322d; --band: #24221f; --accent: #e08a5c; --pen: #ff6b5a; --pencil: #b8b3a9; --tape: rgb(200 180 110 / 0.35); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html { scroll-padding-top: 64px; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 15px/1.5 var(--body); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+/* paper grain over everything: a photocopy, not a screen */
+body::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: .5; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .42  0 0 0 0 .38  0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body::after { mix-blend-mode: screen; opacity: .25; } }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.doc { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 0 40px; }
+.hand { font-family: var(--hand); color: var(--pencil); font-size: 19px; line-height: 1.15; }
+.hand.red { color: var(--pen); }
+.ph { color: var(--ink-2); font-style: italic; }
+
+/* header */
+.top { position: sticky; top: 0; z-index: 10; background: var(--paper); display: flex; align-items: center; justify-content: space-between; gap: 6px 20px; padding-block: 10px 9px; border-bottom: 3px solid var(--ink); }
+.brand { display: flex; align-items: center; gap: 10px; font: 800 15px/1 var(--body); font-stretch: 112%; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
+.top .right { display: flex; align-items: center; gap: 16px; }
+.top nav { display: flex; gap: 16px; }
+.top nav a { font: 600 12px/1 var(--body); font-stretch: 110%; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; color: var(--ink-2); }
+.top nav a:hover { color: var(--accent); }
+.lang { display: flex; border: 1px solid var(--ink); }
+.lang button { font: 600 12px/1 var(--mono); padding: 4px 8px; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.mark { width: 30px; height: 30px; flex: none; overflow: visible; }
+.mark g { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.mark g * { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 9s var(--ease) infinite backwards; }
+.mark .g2 * { animation-delay: 3s; } .mark .g3 * { animation-delay: 6s; }
+.mark .acc { stroke: var(--accent); }
+@keyframes draw { 0% { stroke-dashoffset: 1; } 9%, 27% { stroke-dashoffset: 0; } 33.3%, 100% { stroke-dashoffset: -1; } }
+.rider { --x: 0px; position: absolute; left: 0; bottom: -3px; width: 100%; height: 0; pointer-events: none; }
+.rider::before { content: ''; position: absolute; left: 0; bottom: 0; height: 3px; width: calc(var(--x) + 9px); background: var(--accent); }
+.rider .bot { position: absolute; bottom: -7.5px; left: 0; width: 18px; height: 18px; transform: translateX(var(--x)); }
+.rider svg { position: absolute; inset: 0; width: 18px; height: 18px; overflow: visible; fill: var(--paper); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; transition: opacity 200ms, transform 300ms var(--ease); opacity: 0; transform: scale(.4); }
+.rider svg.on { opacity: 1; transform: none; }
+@media (max-width: 760px) { .top nav { display: none; } }
+
+/* sticky note: honesty about the draft copy */
+.draftnote { position: relative; margin: 18px 0 0 auto; max-width: 300px; padding: 14px 16px 12px; background: #f6e27a; color: #2a2610; transform: rotate(1.6deg); box-shadow: 0 8px 14px -8px rgb(0 0 0 / .35); font: 18px/1.15 var(--hand); }
+.draftnote button { position: absolute; top: 4px; right: 8px; font: 16px var(--hand); color: #6b6020; }
+.draftnote[hidden] { display: none; }
+
+/* hero */
+.hero { display: grid; grid-template-columns: 1fr; gap: 24px 48px; padding-block: 26px 30px; position: relative; }
+.kicker { font: 500 12px/1.4 var(--mono); color: var(--ink-2); letter-spacing: .02em; }
+.hero h1 { margin: 14px 0 0; font: 800 clamp(40px, 6.2vw, 84px)/0.98 var(--body); font-stretch: 78%; letter-spacing: -0.01em; max-width: 12ch; }
+.hero .tag { margin: 22px 0 0; font: italic 400 clamp(19px, 2vw, 24px)/1.35 var(--serif); color: var(--ink-2); }
+.hero .tag span { display: block; }
+.hero .tag span:last-child { color: var(--accent); }
+.globebox { position: relative; }
+.globebox canvas { width: 100%; aspect-ratio: 1 / 0.92; display: block; cursor: grab; touch-action: pan-y; }
+.globebox canvas.is-dragging { cursor: grabbing; }
+.globebox .read { display: flex; justify-content: space-between; font: 500 11.5px/1 var(--mono); color: var(--ink-2); margin-top: 4px; }
+.globebox .try { position: absolute; left: -6px; top: 8%; transform: rotate(-7deg); }
+.globebox .try svg { display: block; width: 70px; height: 38px; margin: 2px 0 0 40px; overflow: visible; }
+.globebox .try svg path { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.cue { display: inline-flex; align-items: center; gap: 10px; margin-top: 34px; text-decoration: none; }
+.cue .hand { font-size: 22px; color: var(--ink); }
+.cue svg { width: 18px; height: 34px; overflow: visible; animation: nudge 1.8s ease-in-out infinite; }
+@keyframes nudge { 50% { transform: translateY(6px); } }
+
+/* chapters */
+.ch { position: relative; padding-block: 64px 40px; border-top: 1px solid var(--ink); }
+.ch .when { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; }
+.ch .when b { font: 900 clamp(46px, 7vw, 92px)/.85 var(--body); font-stretch: 62%; }
+.ch .when span { font: 500 12px/1.3 var(--mono); color: var(--ink-2); text-transform: uppercase; letter-spacing: .04em; }
+.ch h2 { margin: 0; font: 800 clamp(30px, 4.2vw, 54px)/1.02 var(--body); font-stretch: 82%; max-width: 16ch; }
+.prose { font: 400 20px/1.55 var(--serif); max-width: 34ch; }
+.prose p { margin: 16px 0 0; }
+.prose p.big { font-size: clamp(24px, 2.6vw, 30px); line-height: 1.3; }
+.grid2 { display: grid; grid-template-columns: 1fr; gap: 30px 56px; align-items: start; }
+@media (min-width: 900px) {
+  .hero { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); align-items: center; }
+  .grid2 { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  .grid2.flip { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  .grid2.flip > :first-child { order: 2; }
+}
+
+/* a figure on the bench: sheet, tape, slight tilt */
+.bench { position: relative; background: var(--sheet); border: 1px solid var(--rule); padding: 12px; box-shadow: 0 1px 0 var(--rule), 0 14px 30px -22px rgb(0 0 0 / .45); }
+.tape::before, .tape::after { content: ''; position: absolute; width: 86px; height: 24px; background: var(--tape); top: -11px; z-index: 2; box-shadow: 0 1px 2px rgb(0 0 0 / .08); }
+.tape::before { left: 16px; transform: rotate(-4deg); }
+.tape::after { right: 20px; transform: rotate(5deg); }
+.bench canvas { display: block; width: 100%; }
+.figcap { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font: 500 11.5px/1.3 var(--mono); color: var(--ink-2); margin-top: 8px; }
+.figcap b { color: var(--accent); font-weight: 600; }
+
+/* demo controls */
+.ctrl { display: flex; align-items: center; gap: 12px; margin-top: 10px; font: 500 12px/1 var(--mono); }
+.ctrl input[type=range] { flex: 1; accent-color: var(--accent); }
+.ctrl output { min-width: 64px; text-align: right; color: var(--accent); font-weight: 600; }
+.ctrl button { border: 1px solid var(--ink); padding: 5px 9px; font: 600 11px/1 var(--mono); }
+.ctrl button:hover { background: var(--ink); color: var(--paper); }
+
+/* photo slot: a polaroid taped down, waiting for the real photo */
+.photo { position: relative; width: min(260px, 70%); background: #fff; padding: 10px 10px 40px; box-shadow: 0 10px 22px -12px rgb(0 0 0 / .5); transform: rotate(var(--r, -3deg)); margin-top: 28px; }
+.photo .img { aspect-ratio: 1; background: #e9e6df; display: grid; place-items: center; overflow: hidden; }
+.photo .img svg { width: 78%; height: 78%; }
+.photo .cap { position: absolute; left: 12px; right: 12px; bottom: 8px; font: 18px/1.1 var(--hand); color: #403c35; }
+.photo::before { content: ''; position: absolute; width: 80px; height: 22px; background: var(--tape); top: -10px; left: 50%; transform: translateX(-50%) rotate(3deg); }
+.sketch { fill: none; stroke: #4e4a43; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; filter: url(#pencil); }
+
+/* hand-drawn marks inserted by JS */
+.circ, .scrib { position: relative; white-space: nowrap; }
+.mk { position: absolute; pointer-events: none; overflow: visible; }
+.mk path { fill: none; stroke: var(--pen); stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.js .on .mk path, html:not(.js) .mk path { stroke-dashoffset: 0; transition: stroke-dashoffset .9s var(--ease) .35s; }
+.note { position: relative; display: inline-block; transform: rotate(var(--r, -2deg)); }
+.note svg { display: block; overflow: visible; }
+.note svg path { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+
+/* 2019: a dark scope band, the quietest chapter */
+.ch.dark { background: var(--scope); color: #e9efe9; border-top: 0; margin-inline: -20px; padding-inline: 20px; }
+.ch.dark .when span, .ch.dark .figcap { color: #9fb0a8; }
+.ch.dark h2 { font-stretch: 70%; }
+.ch.dark .prose { color: #d3dcd6; }
+.ch.dark a { color: #f2d21b; }
+.ch.dark canvas { display: block; width: 100%; aspect-ratio: 3 / 1; margin-top: 30px; }
+
+/* 2024: boarding pass taped over the route */
+.pass { position: relative; margin: -40px 0 0 auto; width: min(360px, 92%); background: #fff; color: #1d1b17; border: 1px solid #d8d3c8; transform: rotate(2.4deg); box-shadow: 0 12px 24px -14px rgb(0 0 0 / .5); display: grid; grid-template-columns: 1fr 86px; z-index: 3; }
+.pass .main { padding: 12px 14px; border-right: 2px dashed #cfc9bc; }
+.pass .row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.pass .big { font: 900 30px/1 'Archivo', sans-serif; font-stretch: 70%; }
+.pass .lbl { font: 500 10px/1.2 'Reddit Mono', monospace; color: #77716a; text-transform: uppercase; letter-spacing: .04em; }
+.pass .val { font: 600 13px/1.2 'Reddit Mono', monospace; }
+.pass .stub { padding: 12px 8px; display: grid; align-content: space-between; text-align: center; }
+.pass .stamp { font: 700 12px/1 'Reddit Mono', monospace; color: var(--pen); border: 2px solid var(--pen); padding: 6px 2px; transform: rotate(-12deg); opacity: .85; letter-spacing: .04em; mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='60'><filter id='m'><feTurbulence baseFrequency='.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.2 1.6'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>"); }
+
+/* 2025 → now: redacted company work */
+.cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); margin-top: 26px; }
+.card { background: var(--sheet); border: 1px solid var(--rule); padding: 14px 14px 16px; position: relative; }
+.card b { display: block; font: 700 15px/1.25 var(--body); }
+.card .redact { display: block; margin-top: 10px; font-size: 13.5px; color: var(--ink-2); }
+.card .redact i { display: inline-block; height: .95em; vertical-align: -0.1em; background: var(--ink); margin: 0 3px 3px 0; transform: rotate(-.4deg); border-radius: 1px; }
+.stampbox { display: inline-block; margin-top: 18px; font: 700 12px/1 var(--mono); color: var(--pen); border: 2px solid var(--pen); padding: 7px 10px; transform: rotate(-3deg); letter-spacing: .05em; opacity: .9; }
+.sys { margin-top: 30px; display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; align-items: baseline; padding: 16px; border: 2px solid var(--ink); background: var(--sheet); }
+.sys .pn { font: 900 34px/1 var(--body); font-stretch: 66%; text-transform: uppercase; }
+.sys .st { font: 600 12px/1 var(--mono); color: var(--accent); }
+.led { display: inline-block; width: 8px; height: 8px; background: var(--accent); margin-right: 6px; animation: blink .8s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.sys p { grid-column: 1 / -1; margin: 0; }
+.loopfig svg { width: 100%; height: auto; display: block; }
+.loopfig text { font: 600 13px var(--body); fill: var(--ink); }
+.loopfig .small { font: 500 11px var(--mono); fill: var(--ink-2); }
+.loopfig .blk { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.4; }
+.loopfig .wire { fill: none; stroke: var(--ink); stroke-width: 1.3; }
+.loopfig .arrow { fill: var(--ink); }
+.loopfig .sig { fill: var(--accent); }
+
+/* now: a list on a sticky pad */
+.pad { background: var(--sheet); border: 1px solid var(--rule); padding: 18px 20px; position: relative; box-shadow: 0 14px 30px -24px rgb(0 0 0 / .5); background-image: repeating-linear-gradient(transparent 0 33px, var(--rule) 33px 34px); background-position: 0 14px; }
+.pad h3 { margin: 0 0 6px; font: 600 12px/1 var(--mono); color: var(--ink-2); text-transform: uppercase; letter-spacing: .05em; }
+.pad ul { list-style: none; margin: 0 0 14px; padding: 0; }
+.pad li { font: 21px/34px var(--hand); color: var(--ink); display: flex; gap: 10px; align-items: baseline; }
+.pad li::before { content: ''; width: 13px; height: 13px; border: 1.6px solid var(--pencil); flex: none; transform: rotate(-3deg) translateY(1px); }
+.pad li.doing::before { background: linear-gradient(135deg, transparent 45%, var(--accent) 45% 60%, transparent 60%); }
+.question { font: 400 clamp(30px, 4vw, 46px)/1.1 var(--hand); color: var(--pen); margin: 0; transform: rotate(-1.5deg); }
+
+/* someday */
+.dreamfig { position: relative; }
+.dreamfig canvas { width: 100%; aspect-ratio: 4 / 3.4; display: block; background-image: repeating-linear-gradient(45deg, transparent 0 7px, var(--band) 7px 8.5px); border: 1px dashed var(--ink-2); }
+
+/* stories */
+.notes { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); margin-top: 26px; }
+.an { display: grid; gap: 10px; text-decoration: none; align-content: start; position: relative; }
+.an:nth-child(2) { transform: rotate(.8deg); }
+.an:nth-child(3) { transform: rotate(-.6deg); }
+.an canvas { width: 100%; aspect-ratio: 5 / 3; display: block; background: var(--scope); border-radius: 3px; }
+.an .meta { display: flex; flex-wrap: wrap; gap: 2px 12px; font: 500 11.5px/1.3 var(--mono); color: var(--ink-2); }
+.an h3 { margin: 0; font: 500 23px/1.2 var(--serif); text-wrap: balance; }
+.an:hover h3 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.an .hand { position: absolute; right: -4px; top: -16px; transform: rotate(4deg); font-size: 17px; }
+
+/* trace */
+.timing { overflow-x: auto; margin-top: 20px; }
+.timing svg { width: 100%; min-width: 680px; height: auto; display: block; overflow: visible; cursor: crosshair; }
+.timing .ln { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+.timing .x { fill: url(#hatch); stroke: none; }
+.timing text { font: 600 12.5px var(--body); fill: var(--ink); }
+.timing .yr { font: 500 11px var(--mono); fill: var(--ink-2); }
+.timing .cur { stroke: var(--accent); }
+.timing .curt { fill: var(--accent); }
+.timing .tick { stroke: var(--rule); stroke-dasharray: 2 3; }
+.timing .here { font: 20px var(--hand); fill: var(--pen); }
+.timing .herel { stroke: var(--pen); stroke-width: 1.6; fill: none; }
+.timing .cursor line { stroke: var(--accent); }
+.timing .cursor rect { fill: var(--accent); }
+.timing .cursor text { fill: var(--paper); font: 600 11px var(--mono); }
+
+/* support */
+.support { position: relative; display: grid; gap: 24px; grid-template-columns: 1fr; align-items: center; }
+.ring { position: absolute; width: 190px; height: 190px; right: 4%; top: -40px; pointer-events: none; opacity: .55; }
+.ord { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ord td { padding: 10px 8px; border-bottom: 1px solid var(--rule); }
+.ord a { color: var(--accent); font: 700 13px var(--mono); text-decoration: none; }
+.ord tr:hover { background: var(--band); }
+@media (min-width: 900px) { .support { grid-template-columns: 1fr 1fr; } }
+
+footer.foot { margin-top: 40px; padding-top: 10px; border-top: 3px solid var(--ink); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px; font: 500 12px/1.4 var(--mono); color: var(--ink-2); }
+
+/* reveal: chapters ease in; prose lines follow */
+.js .rv { opacity: 0; transform: translateY(18px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+.js .on .rv, .js .rv.on { opacity: 1; transform: none; }
+.js .on .rv.d1 { transition-delay: .12s; } .js .on .rv.d2 { transition-delay: .24s; } .js .on .rv.d3 { transition-delay: .36s; }
+.js .hero h1 { animation: press 1.1s var(--ease) both; }
+@keyframes press { from { font-stretch: 125%; opacity: 0; } 30% { opacity: 1; } to { font-stretch: 78%; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  .js .rv { opacity: 1; transform: none; }
+  .mk path { stroke-dashoffset: 0 !important; }
+  .mark g * { stroke-dashoffset: 0; } .mark .g1, .mark .g2 { display: none; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="pencil"><feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3.2"/></filter>
+  <filter id="stain" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="5"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
+  <filter id="inkbleed"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="8"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter>
+</svg>
+
+<div class="doc">
+  <header class="top">
+    <a class="brand" href="#top" aria-label="Pharaoh Alone">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+        <g class="g1"><path pathLength="1" d="M10 9 H22 V25 H10 Z"/><path pathLength="1" d="M6.5 15 V22 M25.5 15 V22"/><path pathLength="1" class="acc" d="M8 5.5 H24"/><path pathLength="1" d="M16 1 V31" style="stroke-width:.8"/></g>
+        <g class="g2"><path pathLength="1" d="M10 10 L22 22 M22 10 L10 22"/><path pathLength="1" d="M8 3.5 a4.5 4.5 0 1 0 .01 0 M24 3.5 a4.5 4.5 0 1 0 .01 0 M8 19.5 a4.5 4.5 0 1 0 .01 0 M24 19.5 a4.5 4.5 0 1 0 .01 0"/><path pathLength="1" class="acc" d="M13 13 H19 V19 H13 Z"/></g>
+        <g class="g3"><path pathLength="1" class="acc" d="M16 2 a3.6 3.6 0 1 0 .01 0"/><path pathLength="1" d="M11.5 11 H20.5 L19.5 20 H12.5 Z M11.5 11.5 L8 20 M20.5 11.5 L24 20 M14 20 L13 30 M18 20 L19 30"/></g>
+      </svg>
+      Pharaoh Alone
+    </a>
+    <span class="right">
+      <nav aria-label="Mục lục"><a href="#ch-student">Robots</a><a href="#ch-work">Systems</a><a href="#stories">Stories</a><a href="#trace">Trace</a><a href="#now">Now</a><a href="#someday">Dream</a></nav>
+      <span class="lang"><button type="button" data-lang="vi" aria-pressed="true">VI</button><button type="button" data-lang="en" aria-pressed="false">EN</button></span>
+    </span>
+    <div class="rider" aria-hidden="true"><div class="bot" id="bot">
+      <svg class="on" viewBox="0 0 22 22"><path d="M3 6 H15 V17 H3 Z"/><path d="M5 3.5 H11 M5 19.5 H11" style="stroke-width:2.2"/><path d="M18.5 4 V19" style="stroke:var(--accent);stroke-width:1.8"/></svg>
+      <svg viewBox="0 0 22 22"><path d="M5 6 L17 16 M17 6 L5 16"/><ellipse cx="4.5" cy="5.5" rx="3.6" ry="1.4"/><ellipse cx="17.5" cy="5.5" rx="3.6" ry="1.4"/><ellipse cx="4.5" cy="16.5" rx="3.6" ry="1.4"/><ellipse cx="17.5" cy="16.5" rx="3.6" ry="1.4"/></svg>
+      <svg viewBox="0 0 22 22"><circle cx="11" cy="3" r="2.4" style="stroke:var(--accent)"/><path d="M7.5 7 H14.5 L13.8 13 H8.2 Z M7.5 7.5 L5.5 13 M14.5 7.5 L16.5 13 M9.5 13 L9 22 M12.5 13 L13 22"/></svg>
+    </div></div>
+  </header>
+
+  <aside class="draftnote" id="draftnote">
+    <button type="button" aria-label="Đóng" onclick="this.parentNode.hidden=true">×</button>
+    <span data-en="Prototype. The narration is Claude's draft, built only from the milestones Khang gave. Khang will rewrite it in his own words.">Bản thử. Lời kể là nháp của Claude, chỉ dựa trên các mốc Khang đã đưa. Khang sẽ viết lại bằng giọng của mình.</span>
+  </aside>
+
+  <!-- HERO -->
+  <section class="hero on" id="top">
+    <div>
+      <div class="kicker" data-en="PA-001 · KHANG · MECHATRONICS ENGINEER · 1992 →">PA-001 · KHANG · KỸ SƯ CƠ ĐIỆN TỬ · 1992 →</div>
+      <h1 data-en="I solve problems by <span class='scrib'>building systems</span>.">Tôi giải quyết vấn đề bằng cách <span class="scrib">xây hệ thống</span>.</h1>
+      <p class="tag"><span data-en="Problems solved.">Vấn đề được giải.</span><span data-en="Systems built.">Hệ thống được dựng.</span><span data-en="Stories left behind.">Câu chuyện còn ở lại.</span></p>
+      <a class="cue" href="#ch-student">
+        <svg viewBox="0 0 18 34"><path d="M9 2 C7 12 11 20 9 30 M3 24 L9 31 L15 23" fill="none" stroke="var(--pen)" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="hand" data-en="it started with a black line">nó bắt đầu từ một vạch kẻ đen</span>
+      </a>
+    </div>
+    <figure class="globebox" style="margin:0">
+      <canvas id="globe" tabindex="0" role="img" aria-label="Quả địa cầu chiếu trực giao, đánh dấu Việt Nam và New Zealand. Kéo để xoay."></canvas>
+      <div class="read"><span data-en="CENTRE">TÂM</span><span id="center">—</span><span>EPSG:4326</span></div>
+      <div class="try hand red"><span data-en="go on, drag it">kéo thử đi — nó xoay được</span><svg viewBox="0 0 70 38"><path d="M4 4 C20 4 40 10 60 30 M50 30 L61 31 L59 20"/></svg></div>
+    </figure>
+  </section>
+
+  <!-- STUDENT YEARS: LINE FOLLOWER -->
+  <section class="ch" id="ch-student">
+    <div class="when rv"><b data-en="Student">Sinh viên</b><span data-en="years · to be written">năm · chờ Khang ghi</span></div>
+    <div class="grid2">
+      <div>
+        <h2 class="rv" data-en="A robot that knew one thing">Một con robot chỉ biết một việc</h2>
+        <div class="prose">
+          <p class="rv d1 big" data-en="Follow a black line on the floor.">Đi theo một <span class="circ">vạch kẻ đen</span> trên sàn.</p>
+          <p class="rv d2" data-en="Drifting left? Turn right. Drifting right? Turn left. It sounds simple, until it goes a little faster.">Lệch trái thì rẽ phải. Lệch phải thì rẽ trái. Nghe thì đơn giản, cho đến khi nó chạy nhanh hơn một chút.</p>
+          <p class="rv d3" data-en="Measure, correct, measure again. Everything after this is the same loop, only bigger.">Đo, sửa, rồi đo lại. Mọi thứ về sau vẫn là vòng lặp ấy, chỉ to hơn.</p>
+        </div>
+        <div class="photo" style="--r:-4deg">
+          <div class="img"><svg viewBox="0 0 100 100" aria-hidden="true"><g class="sketch"><path d="M10 78 C30 70 55 82 90 66"/><rect x="34" y="34" width="34" height="26" rx="2"/><path d="M30 38 V56 M72 38 V56" stroke-width="4"/><path d="M68 40 L80 36 M68 54 L80 58"/><path d="M80 34 V60"/><circle cx="51" cy="47" r="4"/></g></svg></div>
+          <div class="cap" data-en="real photo of the robot — Khang to tape it here">ảnh robot thật — Khang dán vào đây</div>
+        </div>
+      </div>
+      <div class="rv d1">
+        <div class="bench tape">
+          <canvas id="lf" style="aspect-ratio:16/11" role="img" aria-label="Mô phỏng robot dò đường: năm cảm biến đọc vạch, bộ điều khiển P lái xe. Có thể chỉnh hệ số Kp."></canvas>
+          <div class="ctrl"><label for="kp">Kp</label><input type="range" id="kp" min="0.5" max="30" step="0.5" value="7.5"><output id="kpv">7.5</output><button type="button" id="lfreset" data-en="RESET">ĐẶT LẠI</button></div>
+          <div class="figcap"><span><b>PA-LF</b> · <span data-en="P controller, 5 IR sensors">bộ điều khiển P, 5 cảm biến hồng ngoại</span></span><span id="lfstat">—</span></div>
+        </div>
+        <p class="hand red note" style="--r:-2deg;margin:16px 0 0 10px" data-en="Kp too high: it shakes. Too low: it flies off the line. Try it ↑">Kp cao quá: nó lắc. Thấp quá: nó văng khỏi vạch. Thử đi ↑</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STUDENT YEARS: UAV -->
+  <section class="ch" id="ch-uav">
+    <div class="when rv"><b data-en="Then">Rồi</b><span data-en="still a student · + z axis">vẫn thời sinh viên · + trục z</span></div>
+    <div class="grid2 flip">
+      <div>
+        <h2 class="rv" data-en="No floor to hold on to">Không còn sàn để bám</h2>
+        <div class="prose">
+          <p class="rv d1 big" data-en="A UAV has no line to follow.">UAV không có vạch kẻ nào để đi theo.</p>
+          <p class="rv d2" data-en="It has to hold its own balance, every few milliseconds, against air that never keeps still.">Nó phải tự giữ thăng bằng, từng vài phần nghìn giây, giữa một bầu không khí không bao giờ đứng yên.</p>
+          <p class="rv d3" data-en="One more axis. Every problem got twice as interesting.">Thêm một <span class="circ">trục z</span>. Bài toán nào cũng thú vị gấp đôi.</p>
+        </div>
+        <div class="photo" style="--r:3deg">
+          <div class="img"><svg viewBox="0 0 100 100" aria-hidden="true"><g class="sketch"><path d="M28 28 L72 72 M72 28 L28 72"/><ellipse cx="26" cy="26" rx="15" ry="5"/><ellipse cx="74" cy="26" rx="15" ry="5"/><ellipse cx="26" cy="74" rx="15" ry="5"/><ellipse cx="74" cy="74" rx="15" ry="5"/><rect x="42" y="42" width="16" height="16"/></g></svg></div>
+          <div class="cap" data-en="real UAV photo — waiting">ảnh UAV thật — đang chờ</div>
+        </div>
+      </div>
+      <div class="rv d1">
+        <div class="bench tape">
+          <canvas id="uav" style="aspect-ratio:16/11;cursor:crosshair;touch-action:pan-y" role="img" aria-label="Mô phỏng UAV bay lơ lửng. Di chuột hoặc chạm để thổi gió, bộ điều khiển PD giữ nó lại."></canvas>
+          <div class="figcap"><span><b>PA-UAV</b> · <span data-en="PD hover hold">giữ vị trí bằng PD</span></span><span id="uavstat">—</span></div>
+        </div>
+        <p class="hand red note" style="--r:2deg;margin:16px 0 0 auto;display:block;text-align:right" data-en="blow on it with your mouse (or tap) ↑">thổi nó bằng chuột (hoặc chạm) ↑</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2019 -->
+  <section class="ch dark" id="ch-2019">
+    <div class="when rv"><b>2019</b><span data-en="turning point">bước ngoặt</span></div>
+    <h2 class="rv" data-en="Oscillation. Then, slowly, it settles.">Dao động. Rồi chậm rãi, nó lắng xuống.</h2>
+    <canvas id="settle" aria-hidden="true"></canvas>
+    <div class="figcap"><span>CH3 · <span data-en="damped response">đáp ứng tắt dần</span></span><span>2019 →</span></div>
+    <div class="prose" style="max-width:52ch">
+      <p class="rv d1" data-en="Something turned that year. It is a long story and it will be told on its own page.">Năm đó có một thứ đã rẽ hướng. Chuyện dài, sẽ được kể ở một trang riêng.</p>
+      <p class="rv d2"><a href="#stories" data-en="→ The years I didn’t know where I was going">→ Những năm tôi không biết mình đang đi đâu</a></p>
+    </div>
+  </section>
+
+  <!-- 2024 -->
+  <section class="ch" id="ch-2024">
+    <div class="when rv"><b>2024</b><span data-en="New Zealand · engineering">New Zealand · kỹ thuật</span></div>
+    <div class="grid2">
+      <div>
+        <h2 class="rv" data-en="To the other side of the globe">Sang bên kia quả địa cầu</h2>
+        <div class="prose">
+          <p class="rv d1 big"><span data-en="About">Khoảng</span> <span class="circ" id="dist">—</span> <span data-en="from home, along a great circle.">từ nhà, tính theo đường tròn lớn.</span></p>
+          <p class="rv d2" data-en="Still engineering. A year later, data and maps started taking over most of the work.">Vẫn là kỹ thuật. Một năm sau, dữ liệu và bản đồ bắt đầu chiếm phần lớn công việc.</p>
+        </div>
+      </div>
+      <div class="rv d1">
+        <div class="bench tape"><canvas id="route" style="aspect-ratio:4/3" role="img" aria-label="Bản đồ phác bằng bút chì, đường bay từ Việt Nam đến New Zealand vẽ bằng bút đỏ"></canvas></div>
+        <div class="pass" aria-label="Thẻ lên máy bay minh hoạ">
+          <div class="main">
+            <div class="lbl" data-en="Passenger">Hành khách</div><div class="val">KHANG</div>
+            <div class="row" style="margin-top:8px"><div><div class="lbl" data-en="From">Từ</div><div class="big">VN</div></div><div class="big" style="font-size:22px">→</div><div style="text-align:right"><div class="lbl" data-en="To">Đến</div><div class="big">NZ</div></div></div>
+            <div class="row" style="margin-top:8px"><div><div class="lbl" data-en="Year">Năm</div><div class="val">2024</div></div><div style="text-align:right"><div class="lbl" data-en="Gate">Cổng</div><div class="val">?</div></div></div>
+          </div>
+          <div class="stub"><div class="lbl">PA-001</div><div class="stamp" data-en="ARRIVED">ĐÃ ĐẾN</div><div class="lbl">2024</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2025 → NOW -->
+  <section class="ch" id="ch-work">
+    <div class="when rv"><b>2025 →</b><span data-en="data · GIS · software · AI">dữ liệu · GIS · phần mềm · AI</span></div>
+    <div class="grid2">
+      <div>
+        <h2 class="rv" data-en="Robots became data. Data became maps. Maps became software.">Robot thành dữ liệu. Dữ liệu thành bản đồ. Bản đồ thành phần mềm.</h2>
+        <div class="prose"><p class="rv d1" data-en="The tools changed. The loop did not: look closely, simplify, build, measure, go again.">Công cụ đã đổi. Vòng lặp thì không: nhìn kỹ, đơn giản hoá, xây, đo, rồi làm lại.</p></div>
+      </div>
+      <figure class="loopfig rv d1" style="margin:0">
+        <svg viewBox="0 0 520 240" role="img" aria-label="Sơ đồ vòng kín: vấn đề, quan sát, đơn giản hoá, xây, hệ thống; đo lường quay về">
+          <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="arrow" d="M0 0 L10 5 L0 10 z"/></marker></defs>
+          <circle class="sig" id="sig" r="4.5" cx="8" cy="100"/>
+          <text x="6" y="74" data-en="Problem">Vấn đề</text>
+          <path class="wire" d="M8 100 H58" marker-end="url(#ah)"/>
+          <circle class="blk" cx="72" cy="100" r="13"/><path class="wire" d="M63 100 H81 M72 91 V109"/>
+          <path class="wire" d="M85 100 H120" marker-end="url(#ah)"/>
+          <rect class="blk" x="122" y="72" width="112" height="56"/><text x="178" y="105" text-anchor="middle" data-en="Look closely">Nhìn kỹ</text>
+          <path class="wire" d="M234 100 H262" marker-end="url(#ah)"/>
+          <rect class="blk" x="264" y="72" width="96" height="56"/><text x="312" y="105" text-anchor="middle" data-en="Simplify">Đơn giản hoá</text>
+          <path class="wire" d="M360 100 H388" marker-end="url(#ah)"/>
+          <rect class="blk" x="390" y="72" width="76" height="56"/><text x="428" y="105" text-anchor="middle" data-en="Build">Xây</text>
+          <path class="wire" d="M466 100 H514" marker-end="url(#ah)"/>
+          <text x="516" y="74" text-anchor="end" data-en="System">Hệ thống</text>
+          <path class="wire" d="M490 100 V200 H352" marker-end="url(#ah)"/>
+          <rect class="blk" x="250" y="176" width="100" height="48"/><text x="300" y="205" text-anchor="middle" data-en="Measure">Đo lường</text>
+          <path class="wire" d="M250 200 H72 V115" marker-end="url(#ah)"/>
+          <text x="82" y="190" style="font:18px var(--hand);fill:var(--pen)" data-en="← again, always">← làm lại, luôn luôn</text>
+        </svg>
+      </figure>
+    </div>
+
+    <div class="cards">
+      <div class="card rv"><b data-en="Pavement data processing">Xử lý dữ liệu mặt đường</b><span class="redact"><span data-en="Pipelines for large-scale">Đường ống xử lý dữ liệu</span> <i style="width:64px"></i><i style="width:38px"></i> <i style="width:52px"></i></span></div>
+      <div class="card rv d1"><b data-en="Field data systems">Hệ thống dữ liệu hiện trường</b><span class="redact"><span data-en="Collecting and checking">Thu thập và kiểm tra</span> <i style="width:46px"></i> <i style="width:70px"></i><i style="width:30px"></i></span></div>
+      <div class="card rv d2"><b data-en="Computer vision / ML">Thị giác máy tính / ML</b><span class="redact"><span data-en="Learning from">Học máy trên</span> <i style="width:58px"></i> <i style="width:44px"></i><i style="width:62px"></i></span></div>
+      <div class="card rv d3"><b data-en="Engineering automation">Tự động hoá kỹ thuật</b><span class="redact"><span data-en="Replacing repetitive">Thay quy trình lặp lại</span> <i style="width:40px"></i><i style="width:66px"></i></span></div>
+    </div>
+    <span class="stampbox" data-en="COMPANY WORK · HIGH LEVEL ONLY">CÔNG VIỆC CÔNG TY · CHỈ KHÁI QUÁT</span>
+
+    <div class="sys rv">
+      <span class="pn">GeoNote</span><span class="st"><span class="led"></span><span data-en="BUILDING · PA-SYS-001">ĐANG XÂY · PA-SYS-001</span></span>
+      <p class="ph" data-en="[To be written] One sentence: what problem does GeoNote solve?">[Chờ Khang viết] Một câu: GeoNote giải quyết vấn đề gì?</p>
+    </div>
+  </section>
+
+  <!-- NOW -->
+  <section class="ch" id="now">
+    <div class="when rv"><b data-en="Now">Bây giờ</b><span class="mono">2026-10</span></div>
+    <div class="grid2">
+      <div class="pad rv">
+        <h3 data-en="Building">Đang xây</h3>
+        <ul><li class="doing">GeoNote</li><li data-en="Personal software systems">Các hệ thống phần mềm cá nhân</li></ul>
+        <h3 data-en="Exploring">Đang tìm hiểu</h3>
+        <ul><li data-en="AI · data">AI · dữ liệu</li><li>Rust</li><li data-en="Geospatial systems">Hệ thống không gian địa lý</li></ul>
+        <h3 data-en="Thinking about">Đang nghĩ về</h3>
+        <ul><li data-en="Independent products">Sản phẩm độc lập</li><li data-en="Engineering automation">Tự động hoá kỹ thuật</li></ul>
+      </div>
+      <div class="rv d1" style="align-self:center">
+        <p class="kicker" data-en="OPEN QUESTION">CÂU HỎI CÒN MỞ</p>
+        <p class="question" data-en="What should I build next?">Tiếp theo mình nên xây gì?</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOMEDAY -->
+  <section class="ch" id="someday">
+    <div class="when rv"><b data-en="Someday">Một ngày nào đó</b><span data-en="REV ? · not yet defined">REV ? · chưa xác định</span></div>
+    <div class="grid2 flip">
+      <div>
+        <h2 class="rv" data-en="Something that sees, understands, and then works beside people.">Một thứ biết nhìn, biết hiểu, rồi làm việc cạnh con người.</h2>
+        <div class="prose">
+          <p class="rv d1" data-en="A humanoid robot with AI. There is no drawing of it yet, only phantom lines.">Một robot hình người có AI. Chưa có bản vẽ nào, chỉ có <span class="circ">nét đứt</span>.</p>
+          <p class="rv d2" data-en="From following a line, to leaving the ground, to this.">Từ bám theo một vạch kẻ, đến rời khỏi mặt đất, đến đây.</p>
+        </div>
+      </div>
+      <div class="dreamfig rv d1">
+        <canvas id="hu" role="img" aria-label="Phác thảo robot hình người bằng nét đứt; đầu quay theo con trỏ, mạng nơ-ron trong đầu gửi xung xuống các khớp"></canvas>
+        <p class="hand red note" style="--r:-3deg;margin:12px 0 0" data-en="it looks at you. it waves if you stay.">nó nhìn theo bạn. ở lại lâu một chút, nó vẫy tay.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORIES -->
+  <section class="ch" id="stories">
+    <div class="when rv"><b data-en="Stories">Câu chuyện</b><span data-en="not everything is engineering">không phải mọi thứ đều là kỹ thuật</span></div>
+    <div class="notes">
+      <a class="an rv" href="#stories" data-wave="sine" data-ch="1"><canvas aria-hidden="true"></canvas><span class="meta"><span>LIFE</span><span>CH1</span></span><h3 data-en="The Things I Never Put on My CV">Những điều tôi chưa bao giờ ghi vào CV</h3><span class="hand red" data-en="not written yet">chưa viết</span></a>
+      <a class="an rv d1" href="#stories" data-wave="square" data-ch="2"><canvas aria-hidden="true"></canvas><span class="meta"><span>ENGINEERING</span><span>CH2</span></span><h3 data-en="How a Mechatronics Engineer Ended Up Writing Software">Một kỹ sư cơ điện tử đã đi đến phần mềm như thế nào</h3><span class="hand red" data-en="not written yet">chưa viết</span></a>
+      <a class="an rv d2" href="#stories" data-wave="damped" data-ch="3"><canvas aria-hidden="true"></canvas><span class="meta"><span>THOUGHTS</span><span>CH3</span></span><h3 data-en="The Years I Didn’t Know Where I Was Going">Những năm tôi không biết mình đang đi đâu</h3><span class="hand red" data-en="not written yet">chưa viết</span></a>
+    </div>
+  </section>
+
+  <!-- TRACE -->
+  <section class="ch" id="trace">
+    <div class="when rv"><b data-en="Trace">Dấu vết</b><span data-en="hover to read a year">rê chuột để đọc năm</span></div>
+    <figure class="timing rv d1" style="margin:20px 0 0"><svg id="timing" role="img" aria-label="Giản đồ thời gian các mốc 1992, 2019, 2024, 2025, 2026 và tương lai chưa xác định"></svg></figure>
+  </section>
+
+  <!-- SUPPORT -->
+  <section class="ch" id="support">
+    <svg class="ring" viewBox="0 0 200 200" aria-hidden="true"><g filter="url(#stain)"><circle cx="100" cy="100" r="76" fill="rgb(150 100 50 / .07)" stroke="#8a5a2b" stroke-width="5" opacity=".55"/><circle cx="103" cy="98" r="79" fill="none" stroke="#8a5a2b" stroke-width="1.5" opacity=".35"/><path d="M160 62 C178 80 182 112 168 140" fill="none" stroke="#8a5a2b" stroke-width="9" opacity=".3"/></g></svg>
+    <div class="support">
+      <div>
+        <h2 class="rv" data-en="Fuel the lab">Nạp điện cho phòng lab</h2>
+        <div class="prose"><p class="rv d1" data-en="Pharaoh Alone is an independent project. If something here helped you think, learn or build, a coffee keeps the lab running.">Pharaoh Alone là một dự án độc lập. Nếu điều gì đó ở đây giúp bạn nghĩ, học hay xây, một ly cà phê giúp phòng lab chạy tiếp.</p></div>
+      </div>
+      <table class="ord rv d1"><tbody>
+        <tr><td><a href="#support">PA-COFFEE-1</a></td><td>☕</td><td class="mono">$5</td></tr>
+        <tr><td><a href="#support">PA-COFFEE-2</a></td><td>☕☕</td><td class="mono">$10</td></tr>
+        <tr><td><a href="#support">PA-COFFEE-3</a></td><td>☕☕☕</td><td class="mono">$25</td></tr>
+      </tbody></table>
+    </div>
+  </section>
+
+  <footer class="foot"><span>PA-001 · Pharaoh Alone · 1992 → ∞</span><span data-en="Still being revised. Like its author.">Vẫn đang được sửa. Như người viết ra nó.</span></footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3-array@3.2.4/dist/d3-array.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-geo@3.1.1/dist/d3-geo.min.js"></script>
+<script>var LAND = {"type":"MultiPolygon","coordinates":[[[[-59.6,-80],[-59.9,-80.5],[-60.2,-81],[-62.3,-80.9],[-64.5,-80.9],[-65.7,-80.6],[-65.7,-80.5],[-66.3,-80.3],[-64,-80.3],[-61.9,-80.4],[-61.1,-80],[-60.6,-79.6],[-59.6,-80]]],[[[-159.2,-79.5],[-161.1,-79.6],[-162.4,-79.3],[-163,-78.9],[-163.1,-78.9],[-163.7,-78.6],[-163.1,-78.2],[-161.2,-78.4],[-160.2,-78.7],[-159.5,-79],[-159.2,-79.5]]],[[[-45.2,-78],[-43.9,-78.5],[-43.5,-79.1],[-43.4,-79.5],[-43.3,-80],[-44.9,-80.3],[-46.5,-80.6],[-48.4,-80.8],[-50.5,-81],[-52.9,-81],[-54.2,-80.6],[-54,-80.2],[-51.9,-79.9],[-51,-79.6],[-50.4,-79.2],[-49.9,-78.8],[-49.3,-78.5],[-48.7,-78],[-48.2,-78],[-46.7,-77.8],[-45.2,-78]]],[[[-121.2,-73.5],[-119.9,-73.7],[-118.7,-73.5],[-119.3,-73.8],[-120.2,-74.1],[-121.6,-74],[-122.6,-73.7],[-122.4,-73.3],[-121.2,-73.5]]],[[[-125.6,-73.5],[-124,-73.9],[-124.6,-73.8],[-125.9,-73.7],[-127.3,-73.5],[-126.6,-73.2],[-125.6,-73.5]]],[[[-99,-71.9],[-97.9,-72.1],[-96.8,-72],[-96.2,-72.5],[-97,-72.4],[-98.2,-72.5],[-99.4,-72.4],[-100.8,-72.5],[-101.8,-72.3],[-102.3,-71.9],[-101.7,-71.7],[-100.4,-71.9],[-99,-71.9]]],[[[-68.5,-71],[-68.3,-71.4],[-68.5,-71.8],[-68.8,-72.2],[-70,-72.3],[-71.1,-72.5],[-72.4,-72.5],[-71.9,-72.1],[-73.1,-72.2],[-74.2,-72.4],[-75,-72.1],[-75,-71.7],[-73.9,-71.3],[-73.2,-71.2],[-72.1,-71.2],[-71.8,-70.7],[-71.7,-70.3],[-71.7,-69.5],[-71.2,-69],[-70.3,-68.9],[-69.7,-69.3],[-69.5,-69.6],[-69.1,-70.1],[-68.7,-70.5],[-68.5,-71]]],[[[-180,-84.7],[-179.9,-84.7],[-179.1,-84.1],[-177.3,-84.5],[-177.1,-84.4],[-176.9,-84.3],[-176.5,-84.2],[-176.2,-84.1],[-176.1,-84.1],[-175.9,-84.1],[-175.8,-84.1],[-174.4,-84.5],[-173.1,-84.1],[-172.9,-84.1],[-170,-83.9],[-169,-84.1],[-168.5,-84.2],[-167,-84.6],[-164.2,-84.8],[-161.9,-85.1],[-158.1,-85.4],[-155.2,-85.1],[-150.9,-85.3],[-148.5,-85.6],[-145.9,-85.3],[-143.1,-85],[-142.9,-84.6],[-146.8,-84.5],[-150.1,-84.3],[-150.9,-83.9],[-153.6,-83.7],[-153.4,-83.2],[-153,-82.8],[-152.7,-82.5],[-152.9,-82],[-154.5,-81.8],[-155.3,-81.4],[-156.8,-81.1],[-154.4,-81.2],[-152.1,-81],[-150.6,-81.3],[-148.9,-81],[-147.2,-80.7],[-146.4,-80.3],[-146.8,-79.9],[-148.1,-79.7],[-149.5,-79.4],[-151.6,-79.3],[-153.4,-79.2],[-155.3,-79.1],[-156,-78.7],[-157.3,-78.4],[-158.1,-78],[-158.4,-76.9],[-157.9,-77],[-157,-77.3],[-155.3,-77.2],[-153.7,-77.1],[-152.9,-77.5],[-151.3,-77.4],[-150,-77.2],[-148.7,-76.9],[-147.6,-76.6],[-146.1,-76.5],[-146.1,-76.1],[-146.5,-75.7],[-146.2,-75.4],[-144.9,-75.2],[-144.3,-75.5],[-142.8,-75.3],[-141.6,-75.1],[-140.2,-75.1],[-138.9,-75],[-137.5,-74.7],[-136.4,-74.5],[-135.2,-74.3],[-134.4,-74.4],[-133.7,-74.4],[-132.3,-74.3],[-130.9,-74.5],[-129.6,-74.5],[-128.2,-74.3],[-126.9,-74.4],[-125.4,-74.5],[-124,-74.5],[-122.6,-74.5],[-121.1,-74.5],[-119.7,-74.5],[-118.7,-74.2],[-117.5,-74],[-116.2,-74.2],[-115,-74.1],[-113.9,-73.7],[-113.3,-74],[-112.9,-74.4],[-112.3,-74.7],[-111.3,-74.4],[-110.1,-74.8],[-108.7,-74.9],[-107.6,-75.2],[-106.1,-75.1],[-104.9,-74.9],[-103.4,-75],[-102,-75.1],[-100.6,-75.3],[-100.1,-74.9],[-100.8,-74.5],[-101.3,-74.2],[-102.5,-74.1],[-103.1,-73.7],[-103.3,-73.4],[-103.7,-72.6],[-102.9,-72.8],[-101.6,-72.8],[-100.3,-72.8],[-99.1,-72.9],[-98.1,-73.2],[-97.7,-73.6],[-96.3,-73.6],[-95,-73.5],[-93.7,-73.3],[-92.4,-73.2],[-91.4,-73.4],[-90.1,-73.3],[-89.2,-72.6],[-88.4,-73],[-87.3,-73.2],[-86,-73.1],[-85.2,-73.5],[-83.9,-73.5],[-82.7,-73.6],[-81.5,-73.9],[-80.7,-73.5],[-80.3,-73.1],[-79.3,-73.5],[-77.9,-73.4],[-76.9,-73.6],[-76.2,-74],[-74.9,-73.9],[-73.9,-73.7],[-72.8,-73.4],[-71.6,-73.3],[-70.2,-73.1],[-68.9,-73],[-68,-72.8],[-67.4,-72.5],[-67.1,-72],[-67.3,-71.6],[-67.6,-71.2],[-67.9,-70.9],[-68.2,-70.5],[-68.5,-70.1],[-68.5,-69.7],[-68.4,-69.3],[-68,-69],[-67.6,-68.5],[-67.4,-68.2],[-67.6,-67.7],[-67.7,-67.3],[-67.3,-66.9],[-66.7,-66.6],[-66.1,-66.2],[-65.4,-65.9],[-64.6,-65.6],[-64.2,-65.2],[-63.6,-64.9],[-63,-64.6],[-62,-64.6],[-61.4,-64.3],[-60.7,-64.1],[-59.9,-64],[-59.2,-63.7],[-58.6,-63.4],[-57.8,-63.3],[-57.2,-63.5],[-57.6,-63.9],[-58.6,-64.2],[-59,-64.4],[-59.8,-64.2],[-60.6,-64.3],[-61.3,-64.5],[-62,-64.8],[-62.5,-65.1],[-62.6,-65.5],[-62.6,-65.9],[-62.1,-66.2],[-62.8,-66.4],[-63.7,-66.5],[-64.3,-66.8],[-64.9,-67.1],[-65.5,-67.6],[-65.7,-68],[-65.3,-68.4],[-64.8,-68.7],[-64,-68.9],[-63.2,-69.2],[-62.8,-69.6],[-62.6,-70],[-62.3,-70.4],[-61.8,-70.7],[-61.5,-71.1],[-61.4,-72],[-61.1,-72.4],[-61,-72.8],[-60.7,-73.2],[-60.8,-73.7],[-61.4,-74.1],[-62,-74.4],[-63.3,-74.6],[-63.7,-74.9],[-64.4,-75.3],[-65.9,-75.6],[-67.2,-75.8],[-68.4,-76],[-69.8,-76.2],[-70.6,-76.6],[-72.2,-76.7],[-74,-76.6],[-75.6,-76.7],[-77.2,-76.7],[-76.9,-77.1],[-75.4,-77.3],[-74.3,-77.6],[-73.7,-77.9],[-74.8,-78.2],[-76.5,-78.1],[-77.9,-78.4],[-78,-78.8],[-78,-79.2],[-76.8,-79.5],[-76.6,-79.9],[-75.4,-80.3],[-73.2,-80.4],[-71.4,-80.7],[-70,-81],[-68.2,-81.3],[-65.7,-81.5],[-63.3,-81.7],[-61.6,-82],[-59.7,-82.4],[-58.7,-82.8],[-58.2,-83.2],[-57,-82.9],[-55.4,-82.6],[-53.6,-82.3],[-51.5,-82],[-49.8,-81.7],[-47.3,-81.7],[-44.8,-81.8],[-42.8,-82.1],[-42.2,-81.7],[-40.8,-81.4],[-38.2,-81.3],[-36.3,-81.1],[-34.4,-80.9],[-32.3,-80.8],[-30.1,-80.6],[-28.6,-80.3],[-29.3,-80],[-29.7,-79.6],[-29.7,-79.3],[-31.6,-79.3],[-33.7,-79.5],[-35.6,-79.5],[-35.9,-79.1],[-35.8,-78.3],[-35.3,-78.1],[-33.9,-77.9],[-32.2,-77.7],[-31,-77.4],[-29.8,-77.1],[-28.9,-76.7],[-27.5,-76.5],[-26.2,-76.4],[-25.5,-76.3],[-23.9,-76.2],[-22.5,-76.1],[-21.2,-75.9],[-20,-75.7],[-18.9,-75.4],[-17.5,-75.1],[-16.6,-74.8],[-15.7,-74.5],[-15.4,-74.1],[-16.5,-73.9],[-16.1,-73.5],[-15.4,-73.1],[-14.4,-73],[-13.3,-72.7],[-12.3,-72.4],[-11.5,-72],[-11,-71.5],[-10.3,-71.3],[-9.1,-71.3],[-8.6,-71.7],[-7.4,-71.7],[-7.4,-71.3],[-6.9,-70.9],[-5.8,-71],[-5.5,-71.4],[-4.3,-71.5],[-3,-71.3],[-1.8,-71.2],[-0.7,-71.2],[-0.2,-71.6],[0.9,-71.3],[1.9,-71.1],[3,-71],[4.1,-70.9],[5.2,-70.6],[6.3,-70.5],[7.1,-70.2],[7.7,-69.9],[8.5,-70.1],[9.5,-70],[10.3,-70.5],[10.8,-70.8],[12,-70.6],[12.4,-70.2],[13.4,-70],[14.7,-70],[15.1,-70.4],[15.9,-70],[17,-69.9],[18.2,-69.9],[19.3,-69.9],[20.4,-70],[21.5,-70.1],[21.9,-70.4],[22.6,-70.7],[23.7,-70.5],[24.8,-70.5],[26,-70.5],[27.1,-70.5],[28.1,-70.3],[29.2,-70.2],[30,-69.9],[31,-69.8],[32,-69.7],[32.8,-69.4],[33.3,-68.8],[33.9,-68.5],[34.9,-68.7],[35.3,-69],[36.2,-69.2],[37.2,-69.2],[37.9,-69.5],[38.6,-69.8],[39.7,-69.5],[40,-69.1],[40.9,-68.9],[42,-68.6],[42.9,-68.5],[44.1,-68.3],[44.9,-68.1],[45.7,-67.8],[46.5,-67.6],[47.4,-67.7],[48.3,-67.4],[49,-67.1],[49.9,-67.1],[50.8,-66.9],[50.9,-66.5],[51.8,-66.2],[52.6,-66.1],[53.6,-65.9],[54.5,-65.8],[55.4,-65.9],[56.4,-66],[57.2,-66.2],[57.3,-66.7],[58.1,-67],[58.7,-67.3],[59.9,-67.4],[60.6,-67.7],[61.4,-68],[62.4,-68],[63.2,-67.8],[64.1,-67.4],[65,-67.6],[66,-67.7],[66.9,-67.9],[67.9,-67.9],[68.9,-67.9],[69.7,-69],[69.7,-69.2],[69.6,-69.7],[68.6,-69.9],[67.8,-70.3],[67.9,-70.7],[69.1,-70.7],[68.9,-71.1],[68.4,-71.4],[67.9,-71.9],[68.7,-72.2],[69.9,-72.3],[71,-72.1],[71.6,-71.7],[71.9,-71.3],[72.5,-71],[73.1,-70.7],[73.3,-70.4],[73.9,-69.9],[74.5,-69.8],[75.6,-69.7],[76.6,-69.6],[77.6,-69.5],[78.1,-69.1],[78.4,-68.7],[79.1,-68.3],[80.1,-68.1],[80.9,-67.9],[81.5,-67.5],[82.1,-67.4],[82.8,-67.2],[83.8,-67.3],[84.7,-67.2],[85.7,-67.1],[86.8,-67.1],[87.5,-66.9],[88,-66.2],[88.4,-66.5],[88.8,-67],[89.7,-67.1],[90.6,-67.2],[91.6,-67.1],[92.6,-67.2],[93.5,-67.2],[94.2,-67.1],[95,-67.2],[95.8,-67.4],[96.7,-67.2],[97.8,-67.2],[98.7,-67.1],[99.7,-67.2],[100.4,-66.9],[100.9,-66.6],[101.6,-66.3],[102.8,-65.6],[103.5,-65.7],[104.2,-66],[104.9,-66.3],[106.2,-66.9],[107.2,-67],[108.1,-67],[109.2,-66.8],[110.2,-66.7],[111.1,-66.4],[111.7,-66.1],[112.9,-66.1],[113.6,-65.9],[114.4,-66.1],[114.9,-66.4],[115.6,-66.7],[116.7,-66.7],[117.4,-66.9],[118.6,-67.2],[119.8,-67.3],[120.9,-67.2],[121.7,-66.9],[122.3,-66.6],[123.2,-66.5],[124.1,-66.6],[125.2,-66.7],[126.1,-66.6],[127,-66.6],[127.9,-66.7],[128.8,-66.8],[129.7,-66.6],[130.8,-66.4],[131.8,-66.4],[132.9,-66.4],[133.9,-66.3],[134.8,-66.2],[135,-65.7],[135.1,-65.3],[135.7,-65.6],[135.9,-66],[136.2,-66.4],[136.6,-66.8],[137.5,-67],[138.6,-66.9],[139.9,-66.9],[140.8,-66.8],[142.1,-66.8],[143.1,-66.8],[144.4,-66.8],[145.5,-66.9],[146.2,-67.2],[146,-67.6],[146.6,-67.9],[147.7,-68.1],[148.8,-68.4],[150.1,-68.6],[151.5,-68.7],[152.5,-68.9],[153.6,-68.9],[154.3,-68.6],[155.2,-68.8],[155.9,-69.1],[156.8,-69.4],[158,-69.5],[159.2,-69.6],[159.7,-70],[160.8,-70.2],[161.6,-70.6],[162.7,-70.7],[163.8,-70.7],[164.9,-70.8],[166.1,-70.8],[167.3,-70.8],[168.4,-71],[169.5,-71.2],[170.5,-71.4],[171.2,-71.7],[171.1,-72.1],[170.6,-72.4],[170.1,-72.9],[169.8,-73.2],[169.3,-73.7],[168,-73.8],[167.4,-74.2],[166.1,-74.4],[165.6,-74.8],[165,-75.1],[164.2,-75.5],[163.8,-75.9],[163.6,-76.2],[163.5,-76.7],[163.5,-77.1],[164.1,-77.5],[164.3,-77.8],[164.7,-78.2],[166.6,-78.3],[167,-78.8],[165.2,-78.9],[163.7,-79.1],[161.8,-79.2],[160.9,-79.7],[160.7,-80.2],[160.3,-80.6],[159.8,-80.9],[161.1,-81.3],[161.6,-81.7],[162.5,-82.1],[163.7,-82.4],[165.1,-82.7],[166.6,-83],[168.9,-83.3],[169.4,-83.8],[172.3,-84],[172.5,-84.1],[173.2,-84.4],[176,-84.2],[178.3,-84.5],[-180,-84.7]]],[[[-67.8,-53.8],[-66.5,-54.5],[-65.1,-54.7],[-65.5,-55.2],[-66.5,-55.2],[-67,-54.9],[-67.3,-55.3],[-68.1,-55.6],[-69.2,-55.5],[-70,-55.2],[-71,-55.1],[-72.3,-54.5],[-73.3,-54],[-74.7,-52.8],[-73.8,-53],[-72.4,-53.7],[-71.1,-54.1],[-70.6,-53.6],[-70.3,-52.9],[-69.3,-52.5],[-68.6,-52.6],[-68.3,-53.1],[-67.8,-53.8]]],[[[-58.5,-51.1],[-57.7,-51.5],[-58,-51.9],[-59.4,-52.2],[-59.8,-51.8],[-60.7,-52.3],[-61.2,-51.8],[-60,-51.3],[-59.2,-51.5],[-58.5,-51.1]]],[[[70.3,-49.7],[68.7,-49.8],[68.7,-49.2],[68.9,-48.8],[68.9,-48.6],[69.6,-48.9],[70.5,-49.1],[70.6,-49.3],[70.3,-49.7]]],[[[145.4,-40.8],[146.4,-41.1],[146.9,-41],[147.7,-40.8],[148.3,-40.9],[148.4,-42.1],[148,-42.4],[147.9,-43.2],[147.6,-42.9],[146.9,-43.6],[146.7,-43.6],[146,-43.5],[145.4,-42.7],[145.3,-42],[144.7,-41.2],[144.7,-40.7],[145.4,-40.8]]],[[[173,-40.9],[173.2,-41.3],[174,-40.9],[174.2,-41.3],[174.2,-41.8],[173.9,-42.2],[173.2,-43],[172.7,-43.4],[173.1,-43.9],[172.3,-43.9],[171.5,-44.2],[171.2,-44.9],[170.6,-45.9],[169.8,-46.4],[169.3,-46.6],[168.4,-46.6],[167.8,-46.3],[166.7,-46.2],[166.5,-45.9],[167,-45.1],[168.3,-44.1],[168.9,-43.9],[169.7,-43.6],[170.5,-43],[171.1,-42.5],[171.6,-41.8],[172,-41.5],[172.1,-41],[172.8,-40.5],[173,-40.9]]],[[[174.6,-36.2],[175.3,-37.2],[175.4,-36.5],[175.8,-36.8],[176,-37.6],[176.8,-37.9],[177.4,-38],[178,-37.6],[178.5,-37.7],[178.3,-38.6],[178,-39.2],[177.2,-39.1],[176.9,-39.4],[177,-39.9],[176.9,-40.1],[176.5,-40.6],[176,-41.3],[175.2,-41.7],[175.1,-41.4],[174.7,-41.3],[175.2,-40.5],[174.9,-39.9],[173.8,-39.5],[173.9,-39.1],[174.6,-38.8],[174.7,-38],[174.7,-37.4],[174.3,-36.7],[174.3,-36.5],[173.8,-36.1],[173.1,-35.2],[172.6,-34.5],[173,-34.5],[173.6,-35],[174.3,-35.3],[174.6,-36.2]]],[[[167.1,-22.2],[166.7,-22.4],[166.2,-22.1],[165.5,-21.7],[164.8,-21.1],[164.2,-20.4],[164,-20.1],[164.5,-20.1],[165,-20.5],[165.5,-20.8],[165.8,-21.1],[166.6,-21.7],[167.1,-22.2]]],[[[178.4,-17.3],[178.7,-17.6],[178.6,-18.2],[177.9,-18.3],[177.4,-18.2],[177.3,-17.7],[177.7,-17.4],[178.1,-17.5],[178.4,-17.3]]],[[[-180,-16.6],[179.4,-16.8],[178.7,-17],[178.6,-16.6],[179.1,-16.4],[179.4,-16.4],[-180,-16.1],[-179.8,-16],[-179.9,-16.5],[-180,-16.6]]],[[[167.8,-16.5],[167.5,-16.6],[167.2,-16.2],[167.2,-15.9],[167.8,-16.5]]],[[[167.1,-14.9],[167.3,-15.7],[167,-15.6],[166.8,-15.7],[166.7,-15.4],[166.6,-14.6],[167.1,-14.9]]],[[[50.1,-13.6],[50.2,-14.8],[50.5,-15.2],[50.4,-15.7],[50.2,-16],[49.9,-15.4],[49.7,-15.7],[49.9,-16.5],[49.8,-16.9],[49.5,-17.1],[49.4,-18],[49,-19.1],[48.5,-20.5],[47.9,-22.4],[47.5,-23.8],[47.1,-24.9],[46.3,-25.2],[45.4,-25.6],[44.8,-25.3],[44,-25],[43.8,-24.5],[43.7,-23.6],[43.3,-22.8],[43.3,-22.1],[43.4,-21.3],[43.9,-21.2],[43.9,-20.8],[44.4,-20.1],[44.5,-19.4],[44.2,-19],[44,-18.3],[44,-17.4],[44.3,-16.9],[44.4,-16.2],[44.9,-16.2],[45.5,-16],[45.9,-15.8],[46.3,-15.8],[46.9,-15.2],[47.7,-14.6],[48,-14.1],[47.9,-13.7],[48.3,-13.8],[48.8,-13.1],[48.9,-12.5],[49.2,-12],[49.5,-12.5],[49.8,-12.9],[50.1,-13.6]]],[[[143.6,-13.8],[143.9,-14.5],[144.6,-14.2],[144.9,-14.6],[145.4,-15],[145.3,-15.4],[145.5,-16.3],[145.6,-16.8],[145.9,-16.9],[146.2,-17.8],[146.1,-18.3],[146.4,-19],[147.5,-19.5],[148.2,-20],[148.8,-20.4],[148.7,-20.6],[149.3,-21.3],[149.7,-22.3],[150.1,-22.1],[150.5,-22.6],[150.7,-22.4],[150.9,-23.5],[151.6,-24.1],[152.1,-24.5],[152.9,-25.3],[153.1,-26.1],[153.2,-26.6],[153.1,-27.3],[153.6,-28.1],[153.5,-29],[153.3,-29.5],[153.1,-30.4],[153.1,-30.9],[152.9,-31.6],[152.4,-32.6],[151.7,-33],[151.3,-33.8],[151,-34.3],[150.7,-35.2],[150.3,-35.7],[150.1,-36.4],[149.9,-37.1],[150,-37.4],[149.4,-37.8],[148.3,-37.8],[147.4,-38.2],[146.9,-38.6],[146.3,-39],[145.5,-38.6],[144.9,-38.4],[145,-37.9],[144.5,-38.1],[143.6,-38.8],[142.7,-38.5],[142.2,-38.4],[141.6,-38.3],[140.6,-38],[140,-37.4],[139.8,-36.6],[139.6,-36.1],[139.1,-35.7],[138.1,-35.6],[138.4,-35.1],[138.2,-34.4],[137.7,-35.1],[136.8,-35.3],[137.4,-34.7],[137.5,-34.1],[137.9,-33.6],[137.8,-32.9],[137,-33.8],[136.4,-34.1],[136,-34.9],[135.2,-34.5],[135.2,-33.9],[134.6,-33.2],[134.1,-32.8],[134.3,-32.6],[133,-32],[132.3,-32],[131.3,-31.5],[129.5,-31.6],[128.2,-31.9],[127.1,-32.3],[126.1,-32.2],[125.1,-32.7],[124.2,-33],[124,-33.5],[123.7,-33.9],[122.8,-33.9],[122.2,-34],[121.3,-33.8],[120.6,-33.9],[119.9,-34],[119.3,-34.5],[119,-34.5],[118.5,-34.7],[118,-35.1],[117.3,-35],[116.6,-35],[115.6,-34.4],[115,-34.2],[115,-33.6],[115.5,-33.5],[115.7,-33.3],[115.7,-32.9],[115.8,-32.2],[115.7,-31.6],[115.2,-30.6],[115,-30],[115,-29.5],[114.6,-28.8],[114.6,-28.5],[114.2,-28.1],[114,-27.3],[113.5,-26.5],[113.3,-26.1],[113.8,-26.5],[113.4,-25.6],[113.9,-25.9],[114.2,-26.3],[114.2,-25.8],[113.7,-25],[113.6,-24.7],[113.4,-24.4],[113.5,-23.8],[113.7,-23.6],[113.8,-23.1],[113.7,-22.5],[114.1,-21.8],[114.2,-22.5],[114.6,-21.8],[115.5,-21.5],[115.9,-21.1],[116.7,-20.7],[117.2,-20.6],[117.4,-20.7],[118.2,-20.4],[118.8,-20.3],[119,-20],[119.3,-20],[119.8,-20],[120.9,-19.7],[121.4,-19.2],[121.7,-18.7],[122.2,-18.2],[122.3,-17.8],[122.3,-17.3],[123,-16.4],[123.4,-17.3],[123.9,-17.1],[123.5,-16.6],[123.8,-16.1],[124.3,-16.3],[124.4,-15.6],[124.9,-15.1],[125.2,-14.7],[125.7,-14.5],[125.7,-14.2],[126.1,-14.3],[126.1,-14.1],[126.6,-14],[127.1,-13.8],[127.8,-14.3],[128.4,-14.9],[129,-14.9],[129.6,-15],[129.4,-14.4],[129.9,-13.6],[130.3,-13.4],[130.2,-13.1],[130.6,-12.5],[131.2,-12.2],[131.7,-12.3],[132.6,-12.1],[132.6,-11.6],[131.8,-11.3],[132.4,-11.1],[133,-11.4],[133.6,-11.8],[134.4,-12],[134.7,-11.9],[135.3,-12.2],[135.9,-12],[136.3,-12],[136.5,-11.9],[137,-12.4],[136.7,-12.9],[136.3,-13.3],[136,-13.3],[136.1,-13.7],[135.8,-14.2],[135.4,-14.7],[135.5,-15],[136.3,-15.6],[137.1,-15.9],[137.6,-16.2],[138.3,-16.8],[138.6,-16.8],[139.1,-17.1],[139.3,-17.4],[140.2,-17.7],[140.9,-17.4],[141.1,-16.8],[141.3,-16.4],[141.4,-15.8],[141.7,-15],[141.6,-14.6],[141.6,-14.3],[141.5,-13.7],[141.7,-12.9],[141.8,-12.7],[141.7,-12.4],[141.9,-11.9],[142.1,-11.3],[142.1,-11],[142.5,-10.7],[142.8,-11.2],[142.9,-11.8],[143.1,-11.9],[143.2,-12.3],[143.5,-12.8],[143.6,-13.4],[143.6,-13.8]]],[[[162.1,-10.5],[162.4,-10.8],[161.7,-10.8],[161.3,-10.2],[161.9,-10.4],[162.1,-10.5]]],[[[120.7,-10.2],[120.3,-10.3],[119,-9.6],[119.9,-9.4],[120.4,-9.7],[120.8,-10],[120.7,-10.2]]],[[[160.9,-9.9],[160.5,-9.9],[159.9,-9.8],[159.6,-9.6],[159.7,-9.2],[160.4,-9.4],[160.7,-9.6],[160.9,-9.9]]],[[[161.7,-9.6],[161.5,-9.8],[160.8,-8.9],[160.6,-8.3],[160.9,-8.3],[161.3,-9.1],[161.7,-9.6]]],[[[124.4,-10.1],[123.6,-10.4],[123.5,-10.2],[123.6,-9.9],[124,-9.3],[125,-8.9],[125.1,-8.7],[125.9,-8.4],[126.6,-8.4],[127,-8.3],[127.3,-8.4],[127,-8.7],[125.9,-9.1],[125.1,-9.4],[124.4,-10.1]]],[[[117.9,-8.1],[118.3,-8.4],[118.9,-8.3],[119.1,-8.7],[118,-8.9],[117.3,-9],[116.7,-9],[117.1,-8.5],[117.6,-8.4],[117.9,-8.1]]],[[[122.9,-8.1],[122.8,-8.7],[121.3,-8.9],[119.9,-8.8],[119.9,-8.4],[120.7,-8.2],[121.3,-8.5],[122,-8.5],[122.9,-8.1]]],[[[159.9,-8.3],[159.9,-8.5],[159.1,-8.1],[158.6,-7.8],[158.2,-7.4],[158.4,-7.3],[158.8,-7.6],[159.6,-8],[159.9,-8.3]]],[[[157.5,-7.3],[157.3,-7.4],[156.9,-7.2],[156.5,-6.8],[156.5,-6.6],[157.1,-7],[157.5,-7.3]]],[[[108.6,-6.8],[110.5,-6.9],[110.8,-6.5],[112.6,-6.9],[113,-7.6],[114.5,-7.8],[115.7,-8.4],[114.6,-8.8],[113.5,-8.3],[112.6,-8.4],[111.5,-8.3],[110.6,-8.1],[109.4,-7.7],[108.7,-7.6],[108.3,-7.8],[106.5,-7.4],[106.3,-6.9],[105.4,-6.9],[106.1,-5.9],[107.3,-6],[108.1,-6.3],[108.5,-6.4],[108.6,-6.8]]],[[[134.7,-6.2],[134.2,-6.9],[134.1,-6.1],[134.3,-5.8],[134.5,-5.4],[134.7,-5.7],[134.7,-6.2]]],[[[155.9,-6.8],[155.6,-6.9],[155.2,-6.5],[154.7,-5.9],[154.5,-5.1],[154.7,-5],[154.8,-5.3],[155.1,-5.6],[155.5,-6.2],[156,-6.5],[155.9,-6.8]]],[[[152,-5.5],[151.5,-5.6],[151.3,-5.8],[150.8,-6.1],[150.2,-6.3],[149.7,-6.3],[148.9,-6],[148.3,-5.7],[148.4,-5.4],[149.3,-5.6],[149.8,-5.5],[150,-5],[150.1,-5],[150.2,-5.5],[150.8,-5.5],[151.1,-5.1],[151.6,-4.8],[151.5,-4.2],[152.1,-4.1],[152.3,-4.3],[152.3,-4.9],[152,-5.5]]],[[[127.2,-3.5],[126.9,-3.8],[126.2,-3.6],[126,-3.2],[127,-3.1],[127.2,-3.5]]],[[[130.5,-3.1],[130.8,-3.9],[130,-3.4],[129.2,-3.4],[128.6,-3.4],[127.9,-3.4],[128.1,-2.8],[129.4,-2.8],[130.5,-3.1]]],[[[153.1,-4.5],[152.8,-4.8],[152.6,-4.2],[152.4,-3.8],[152,-3.5],[151.4,-3],[150.7,-2.7],[150.9,-2.5],[151.5,-2.8],[151.8,-3],[152.2,-3.2],[152.6,-3.7],[153,-4],[153.1,-4.5]]],[[[134.1,-1.2],[134.4,-2.8],[135.5,-3.4],[136.3,-2.3],[137.4,-1.7],[138.3,-1.7],[139.2,-2.1],[139.9,-2.4],[141,-2.6],[142.7,-3.3],[144.6,-3.9],[145.3,-4.4],[145.8,-4.9],[146,-5.5],[147.6,-6.1],[147.9,-6.6],[147,-6.7],[147.2,-7.4],[148.1,-8],[148.7,-9.1],[149.3,-9.1],[149.3,-9.5],[150,-9.7],[149.7,-9.9],[150.8,-10.3],[150.7,-10.6],[150,-10.7],[149.8,-10.4],[148.9,-10.3],[147.9,-10.1],[147.1,-9.5],[146.6,-8.9],[146,-8.1],[144.7,-7.6],[143.9,-7.9],[143.3,-8.2],[143.4,-9],[142.6,-9.3],[142.1,-9.2],[141,-9.1],[140.1,-8.3],[139.1,-8.1],[138.9,-8.4],[137.6,-8.4],[138,-7.6],[138.7,-7.3],[138.4,-6.2],[137.9,-5.4],[136,-4.5],[135.2,-4.5],[133.7,-3.5],[133.4,-4],[133,-4.1],[132.8,-3.7],[132.8,-3.3],[132,-2.8],[133.1,-2.5],[133.8,-2.5],[133.7,-2.2],[132.2,-2.2],[131.8,-1.6],[130.9,-1.4],[130.5,-0.9],[131.9,-0.7],[132.4,-0.4],[134,-0.8],[134.1,-1.2]]],[[[125.2,1.4],[124.4,0.4],[123.7,0.2],[122.7,0.4],[121.1,0.4],[120.2,0.2],[120,-0.5],[120.9,-1.4],[121.5,-1],[123.3,-0.6],[123.3,-1.1],[122.8,-0.9],[122.4,-1.5],[121.5,-1.9],[122.5,-3.2],[122.3,-3.5],[123.2,-4.7],[123.2,-5.3],[122.6,-5.6],[122.2,-5.3],[122.7,-4.5],[121.7,-4.9],[121.5,-4.6],[121.6,-4.2],[120.9,-3.6],[121,-2.6],[120.3,-2.9],[120.4,-4.1],[120.4,-5.5],[119.8,-5.7],[119.4,-5.4],[119.7,-4.5],[119.5,-3.5],[119.1,-3.5],[118.8,-2.8],[119.2,-2.1],[119.3,-1.4],[119.8,0.2],[120,0.6],[120.9,1.3],[121.7,1],[122.9,0.9],[124.1,0.9],[125.1,1.6],[125.2,1.4]]],[[[128.7,1.1],[128.6,0.3],[128.1,0.4],[128,-0.3],[128.4,-0.8],[128.1,-0.9],[127.7,-0.3],[127.4,1],[127.6,1.8],[127.9,2.2],[128,1.6],[128.6,1.5],[128.7,1.1]]],[[[105.8,-5.9],[104.7,-5.9],[103.9,-5],[102.6,-4.2],[102.2,-3.6],[101.4,-2.8],[100.9,-2.1],[100.1,-0.7],[99.3,0.2],[99,1],[98.6,1.8],[97.7,2.5],[97.2,3.3],[96.4,3.9],[95.4,5],[95.3,5.5],[95.9,5.4],[97.5,5.2],[98.4,4.3],[99.1,3.6],[99.7,3.2],[100.6,2.1],[101.7,2.1],[102.5,1.4],[103.1,0.6],[103.8,0.1],[103.4,-0.7],[104,-1.1],[104.4,-1.1],[104.5,-1.8],[104.9,-2.3],[105.6,-2.4],[106.1,-3.1],[105.9,-4.3],[105.8,-5.9]]],[[[117.9,1.8],[119,0.9],[117.8,0.8],[117.5,0.1],[117.5,-0.8],[116.6,-1.5],[116.5,-2.5],[116.1,-4],[116,-3.7],[114.9,-4.1],[114.5,-3.5],[113.8,-3.4],[113.3,-3.1],[112.1,-3.5],[111.7,-3],[111,-3],[110.2,-2.9],[110.1,-1.6],[109.6,-1.3],[109.1,-0.5],[109,0.4],[109.1,1.3],[109.7,2],[110.4,1.7],[111.2,1.9],[111.4,2.7],[111.8,2.9],[113,3.1],[113.7,3.9],[114.2,4.5],[114.6,4.9],[115.5,5.4],[116.2,6.1],[116.7,6.9],[117.1,6.9],[117.6,6.4],[117.7,6],[118.3,5.7],[119.2,5.4],[119.1,5],[118.4,5],[118.6,4.5],[117.9,4.1],[117.3,3.2],[118,2.3],[117.9,1.8]]],[[[126.4,8.4],[126.5,7.8],[126.5,7.2],[126.2,6.3],[125.8,7.3],[125.4,6.8],[125.7,6],[125.4,5.6],[124.2,6.2],[123.9,6.9],[124.2,7.4],[123.6,7.8],[123.3,7.4],[122.8,7.5],[122.1,6.9],[121.9,7.2],[122.3,8],[122.9,8.3],[123.5,8.7],[123.8,8.2],[124.6,8.5],[124.8,9],[125.5,9],[125.4,9.8],[126.2,9.3],[126.3,8.8],[126.4,8.4]]],[[[81.2,6.2],[80.3,6],[79.9,6.8],[79.7,8.2],[80.1,9.8],[80.8,9.3],[81.3,8.6],[81.8,7.5],[81.6,6.5],[81.2,6.2]]],[[[-60.9,10.1],[-61.8,10],[-62,10.1],[-61.7,10.4],[-61.7,10.8],[-61.1,10.9],[-60.9,10.9],[-60.9,10.1]]],[[[124,10.3],[123.6,9.9],[123.3,9.3],[123,9],[122.4,9.7],[122.6,10],[122.8,10.3],[122.9,10.9],[123.5,10.9],[123.3,10.3],[124.1,11.2],[124,10.3]]],[[[118.5,9.3],[117.2,8.4],[117.7,9.1],[118.4,9.7],[119,10.4],[119.5,11.4],[119.7,10.6],[119,10],[118.5,9.3]]],[[[121.9,11.9],[122.5,11.6],[123.1,11.6],[123.1,11.2],[122.6,10.7],[122,10.4],[122,10.9],[122,11.4],[121.9,11.9]]],[[[125.5,12.2],[125.8,11],[125,11.3],[125,11],[125.3,10.4],[124.8,10.1],[124.8,10.8],[124.5,10.9],[124.3,11.5],[124.9,11.4],[124.9,11.8],[124.3,12.6],[125.2,12.5],[125.5,12.2]]],[[[121.5,13.1],[121.3,12.2],[120.8,12.7],[120.3,13.5],[121.2,13.4],[121.5,13.1]]],[[[121.3,18.5],[121.9,18.2],[122.2,18.5],[122.3,18.2],[122.2,17.8],[122.5,17.1],[122.3,16.3],[121.7,15.9],[121.5,15.1],[121.7,14.3],[122.3,14.2],[122.7,14.3],[124,13.8],[123.9,13.2],[124.2,13],[124.1,12.5],[123.3,13],[122.9,13.6],[122.7,13.2],[122,13.8],[121.1,13.6],[120.6,13.9],[120.7,14.3],[121,14.5],[120.7,14.8],[120.6,14.4],[120.1,15],[119.9,15.4],[119.9,16.4],[120.3,16],[120.4,17.6],[120.7,18.5],[121.3,18.5]]],[[[-65.6,18.2],[-65.8,18],[-66.6,18],[-67.2,17.9],[-67.2,18.4],[-67.1,18.5],[-66.3,18.5],[-65.8,18.4],[-65.6,18.2]]],[[[-76.9,17.9],[-77.2,17.7],[-77.8,17.9],[-78.3,18.2],[-78.2,18.5],[-77.8,18.5],[-77.6,18.5],[-76.9,18.4],[-76.4,18.2],[-76.2,17.9],[-76.9,17.9]]],[[[-72.6,19.9],[-71.7,19.7],[-71.6,19.9],[-70.8,19.9],[-70.2,19.6],[-70,19.6],[-69.8,19.3],[-69.2,19.3],[-69.3,19],[-68.8,19],[-68.3,18.6],[-68.7,18.2],[-69.2,18.4],[-69.6,18.4],[-70,18.4],[-70.1,18.2],[-70.5,18.2],[-70.7,18.4],[-71,18.3],[-71.4,17.6],[-71.7,17.8],[-71.7,18],[-72.4,18.2],[-72.8,18.1],[-73.5,18.2],[-73.9,18],[-74.5,18.3],[-74.4,18.7],[-73.4,18.5],[-72.7,18.4],[-72.3,18.7],[-72.8,19.1],[-72.8,19.5],[-73.4,19.6],[-73.2,19.9],[-72.6,19.9]]],[[[110.3,18.7],[109.5,18.2],[108.7,18.5],[108.6,19.4],[109.1,19.8],[110.2,20.1],[110.8,20.1],[111,19.7],[110.6,19.3],[110.3,18.7]]],[[[-155.5,19.1],[-155.7,18.9],[-155.9,19.1],[-155.9,19.3],[-156.1,19.7],[-156,19.8],[-155.9,20],[-155.9,20.2],[-155.9,20.3],[-155.8,20.2],[-155.4,20.1],[-155.2,20],[-155.1,19.9],[-154.8,19.5],[-154.8,19.5],[-155.2,19.2],[-155.5,19.1]]],[[[-156.1,20.6],[-156.4,20.6],[-156.6,20.8],[-156.7,20.9],[-156.7,20.9],[-156.6,21],[-156.3,20.9],[-156,20.8],[-156.1,20.6]]],[[[-156.8,21.2],[-156.8,21.1],[-157.3,21.1],[-157.3,21.2],[-156.8,21.2]]],[[[-157.7,21.3],[-157.7,21.3],[-157.8,21.3],[-158.1,21.3],[-158.3,21.5],[-158.3,21.6],[-158,21.7],[-157.9,21.7],[-157.7,21.3]]],[[[-159.3,22],[-159.5,21.9],[-159.8,22.1],[-159.7,22.1],[-159.6,22.2],[-159.4,22.2],[-159.3,22]]],[[[-79.7,22.8],[-79.3,22.4],[-78.3,22.5],[-78,22.3],[-77.1,21.7],[-76.5,21.2],[-76.2,21.2],[-75.6,21],[-75.7,20.7],[-74.9,20.7],[-74.2,20.3],[-74.3,20.1],[-75,19.9],[-75.6,19.9],[-76.3,20],[-77.8,19.9],[-77.1,20.4],[-77.5,20.7],[-78.1,20.7],[-78.5,21],[-78.7,21.6],[-79.3,21.6],[-80.2,21.8],[-80.5,22],[-81.8,22.2],[-82.2,22.4],[-81.8,22.6],[-82.8,22.7],[-83.5,22.2],[-83.9,22.2],[-84.1,21.9],[-84.5,21.8],[-85,21.9],[-84.4,22.2],[-84.2,22.6],[-83.8,22.8],[-83.3,23],[-82.5,23.1],[-82.3,23.2],[-81.4,23.1],[-80.6,23.1],[-79.7,22.8]]],[[[-77.5,23.8],[-77.8,23.7],[-78,24.3],[-78.4,24.6],[-78.2,25.2],[-77.9,25.2],[-77.5,24.3],[-77.5,23.8]]],[[[121.2,22.8],[120.7,22],[120.2,22.8],[120.1,23.6],[120.7,24.5],[121.5,25.3],[122,25],[121.8,24.4],[121.2,22.8]]],[[[-77.8,26.6],[-78.9,26.4],[-79,26.8],[-78.5,26.9],[-77.8,26.8],[-77.8,26.6]]],[[[-77,26.6],[-77.2,25.9],[-77.4,26],[-77.3,26.5],[-77.8,26.9],[-77.8,27],[-77,26.6]]],[[[134.6,34.1],[134.8,33.8],[134.2,33.2],[133.8,33.5],[133.3,33.3],[133,32.7],[132.4,33],[132.4,33.5],[132.9,34.1],[133.5,33.9],[133.9,34.4],[134.6,34.1]]],[[[34.6,35.7],[33.9,35.2],[34,35.1],[34,35],[33,34.6],[32.5,34.7],[32.3,35.1],[32.7,35.1],[32.8,35.1],[32.9,35.4],[33.7,35.4],[34.6,35.7]]],[[[23.7,35.7],[24.2,35.4],[25,35.4],[25.8,35.4],[25.7,35.2],[26.3,35.3],[26.2,35],[24.7,34.9],[24.7,35.1],[23.5,35.3],[23.7,35.7]]],[[[15.5,38.2],[15.2,37.4],[15.3,37.1],[15.1,36.6],[14.3,37],[13.8,37.1],[12.4,37.6],[12.6,38.1],[13.7,38],[14.8,38.1],[15.5,38.2]]],[[[9.2,41.2],[9.8,40.5],[9.7,39.2],[9.2,39.2],[8.8,38.9],[8.4,39.2],[8.4,40.4],[8.2,41],[8.7,40.9],[9.2,41.2]]],[[[141,37.1],[140.6,36.3],[140.8,35.8],[140.3,35.1],[139,34.7],[137.2,34.6],[135.8,33.5],[135.1,33.8],[135.1,34.6],[133.3,34.4],[132.2,33.9],[131,33.9],[132,33.1],[131.3,31.5],[130.7,31],[130.2,31.4],[130.4,32.3],[129.8,32.6],[129.4,33.3],[130.4,33.6],[130.9,34.2],[131.9,34.8],[132.6,35.4],[134.6,35.7],[135.7,35.5],[136.7,37.3],[137.4,36.8],[138.9,37.8],[139.4,38.2],[140.1,39.4],[139.9,40.6],[140.3,41.2],[141.4,41.4],[141.9,40],[141.9,39.2],[141,38.2],[141,37.1]]],[[[9.6,42.2],[9.2,41.4],[8.8,41.6],[8.5,42.3],[8.7,42.6],[9.4,43],[9.6,42.2]]],[[[143.9,44.2],[144.6,44],[145.3,44.4],[145.5,43.3],[144.1,43],[143.2,42],[141.6,42.7],[141.1,41.6],[140,41.6],[139.8,42.6],[140.3,43.3],[141.4,43.4],[141.7,44.8],[142,45.6],[143.1,44.5],[143.9,44.2]]],[[[-63.7,46.5],[-62.9,46.4],[-62,46.4],[-62.5,46],[-62.9,46],[-64.1,46.4],[-64.4,46.7],[-64,47],[-63.7,46.5]]],[[[-61.8,49.1],[-62.3,49.1],[-63.6,49.4],[-64.5,49.9],[-64.2,50],[-62.9,49.7],[-61.8,49.3],[-61.8,49.1]]],[[[-123.5,48.5],[-124,48.4],[-125.7,48.8],[-126,49.2],[-126.8,49.5],[-127,49.8],[-128.1,50],[-128.4,50.5],[-128.4,50.8],[-127.3,50.6],[-126.7,50.4],[-125.8,50.3],[-125.4,49.9],[-124.9,49.5],[-123.9,49.1],[-123.5,48.5]]],[[[-56.1,50.7],[-56.8,49.8],[-56.1,50.1],[-55.5,49.9],[-55.8,49.6],[-54.9,49.3],[-54.5,49.6],[-53.5,49.2],[-53.8,48.5],[-53.1,48.7],[-53,48.2],[-52.6,47.5],[-53.1,46.7],[-53.5,46.6],[-54.2,46.8],[-54,47.6],[-54.2,47.8],[-55.4,46.9],[-56,46.9],[-55.3,47.4],[-56.3,47.6],[-57.3,47.6],[-59.3,47.6],[-59.4,47.9],[-58.8,48.3],[-59.2,48.5],[-58.4,49.1],[-57.4,50.7],[-56.7,51.3],[-55.9,51.6],[-55.4,51.6],[-55.6,51.3],[-56.1,50.7]]],[[[-132.7,54],[-131.7,54.1],[-132.1,53],[-131.2,52.2],[-131.6,52.2],[-132.2,52.6],[-132.6,53.1],[-133.1,53.4],[-133.2,53.9],[-133.2,54.2],[-132.7,54]]],[[[143.6,50.7],[144.7,49],[143.2,49.3],[142.6,47.9],[143.5,46.8],[143.5,46.1],[142.7,46.7],[142.1,46],[141.9,46.8],[142,47.8],[141.9,48.9],[142.1,49.6],[142.2,51],[141.6,51.9],[141.7,53.3],[142.6,53.8],[142.2,54.2],[142.7,54.4],[142.9,53.7],[143.3,52.7],[143.2,51.8],[143.6,50.7]]],[[[-6.8,52.3],[-8.6,51.7],[-10,51.8],[-9.2,52.9],[-9.7,53.9],[-8.3,54.7],[-7.6,55.1],[-6.7,55.2],[-5.7,54.6],[-6.2,53.9],[-6,53.2],[-6.8,52.3]]],[[[12.7,55.6],[12.1,54.8],[11,55.4],[10.9,55.8],[12.4,56.1],[12.7,55.6]]],[[[-153,57.1],[-154,56.7],[-154.5,57],[-154.7,57.5],[-153.8,57.8],[-153.2,58],[-152.6,57.9],[-152.1,57.6],[-153,57.1]]],[[[-3,58.6],[-4.1,57.6],[-3.1,57.7],[-2,57.7],[-2.2,56.9],[-3.1,56],[-2.1,55.9],[-1.1,54.6],[-0.4,54.5],[0.2,53.3],[0.5,52.9],[1.7,52.7],[1.6,52.1],[1,51.8],[1.4,51.3],[0.5,50.8],[-0.8,50.8],[-2.5,50.5],[-3,50.7],[-3.6,50.2],[-4.5,50.3],[-5.2,50],[-5.8,50.2],[-4.3,51.2],[-3.4,51.4],[-5,51.6],[-5.3,52],[-4.2,52.3],[-4.8,52.8],[-4.6,53.5],[-3.1,53.4],[-2.9,54],[-3.6,54.6],[-4.8,54.8],[-5.1,55.1],[-4.7,55.5],[-5,55.8],[-5.6,55.3],[-5.6,56.3],[-6.2,56.8],[-5.8,57.8],[-5,58.6],[-4.2,58.6],[-3,58.6]]],[[[-165.6,59.9],[-166.2,59.8],[-166.8,59.9],[-167.5,60.2],[-166.5,60.4],[-165.7,60.3],[-165.6,59.9]]],[[[-79.3,62.2],[-79.7,61.6],[-80.1,61.7],[-80.4,62],[-80.3,62.1],[-79.9,62.4],[-79.5,62.4],[-79.3,62.2]]],[[[-81.9,62.7],[-83.1,62.2],[-83.8,62.2],[-84,62.5],[-83.2,62.9],[-81.9,62.9],[-81.9,62.7]]],[[[-171.7,63.8],[-171.1,63.6],[-170.5,63.7],[-169.7,63.4],[-168.7,63.3],[-168.8,63.2],[-169.5,63],[-170.3,63.2],[-170.7,63.4],[-171.6,63.3],[-171.8,63.4],[-171.7,63.8]]],[[[-85.2,65.7],[-85,65.2],[-84.5,65.4],[-83.9,65.1],[-82.8,64.8],[-81.6,64.5],[-81.6,64],[-80.8,64.1],[-80.1,63.7],[-81,63.4],[-82.5,63.7],[-83.1,64.1],[-84.1,63.6],[-85.5,63.1],[-85.9,63.6],[-87.2,63.5],[-86.4,64],[-86.2,64.8],[-85.9,65.7],[-85.2,65.7]]],[[[-14.5,66.5],[-14.7,65.8],[-13.6,65.1],[-14.9,64.4],[-17.8,63.7],[-18.7,63.5],[-20,63.6],[-22.8,64],[-21.8,64.4],[-24,64.9],[-22.2,65.1],[-22.2,65.4],[-24.3,65.6],[-23.7,66.3],[-22.1,66.4],[-20.6,65.7],[-19.1,66.3],[-17.8,66],[-16.2,66.5],[-14.5,66.5]]],[[[-75.9,67.1],[-77,67.1],[-77.2,67.6],[-76.8,68.1],[-75.9,68.3],[-75.1,68],[-75.1,67.6],[-75.2,67.4],[-75.9,67.1]]],[[[-180,69],[-177.5,68.2],[-174.9,67.2],[-175,66.6],[-174.3,66.3],[-174.6,67.1],[-171.9,66.9],[-169.9,66],[-170.9,65.5],[-172.5,65.4],[-172.6,64.5],[-173,64.3],[-173.9,64.3],[-174.7,64.6],[-176,64.9],[-176.2,65.4],[-177.2,65.5],[-178.4,65.4],[-178.9,65.7],[-178.7,66.1],[-179.9,65.9],[-179.4,65.4],[-180,65],[180,65],[178.7,64.5],[177.4,64.6],[178.3,64.1],[178.9,63.3],[179.4,63],[179.5,62.6],[179.2,62.3],[177.4,62.5],[174.6,61.8],[173.7,61.7],[172.1,60.9],[170.7,60.3],[170.3,59.9],[168.9,60.6],[166.3,59.8],[165.8,60.2],[164.9,59.7],[163.5,59.9],[163.2,59.2],[162,58.2],[162.1,57.8],[163.2,57.6],[163.1,56.2],[162.1,56.1],[161.7,55.3],[162.1,54.9],[160.4,54.3],[160,53.2],[158.5,53],[158.2,51.9],[156.8,51],[156.4,51.7],[156,53.2],[155.4,55.4],[155.9,56.8],[156.8,57.4],[156.8,57.8],[158.4,58.1],[160.1,59.3],[161.9,60.3],[163.7,61.1],[164.5,62.6],[163.3,62.5],[162.7,61.6],[160.1,60.5],[159.3,61.8],[156.7,61.4],[154.2,59.8],[155,59.1],[152.8,58.9],[151.3,58.8],[151.3,59.5],[149.8,59.7],[148.5,59.2],[145.5,59.3],[142.2,59],[139,57.1],[135.1,54.7],[136.7,54.6],[137.2,54],[138.2,53.8],[138.8,54.3],[139.9,54.2],[141.3,53.1],[141.4,52.2],[140.6,51.2],[140.5,50],[140.1,48.4],[138.6,47],[138.2,46.3],[136.9,45.1],[135.5,44],[134.9,43.4],[133.5,42.8],[132.9,42.8],[132.3,43.3],[130.9,42.6],[130.8,42.2],[130.4,42.3],[130,41.9],[129.7,41.6],[129.7,40.9],[129.2,40.7],[129,40.5],[128.6,40.2],[128,40],[127.5,39.8],[127.5,39.3],[127.4,39.2],[127.8,39.1],[128.4,38.6],[129.2,37.4],[129.5,36.8],[129.5,35.6],[129.1,35.1],[128.2,34.9],[127.4,34.5],[126.5,34.4],[126.4,34.9],[126.6,35.7],[126.1,36.7],[126.9,36.9],[126.2,37.7],[125.7,37.9],[125.6,37.8],[125.3,37.7],[125.2,37.9],[125,37.9],[124.7,38.1],[125,38.5],[125.2,38.7],[125.1,38.8],[125.4,39.4],[125.3,39.6],[124.7,39.7],[124.3,39.9],[122.9,39.6],[122.1,39.2],[121.1,38.9],[121.6,39.4],[121.4,39.8],[122.2,40.4],[121.6,40.9],[120.8,40.6],[119.6,39.9],[119,39.3],[118,39.2],[117.5,38.7],[118.1,38.1],[118.9,37.9],[118.9,37.4],[119.7,37.2],[120.8,37.9],[121.7,37.5],[122.4,37.5],[122.5,36.9],[121.1,36.7],[120.6,36.1],[119.7,35.6],[119.2,34.9],[120.2,34.4],[120.6,33.4],[121.2,32.5],[121.9,31.7],[121.9,30.9],[121.3,30.7],[121.5,30.1],[122.1,29.8],[121.9,29],[121.7,28.2],[121.1,28.1],[120.4,27.1],[119.6,25.7],[118.7,24.5],[117.3,23.6],[115.9,22.8],[114.8,22.7],[114.2,22.2],[113.8,22.5],[113.2,22.1],[111.8,21.6],[110.8,21.4],[110.4,20.3],[109.9,20.3],[109.6,21],[109.9,21.4],[108.5,21.7],[108,21.6],[106.7,20.7],[105.9,19.8],[105.7,19.1],[106.4,18],[107.4,16.7],[108.3,16.1],[108.9,15.3],[109.3,13.4],[109.2,11.7],[108.4,11],[107.2,10.4],[106.4,9.5],[105.2,8.6],[104.8,9.2],[105.1,9.9],[104.3,10.5],[103.5,10.6],[103.1,11.2],[102.6,12.2],[101.7,12.6],[100.8,12.6],[101,13.4],[100.1,13.4],[100,12.3],[99.5,10.8],[99.2,10],[99.2,9.2],[99.9,9.2],[100.3,8.3],[100.5,7.4],[101,6.9],[101.6,6.7],[102.1,6.2],[102.4,6.1],[103,5.5],[103.4,4.9],[103.4,4.2],[103.3,3.7],[103.4,3.4],[103.5,2.8],[103.9,2.5],[104.2,1.6],[104.2,1.3],[103.5,1.2],[102.6,2],[101.4,2.8],[101.3,3.3],[100.7,3.9],[100.6,4.8],[100.2,5.3],[100.3,6],[100.1,6.5],[99.7,6.8],[99.5,7.3],[99,7.9],[98.5,8.4],[98.3,7.8],[98.1,8.3],[98.3,9],[98.6,9.9],[98.5,10.7],[98.8,11.4],[98.4,12],[98.5,13.1],[98.1,13.6],[97.8,14.8],[97.6,16.1],[97.2,16.9],[96.5,16.4],[95.4,15.7],[94.8,15.8],[94.2,16],[94.5,17.3],[94.3,18.2],[93.5,19.4],[93.7,19.7],[93.1,19.9],[92.4,20.7],[92.1,21.2],[92,21.7],[91.8,22.2],[91.4,22.8],[90.5,22.8],[90.6,22.4],[90.3,21.8],[89.8,22],[89.7,21.9],[89.4,22],[89,22.1],[88.9,21.7],[88.2,21.7],[87,21.5],[87,20.7],[86.5,20.2],[85.1,19.5],[83.9,18.3],[83.2,17.7],[82.2,17],[82.2,16.6],[81.7,16.3],[80.8,16],[80.3,15.9],[80,15.1],[80.2,13.8],[80.3,13],[79.9,12.1],[79.9,10.4],[79.3,10.3],[78.9,9.5],[79.2,9.2],[78.3,8.9],[77.9,8.3],[77.5,8],[76.6,8.9],[76.1,10.3],[75.7,11.3],[75.4,11.8],[74.9,12.7],[74.6,14],[74.4,14.6],[73.5,16],[73.1,17.9],[72.8,19.2],[72.8,20.4],[72.6,21.4],[71.2,20.8],[70.5,20.9],[69.2,22.1],[69.6,22.5],[69.3,22.8],[68.2,23.7],[67.4,23.9],[67.1,24.7],[66.4,25.4],[64.5,25.2],[62.9,25.2],[61.5,25.1],[59.6,25.4],[58.5,25.6],[57.4,25.7],[57,27],[56.5,27.1],[55.7,27],[54.7,26.5],[53.5,26.8],[52.5,27.6],[51.5,27.9],[50.9,28.8],[50.1,30.1],[49.6,30],[48.9,30.3],[48.6,29.9],[48,30],[48.2,29.5],[48.1,29.3],[48.4,28.6],[48.8,27.7],[49.3,27.5],[49.5,27.1],[50.2,26.7],[50.2,26.3],[50.1,25.9],[50.2,25.6],[50.5,25.3],[50.7,25],[50.8,24.8],[50.7,25.5],[51,26],[51.3,26.1],[51.6,25.8],[51.6,25.2],[51.4,24.6],[51.6,24.2],[51.8,24.3],[51.8,24],[52.6,24.2],[53.4,24.2],[54,24.1],[54.7,24.8],[55.4,25.4],[56.1,26.1],[56.4,26.4],[56.5,26.3],[56.4,25.9],[56.3,25.7],[56.4,24.9],[56.8,24.2],[57.4,23.9],[58.1,23.7],[58.7,23.6],[59.2,23],[59.4,22.7],[59.8,22.5],[59.8,22.3],[59.4,21.7],[59.3,21.4],[58.9,21.1],[58.5,20.4],[58,20.5],[57.8,20.2],[57.7,19.7],[57.8,19.1],[57.7,18.9],[57.2,18.9],[56.6,18.6],[56.5,18.1],[56.3,17.9],[55.7,17.9],[55.3,17.6],[55.3,17.2],[54.8,16.9],[54.2,17],[53.6,16.7],[53.1,16.7],[52.4,16.4],[52.2,15.9],[52.2,15.6],[51.2,15.2],[49.6,14.7],[48.7,14],[48.2,13.9],[47.9,14],[47.4,13.6],[46.7,13.4],[45.9,13.3],[45.6,13.3],[45.4,13],[45.1,13],[45,12.7],[44.5,12.7],[44.2,12.6],[43.5,12.6],[43.2,13.2],[43.3,13.8],[43.1,14.1],[42.9,14.8],[42.6,15.2],[42.8,15.3],[42.7,15.7],[42.8,15.9],[42.8,16.3],[42.7,16.8],[42.3,17.1],[42.3,17.5],[41.8,17.8],[41.2,18.7],[40.9,19.5],[40.2,20.2],[39.8,20.3],[39.1,21.3],[39,22],[39.1,22.6],[38.5,23.7],[38,24.1],[37.5,24.3],[37.2,24.9],[37.2,25.1],[36.9,25.6],[36.6,25.8],[36.3,26.6],[35.6,27.4],[35.1,28.1],[34.6,28.1],[34.8,28.6],[34.8,29],[35,29.4],[34.9,29.5],[34.6,29.1],[34.4,28.3],[34.2,27.8],[33.9,27.6],[33.6,28],[33.1,28.4],[32.4,29.9],[32.3,29.8],[32.7,28.7],[33.3,27.7],[34.1,26.1],[34.5,25.6],[34.8,25],[35.7,23.9],[35.5,23.8],[35.5,23.1],[36.7,22.2],[36.9,22],[37.2,21],[37,20.8],[37.1,19.8],[37.5,18.6],[37.9,18.4],[38.4,18],[39,16.8],[39.3,15.9],[39.8,15.4],[41.2,14.5],[41.7,13.9],[42.3,13.3],[42.6,13],[43.1,12.7],[43.3,12.4],[43.3,12],[42.7,11.7],[43.1,11.5],[43.5,11.3],[43.7,10.9],[44.1,10.4],[44.6,10.4],[45.6,10.7],[46.6,10.8],[47.5,11.1],[48,11.2],[48.4,11.4],[48.9,11.4],[49.3,11.4],[49.7,11.6],[50.3,11.7],[50.7,12],[51.1,12],[51.1,11.7],[51,11.2],[51,10.6],[50.8,10.3],[50.6,9.2],[50.1,8.1],[49.5,6.8],[48.6,5.3],[47.7,4.2],[46.6,2.9],[45.6,2],[44.1,1.1],[43.1,0.3],[42,-0.9],[41.8,-1.4],[41.6,-1.7],[40.9,-2.1],[40.6,-2.5],[40.3,-2.6],[40.1,-3.3],[39.8,-3.7],[39.6,-4.3],[39.2,-4.7],[38.7,-5.9],[38.8,-6.5],[39.4,-6.8],[39.5,-7.1],[39.2,-7.7],[39.3,-8],[39.2,-8.5],[39.5,-9.1],[40,-10.1],[40.3,-10.3],[40.5,-10.8],[40.4,-11.8],[40.6,-12.6],[40.6,-14.2],[40.8,-14.7],[40.5,-15.4],[40.1,-16.1],[39.5,-16.7],[38.5,-17.1],[37.4,-17.6],[36.3,-18.7],[35.9,-18.8],[35.2,-19.6],[34.8,-19.8],[34.7,-20.5],[35.2,-21.3],[35.4,-21.8],[35.4,-22.1],[35.6,-22.1],[35.5,-23.1],[35.4,-23.5],[35.6,-23.7],[35.5,-24.1],[35,-24.5],[34.2,-24.8],[33,-25.4],[32.6,-25.7],[32.7,-26.1],[32.9,-26.2],[32.8,-26.7],[32.6,-27.5],[32.5,-28.3],[32.2,-28.8],[31.5,-29.3],[31.3,-29.4],[30.9,-29.9],[30.6,-30.4],[30.1,-31.1],[28.9,-32.2],[28.2,-32.8],[27.5,-33.2],[26.4,-33.6],[25.9,-33.7],[25.8,-33.9],[25.2,-33.8],[24.7,-34],[23.6,-33.8],[23,-33.9],[22.6,-33.9],[21.5,-34.3],[20.7,-34.4],[20.1,-34.8],[19.6,-34.8],[19.2,-34.5],[18.9,-34.4],[18.4,-34],[18.4,-34.1],[18.2,-33.9],[18.3,-33.3],[17.9,-32.6],[18.2,-32.4],[18.2,-31.7],[17.6,-30.7],[17.1,-29.9],[17.1,-29.9],[16.3,-28.6],[15.6,-27.8],[15.2,-27.1],[15,-26.1],[14.7,-25.4],[14.4,-23.9],[14.4,-22.7],[14.3,-22.1],[13.9,-21.7],[13.4,-20.9],[12.8,-19.7],[12.6,-19],[11.8,-18.1],[11.7,-17.3],[11.6,-16.7],[11.8,-15.8],[12.1,-14.9],[12.2,-14.4],[12.5,-13.5],[12.7,-13.1],[13.3,-12.5],[13.6,-12],[13.7,-11.3],[13.7,-10.7],[13.4,-10.4],[13.1,-9.8],[12.9,-9.2],[12.9,-9],[13.2,-8.6],[12.9,-7.6],[12.7,-6.9],[12.2,-6.3],[12.3,-6.1],[12.2,-5.8],[11.9,-5],[11.1,-4],[10.1,-3],[9.4,-2.1],[8.8,-1.1],[8.8,-0.8],[9,-0.5],[9.3,0.3],[9.5,1],[9.3,1.2],[9.6,2.3],[9.8,3.1],[9.4,3.7],[8.9,3.9],[8.7,4.4],[8.5,4.5],[8.5,4.8],[7.5,4.4],[7.1,4.5],[6.7,4.2],[5.9,4.3],[5.4,4.9],[5,5.6],[4.3,6.3],[3.6,6.3],[2.7,6.3],[1.9,6.1],[1.1,5.9],[-0.5,5.3],[-1.1,5],[-2,4.7],[-2.9,5],[-3.3,5],[-4,5.2],[-4.6,5.2],[-5.8,5],[-6.5,4.7],[-7.5,4.3],[-7.7,4.4],[-8,4.4],[-9,4.8],[-9.9,5.6],[-10.8,6.1],[-11.4,6.8],[-11.7,6.9],[-12.4,7.3],[-12.9,7.8],[-13.1,8.2],[-13.2,8.9],[-13.7,9.5],[-14.1,9.9],[-14.3,10],[-14.6,10.2],[-14.7,10.7],[-14.8,10.9],[-15.1,11],[-15.7,11.5],[-16.1,11.5],[-16.3,11.8],[-16.3,12],[-16.6,12.2],[-16.7,12.4],[-16.8,13.2],[-16.7,13.6],[-17.1,14.4],[-17.6,14.7],[-17.2,14.9],[-16.7,15.6],[-16.5,16.1],[-16.6,16.7],[-16.3,17.2],[-16.1,18.1],[-16.3,19.1],[-16.4,19.6],[-16.3,20.1],[-16.5,20.6],[-17.1,21],[-17,21.4],[-17,21.9],[-16.6,22.2],[-16.3,22.7],[-16.3,23],[-16,23.7],[-15.4,24.4],[-15.1,24.5],[-14.8,25.1],[-14.8,25.6],[-14.4,26.3],[-13.8,26.6],[-13.1,27.6],[-12.6,28],[-11.7,28.1],[-10.9,28.8],[-10.4,29.1],[-9.6,29.9],[-9.8,31.2],[-9.4,32],[-9.3,32.6],[-8.7,33.2],[-7.7,33.7],[-6.9,34.1],[-6.2,35.1],[-5.9,35.8],[-5.2,35.8],[-4.6,35.3],[-3.6,35.4],[-2.6,35.2],[-2.2,35.2],[-1.2,35.7],[-0.1,35.9],[0.5,36.3],[1.5,36.6],[3.2,36.8],[4.8,36.9],[5.3,36.7],[6.3,37.1],[7.3,37.1],[7.7,36.9],[8.4,36.9],[9.5,37.4],[10.2,37.2],[10.2,36.7],[11,37.1],[11.1,36.9],[10.6,36.4],[10.6,35.9],[10.9,35.7],[10.8,34.8],[10.2,34.3],[10.3,33.8],[10.9,33.8],[11.1,33.3],[11.5,33.1],[12.7,32.8],[13.1,32.9],[13.9,32.7],[15.2,32.3],[15.7,31.4],[16.6,31.2],[18,30.8],[19.1,30.3],[19.6,30.5],[20.1,31],[19.8,31.8],[20.1,32.2],[20.9,32.7],[21.5,32.8],[22.9,32.6],[23.2,32.2],[23.6,32.2],[23.9,32],[24.9,31.9],[25.2,31.6],[26.5,31.6],[27.5,31.3],[28.4,31],[28.9,30.9],[29.7,31.2],[30.1,31.5],[31,31.6],[31.7,31.4],[32,30.9],[32.2,31.3],[33,31],[33.8,31],[34.3,31.2],[34.6,31.5],[34.5,31.6],[34.8,32.1],[35,32.8],[35.1,33.1],[35.1,33.1],[35.5,33.9],[36,34.6],[36,34.6],[35.9,35.4],[36.1,35.8],[35.8,36.3],[36.2,36.7],[35.6,36.6],[34.7,36.8],[34,36.2],[32.5,36.1],[31.7,36.6],[30.6,36.7],[30.4,36.3],[29.7,36.1],[28.7,36.7],[27.6,36.7],[27,37.7],[26.3,38.2],[26.8,39],[26.2,39.5],[27.3,40.4],[28.8,40.5],[29.2,41.2],[31.1,41.1],[32.3,41.7],[33.5,42],[35.2,42],[36.9,41.3],[38.3,40.9],[39.5,41.1],[40.4,41],[41.6,41.5],[41.7,42],[41.5,42.6],[40.9,43],[40.3,43.1],[40,43.4],[38.7,44.3],[37.5,44.7],[36.7,45.2],[37.4,45.4],[38.2,46.2],[37.7,46.6],[39.1,47],[39.1,47.3],[38.2,47.1],[37.4,47],[36.8,46.7],[35.8,46.6],[35,46.3],[35,45.7],[35.5,45.4],[36.5,45.5],[36.3,45.1],[35.2,44.9],[33.9,44.4],[33.3,44.6],[33.5,45],[32.5,45.3],[32.6,45.5],[33.6,45.9],[33.3,46.1],[31.7,46.3],[31.7,46.7],[30.7,46.6],[30.4,46],[29.6,45.3],[29.6,45],[29.1,44.8],[28.8,44.9],[28.6,43.7],[28,43.3],[27.7,42.6],[28,42],[28.1,41.6],[29,41.3],[28.8,41.1],[27.6,41],[27.2,40.7],[26.4,40.2],[26,40.6],[26.1,40.8],[25.4,40.9],[24.9,40.9],[23.7,40.7],[24.4,40.1],[23.9,40],[23.3,40],[22.8,40.5],[22.6,40.3],[22.9,39.7],[23.4,39.2],[23,39],[23.5,38.5],[24,38.2],[24,37.7],[23.1,37.9],[23.4,37.4],[22.8,37.3],[23.2,36.4],[22.5,36.4],[21.7,36.8],[21.3,37.6],[21.1,38.3],[20.7,38.8],[20.2,39.3],[20.2,39.6],[20,39.7],[20,39.9],[19.4,40.3],[19.3,40.7],[19.4,41.4],[19.5,41.7],[19.4,41.9],[19.2,42],[18.9,42.3],[18.4,42.5],[17.5,42.8],[16.9,43.2],[16,43.5],[15.2,44.2],[15.4,44.3],[14.9,44.7],[14.9,45.1],[14.3,45.2],[14,44.8],[13.7,45.1],[13.7,45.5],[13.7,45.5],[13.9,45.6],[13.1,45.7],[12.3,45.4],[12.4,44.9],[12.3,44.6],[12.6,44.1],[13.5,43.6],[14,42.8],[15.1,42],[15.9,42],[16.2,41.7],[15.9,41.5],[16.8,41.2],[17.5,40.9],[18.4,40.4],[18.5,40.2],[18.3,39.8],[17.7,40.3],[16.9,40.4],[16.5,39.8],[17.2,39.4],[17.1,38.9],[16.6,38.8],[16.1,38],[15.7,37.9],[15.7,38.2],[15.9,38.8],[16.1,39],[15.7,39.5],[15.4,40],[15,40.2],[14.7,40.6],[14.1,40.8],[13.6,41.2],[12.9,41.3],[12.1,41.7],[11.2,42.4],[10.5,42.9],[10.2,43.9],[9.7,44],[8.9,44.4],[8.4,44.2],[7.8,43.8],[7.4,43.7],[6.5,43.1],[4.6,43.4],[3.1,43.1],[3,42.5],[3,41.9],[2.1,41.2],[0.8,41],[0.7,40.7],[0.1,40.1],[-0.3,39.3],[0.1,38.7],[-0.5,38.3],[-0.7,37.6],[-1.4,37.4],[-2.1,36.7],[-3.4,36.7],[-4.4,36.7],[-5,36.3],[-5.4,35.9],[-5.9,36],[-6.2,36.4],[-6.5,36.9],[-7.5,37.1],[-7.9,36.8],[-8.4,37],[-8.9,36.9],[-8.7,37.7],[-8.8,38.3],[-9.3,38.4],[-9.5,38.7],[-9.4,39.4],[-9,39.8],[-9,40.2],[-8.8,40.8],[-8.8,41.2],[-9,41.5],[-9,41.9],[-9,42.6],[-9.4,43],[-8,43.7],[-6.8,43.6],[-5.4,43.6],[-4.3,43.4],[-3.5,43.5],[-1.9,43.4],[-1.4,44],[-1.2,46],[-2.2,47.1],[-3,47.6],[-4.5,48],[-4.6,48.7],[-3.3,48.9],[-1.6,48.6],[-1.9,49.8],[-1,49.3],[1.3,50.1],[1.6,50.9],[2.5,51.1],[3.3,51.3],[3.8,51.6],[4.7,53.1],[6.1,53.5],[6.9,53.5],[7.1,53.7],[7.9,53.7],[8.1,53.5],[8.8,54],[8.6,54.4],[8.5,55],[8.1,55.5],[8.1,56.5],[8.3,56.8],[8.5,57.1],[9.4,57.2],[9.8,57.4],[10.6,57.7],[10.5,57.2],[10.3,56.9],[10.4,56.6],[10.9,56.5],[10.7,56.1],[10.4,56.2],[9.6,55.5],[9.9,55],[9.9,54.6],[10.9,54.4],[10.9,54],[12,54.2],[12.5,54.5],[13.6,54.1],[14.1,53.8],[14.8,54.1],[16.4,54.5],[17.6,54.9],[18.6,54.7],[18.7,54.4],[19.7,54.4],[19.9,54.9],[21.3,55.2],[21.1,56],[21.1,56.8],[21.6,57.4],[22.5,57.8],[23.3,57],[24.1,57],[24.3,57.8],[24.4,58.4],[24.1,58.3],[23.4,58.6],[23.3,59.2],[24.6,59.5],[25.9,59.6],[26.9,59.4],[28,59.5],[29.1,60],[28.1,60.5],[26.3,60.4],[24.5,60.1],[22.9,59.8],[22.3,60.4],[21.3,60.7],[21.5,61.7],[21.1,62.6],[21.5,63.2],[22.4,63.8],[24.7,64.9],[25.4,65.1],[25.3,65.5],[23.9,66],[22.2,65.7],[21.2,65],[21.4,64.4],[19.8,63.6],[17.8,62.7],[17.1,61.3],[17.8,60.6],[18.8,60.1],[17.9,59],[16.8,58.7],[16.4,57],[15.9,56.1],[14.7,56.2],[14.1,55.4],[12.9,55.4],[12.6,56.3],[11.8,57.4],[11,58.9],[10.4,59.5],[8.4,58.3],[7.1,58.1],[5.7,58.6],[5.3,59.7],[5,62],[5.9,62.6],[8.6,63.5],[10.5,64.5],[12.4,65.9],[14.8,67.8],[16.4,68.6],[19.2,69.8],[21.4,70.3],[23,70.2],[24.5,71],[26.4,71],[28.2,71.2],[31.3,70.5],[30,70.2],[31.1,69.6],[32.1,69.9],[33.8,69.3],[36.5,69.1],[40.3,67.9],[41.1,67.5],[41.1,66.8],[40,66.3],[38.4,66],[33.9,66.8],[33.2,66.6],[34.8,65.9],[34.9,64.4],[36.2,64.1],[37,63.9],[37.1,64.3],[36.5,64.8],[37.2,65.1],[39.6,64.5],[40.4,64.8],[39.8,65.5],[42.1,66.5],[43,66.4],[44,66.1],[44.5,66.8],[43.7,67.4],[44.2,68],[43.5,68.6],[46.3,68.2],[46.8,67.7],[45.6,67.6],[45.6,67],[46.3,66.7],[47.9,66.9],[48.1,67.5],[50.2,68],[53.7,68.9],[54.5,68.8],[53.5,68.2],[54.7,68.1],[55.4,68.4],[57.3,68.5],[58.8,68.9],[59.9,68.3],[61.1,68.9],[60,69.5],[60.6,69.9],[63.5,69.5],[64.9,69.2],[68.5,68.1],[69.2,68.6],[68.2,69.1],[68.1,69.4],[66.9,69.5],[67.3,69.9],[66.7,70.7],[66.7,71],[68.5,71.9],[69.2,72.8],[69.9,73],[72.6,72.8],[72.8,72.2],[71.8,71.4],[72.5,71.1],[72.8,70.4],[72.6,69],[73.7,68.4],[73.2,67.7],[71.3,66.3],[72.4,66.2],[72.8,66.5],[73.9,66.8],[74.2,67.3],[75.1,67.8],[74.5,68.3],[74.9,69],[73.8,69.1],[73.6,69.6],[74.4,70.6],[73.1,71.4],[74.9,72.1],[74.7,72.8],[75.2,72.9],[75.7,72.3],[75.3,71.3],[76.4,71.2],[75.9,71.9],[77.6,72.3],[79.7,72.3],[81.5,71.7],[80.6,72.6],[80.5,73.6],[82.3,73.9],[84.7,73.8],[86.8,73.9],[86,74.5],[87.2,75.1],[88.3,75.1],[90.3,75.6],[92.9,75.8],[93.2,76],[95.9,76.1],[96.7,75.9],[98.9,76.4],[100.8,76.4],[101,76.9],[102,77.3],[104.4,77.7],[106.1,77.4],[104.7,77.1],[107,77],[107.2,76.5],[108.2,76.7],[111.1,76.7],[113.3,76.2],[114.1,75.8],[113.9,75.3],[112.8,75],[110.2,74.5],[109.4,74.2],[110.6,74],[112.1,73.8],[113,74],[113.5,73.3],[114,73.6],[115.6,73.8],[118.8,73.6],[119,73.1],[123.2,73],[123.3,73.7],[125.4,73.6],[127,73.6],[128.6,73],[129.1,72.4],[128.5,72],[129.7,71.2],[131.3,70.8],[132.3,71.8],[133.9,71.4],[135.6,71.7],[137.5,71.3],[138.2,71.6],[139.9,71.5],[139.1,72.4],[140.5,72.8],[149.5,72.2],[150.4,71.6],[153,70.8],[157,71],[159,70.9],[159.8,70.5],[159.7,69.7],[160.9,69.4],[162.3,69.6],[164.1,69.7],[165.9,69.5],[167.8,69.6],[169.6,68.7],[170.8,69],[170,69.7],[170.5,70.1],[173.6,69.8],[175.7,69.9],[178.6,69.4],[-180,69]],[[49.1,41.3],[49.6,40.6],[50.1,40.5],[50.4,40.3],[49.6,40.2],[49.4,39.4],[49.2,39],[48.9,38.8],[48.9,38.3],[49.2,37.6],[50.1,37.4],[50.8,36.9],[52.3,36.7],[53.8,37],[53.9,37.2],[53.7,37.9],[53.9,39],[53.1,39.3],[53.4,40],[52.7,40],[52.9,40.9],[53.9,40.6],[54.7,41],[54,41.6],[53.7,42.1],[52.9,41.9],[52.8,41.1],[52.5,41.8],[52.4,42],[52.7,42.4],[52.5,42.8],[51.3,43.1],[50.9,44],[50.3,44.3],[50.3,44.6],[51.3,44.5],[51.3,45.2],[52.2,45.4],[53,45.3],[53.2,46.2],[53,46.9],[52,46.8],[51.2,47],[50,46.6],[49.1,46.4],[48.6,45.8],[47.7,45.6],[46.7,44.6],[47.6,43.7],[47.5,43],[48.6,41.8],[49.1,41.3]]],[[[-95.6,69.1],[-96.3,68.8],[-97.6,69.1],[-98.4,69],[-99.8,69.4],[-98.9,69.7],[-98.2,70.1],[-97.2,69.9],[-96.6,69.7],[-96.3,69.5],[-95.6,69.1]]],[[[-180,71.5],[180,70.8],[178.9,70.8],[178.7,71.1],[-180,71.5]]],[[[-180,71.5],[-179.9,71.6],[-179,71.6],[-177.6,71.3],[-177.7,71.1],[-178.7,70.9],[-180,70.8],[-180,71.5]]],[[[-90.5,69.5],[-90.5,68.5],[-89.2,69.3],[-88,68.6],[-88.3,67.9],[-87.3,67.2],[-86.3,67.9],[-85.6,68.8],[-85.5,69.9],[-84.1,69.8],[-82.6,69.7],[-81.3,69.2],[-81.2,68.7],[-82,68.1],[-81.3,67.6],[-81.4,67.1],[-83.3,66.4],[-84.7,66.3],[-85.8,66.6],[-86.1,66.1],[-87,65.2],[-87.3,64.8],[-88.5,64.1],[-89.9,64],[-90.7,63.6],[-90.8,63],[-91.9,62.8],[-93.2,62],[-94.2,60.9],[-94.6,60.1],[-94.7,58.9],[-93.2,58.8],[-92.8,57.8],[-92.3,57.1],[-90.9,57.3],[-89,56.9],[-88,56.5],[-87.3,56],[-86.1,55.7],[-85,55.3],[-83.4,55.2],[-82.3,55.1],[-82.4,54.3],[-82.1,53.3],[-81.4,52.2],[-79.9,51.2],[-79.1,51.5],[-78.6,52.6],[-79.1,54.1],[-79.8,54.7],[-78.2,55.1],[-77.1,55.8],[-76.5,56.5],[-76.6,57.2],[-77.3,58.1],[-78.5,58.8],[-77.3,59.9],[-77.8,60.8],[-78.1,62.3],[-77.4,62.6],[-75.7,62.3],[-74.7,62.2],[-73.8,62.4],[-72.9,62.1],[-71.7,61.5],[-71.4,61.1],[-69.6,61.1],[-69.6,60.2],[-69.3,59],[-68.4,58.8],[-67.7,58.2],[-66.2,58.8],[-65.2,59.9],[-64.6,60.3],[-63.8,59.4],[-62.5,58.2],[-61.4,57],[-61.8,56.3],[-60.5,55.8],[-59.6,55.2],[-58,54.9],[-57.3,54.6],[-56.9,53.8],[-56.2,53.6],[-55.8,53.3],[-55.7,52.1],[-56.4,51.8],[-57.1,51.4],[-58.8,51.1],[-60,50.2],[-61.7,50.1],[-63.9,50.3],[-65.4,50.3],[-66.4,50.2],[-67.2,49.5],[-68.5,49.1],[-70,47.7],[-71.1,46.8],[-70.3,47],[-68.7,48.3],[-66.6,49.1],[-65.1,49.2],[-64.2,48.7],[-65.1,48.1],[-64.8,47],[-64.5,46.2],[-63.2,45.7],[-61.5,45.9],[-60.5,47],[-60.5,46.3],[-59.8,45.9],[-61,45.3],[-63.3,44.7],[-64.2,44.3],[-65.4,43.5],[-66.1,43.6],[-66.2,44.5],[-64.4,45.3],[-66,45.3],[-67.1,45.1],[-67,44.8],[-68,44.3],[-69.1,44],[-70.1,43.7],[-70.7,43],[-70.8,42.9],[-70.8,42.3],[-70.5,41.8],[-70.1,41.8],[-70.2,42.1],[-69.9,41.9],[-70,41.6],[-70.6,41.5],[-71.1,41.5],[-71.9,41.3],[-72.3,41.3],[-72.9,41.2],[-73.7,40.9],[-72.2,41.1],[-71.9,40.9],[-73.3,40.6],[-74,40.6],[-74,40.8],[-74.3,40.5],[-74,40.4],[-74.2,39.7],[-74.9,38.9],[-75,39.2],[-75.2,39.2],[-75.5,39.5],[-75.3,39],[-75.1,38.8],[-75.1,38.4],[-75.4,38],[-75.9,37.2],[-76,37.3],[-75.7,37.9],[-76.2,38.3],[-76.4,39.1],[-76.5,38.7],[-76.3,38.1],[-77,38.2],[-76.3,37.9],[-76.3,37],[-76,36.9],[-75.9,36.6],[-75.7,35.6],[-76.4,34.8],[-77.4,34.5],[-78.1,33.9],[-78.6,33.9],[-79.1,33.5],[-79.2,33.2],[-80.3,32.5],[-80.9,32],[-81.3,31.4],[-81.5,30.7],[-81.3,30],[-81,29.2],[-80.5,28.5],[-80.5,28],[-80.1,26.9],[-80.1,26.2],[-80.1,25.8],[-80.4,25.2],[-80.7,25.1],[-81.2,25.2],[-81.3,25.6],[-81.7,25.9],[-82.2,26.7],[-82.7,27.5],[-82.9,27.9],[-82.7,28.6],[-82.9,29.1],[-83.7,29.9],[-84.1,30.1],[-85.1,29.6],[-85.3,29.7],[-85.8,30.2],[-86.4,30.4],[-87.5,30.3],[-88.4,30.4],[-89.2,30.3],[-89.6,30.2],[-89.4,29.9],[-89.4,29.5],[-89.2,29.3],[-89.4,29.2],[-89.8,29.3],[-90.2,29.1],[-90.9,29.1],[-91.6,29.7],[-92.5,29.6],[-93.2,29.8],[-93.8,29.7],[-94.7,29.5],[-95.6,28.7],[-96.6,28.3],[-97.1,27.8],[-97.4,27.4],[-97.4,26.7],[-97.3,26.2],[-97.1,25.9],[-97.1,25.9],[-97.1,25.9],[-97.5,25],[-97.7,24.3],[-97.8,22.9],[-97.9,22.4],[-97.7,21.9],[-97.4,21.4],[-97.2,20.6],[-96.5,19.9],[-96.3,19.3],[-95.9,18.8],[-94.8,18.6],[-94.4,18.1],[-93.5,18.4],[-92.8,18.5],[-92,18.7],[-91.4,18.9],[-90.8,19.3],[-90.5,19.9],[-90.5,20.7],[-90.3,21],[-89.6,21.3],[-88.5,21.5],[-87.7,21.5],[-87.1,21.5],[-86.8,21.3],[-86.8,20.8],[-87.4,20.3],[-87.6,19.6],[-87.4,19.5],[-87.6,19],[-87.8,18.3],[-88.1,18.5],[-88.3,18.5],[-88.3,18.4],[-88.1,18.3],[-88.1,18.1],[-88.3,17.6],[-88.2,17.5],[-88.3,17.1],[-88.2,17],[-88.4,16.5],[-88.6,16.3],[-88.7,16.2],[-88.9,15.9],[-88.6,15.7],[-88.5,15.9],[-88.2,15.7],[-88.1,15.7],[-87.9,15.9],[-87.6,15.9],[-87.5,15.8],[-87.4,15.8],[-86.9,15.8],[-86.4,15.8],[-86.1,15.9],[-86,16],[-85.7,16],[-85.4,15.9],[-85.2,15.9],[-85,16],[-84.5,15.9],[-84.4,15.8],[-84.1,15.6],[-83.8,15.4],[-83.4,15.3],[-83.1,15],[-83.2,14.9],[-83.3,14.7],[-83.2,14.3],[-83.4,14],[-83.5,13.6],[-83.6,13.1],[-83.5,12.9],[-83.5,12.4],[-83.6,12.3],[-83.7,11.9],[-83.7,11.6],[-83.9,11.4],[-83.8,11.1],[-83.7,10.9],[-83.4,10.4],[-83,10],[-82.5,9.6],[-82.2,9.2],[-82.2,9],[-81.8,9],[-81.7,9],[-81.4,8.8],[-80.9,8.9],[-80.5,9.1],[-79.9,9.3],[-79.6,9.6],[-79,9.6],[-79.1,9.5],[-78.5,9.4],[-78.1,9.2],[-77.7,8.9],[-77.4,8.7],[-76.8,8.6],[-76.1,9.3],[-75.7,9.4],[-75.7,9.8],[-75.5,10.6],[-74.9,11.1],[-74.3,11.1],[-74.2,11.3],[-73.4,11.2],[-72.6,11.7],[-72.2,12],[-71.8,12.4],[-71.4,12.4],[-71.1,12.1],[-71.3,11.8],[-71.4,11.5],[-71.9,11.4],[-71.6,11],[-71.6,10.4],[-72.1,9.9],[-71.7,9.1],[-71.3,9.1],[-71,9.9],[-71.4,10.2],[-71.4,11],[-70.2,11.4],[-70.3,11.8],[-69.9,12.2],[-69.6,11.5],[-68.9,11.4],[-68.2,10.9],[-68.2,10.6],[-67.3,10.5],[-66.2,10.6],[-65.7,10.2],[-64.9,10.1],[-64.3,10.4],[-64.3,10.6],[-63.1,10.7],[-61.9,10.7],[-62.7,10.4],[-62.4,9.9],[-61.6,9.9],[-60.8,9.4],[-60.7,8.6],[-60.2,8.6],[-59.8,8.4],[-59.1,8],[-58.5,7.3],[-58.5,6.8],[-58.1,6.8],[-57.5,6.3],[-57.1,6],[-55.9,5.8],[-55.8,6],[-55,6],[-54,5.8],[-53.6,5.6],[-52.9,5.4],[-51.8,4.6],[-51.7,4.2],[-51.3,4.2],[-51.1,3.6],[-50.5,1.9],[-50,1.7],[-49.9,1],[-50.7,0.2],[-50.4,-0.1],[-48.6,-0.2],[-48.6,-1.2],[-47.8,-0.6],[-46.6,-0.9],[-44.9,-1.6],[-44.4,-2.1],[-44.6,-2.7],[-43.4,-2.4],[-41.5,-2.9],[-40,-2.9],[-38.5,-3.7],[-37.2,-4.8],[-36.5,-5.1],[-35.6,-5.1],[-35.2,-5.5],[-34.9,-6.7],[-34.7,-7.3],[-35.1,-9],[-35.6,-9.6],[-37,-11],[-37.7,-12.2],[-38.4,-13],[-38.7,-13.1],[-39,-13.8],[-38.9,-15.7],[-39.2,-17.2],[-39.3,-17.9],[-39.6,-18.3],[-39.8,-19.6],[-40.8,-20.9],[-40.9,-21.9],[-41.8,-22.4],[-42,-23],[-43.1,-23],[-44.6,-23.4],[-45.4,-23.8],[-46.5,-24.1],[-47.6,-24.9],[-48.5,-25.9],[-48.6,-26.6],[-48.5,-27.2],[-48.7,-28.2],[-48.9,-28.7],[-49.6,-29.2],[-50.7,-31],[-51.6,-31.8],[-52.3,-32.2],[-52.7,-33.2],[-53.4,-33.8],[-53.8,-34.4],[-54.9,-35],[-55.7,-34.8],[-56.2,-34.9],[-57.1,-34.4],[-57.8,-34.5],[-58.4,-33.9],[-58.5,-34.4],[-57.2,-35.3],[-57.4,-36],[-56.7,-36.4],[-56.8,-36.9],[-57.7,-38.2],[-59.2,-38.7],[-61.2,-38.9],[-62.3,-38.8],[-62.1,-39.4],[-62.3,-40.2],[-62.1,-40.7],[-62.7,-41],[-63.8,-41.2],[-64.7,-40.8],[-65.1,-41.1],[-65,-42.1],[-64.3,-42.4],[-63.8,-42],[-63.5,-42.6],[-64.4,-42.9],[-65.2,-43.5],[-65.3,-44.5],[-65.6,-45],[-66.5,-45],[-67.3,-45.6],[-67.6,-46.3],[-66.6,-47],[-65.6,-47.2],[-66,-48.1],[-67.2,-48.7],[-67.8,-49.9],[-68.7,-50.3],[-69.1,-50.7],[-68.8,-51.8],[-68.2,-52.4],[-68.6,-52.3],[-69.5,-52.3],[-69.9,-52.5],[-70.8,-52.9],[-71,-53.8],[-71.4,-53.9],[-72.6,-53.5],[-73.7,-52.8],[-74.9,-52.3],[-75.3,-51.6],[-75,-51],[-75.5,-50.4],[-75.6,-48.7],[-75.2,-47.7],[-74.1,-46.9],[-75.6,-46.6],[-74.7,-45.8],[-74.4,-44.1],[-73.2,-44.5],[-72.7,-42.4],[-73.4,-42.1],[-73.7,-43.4],[-74.3,-43.2],[-74,-41.8],[-73.7,-39.9],[-73.2,-39.3],[-73.5,-38.3],[-73.6,-37.2],[-73.2,-37.1],[-72.6,-35.5],[-71.9,-33.9],[-71.4,-32.4],[-71.7,-30.9],[-71.4,-30.1],[-71.5,-28.9],[-70.9,-27.6],[-70.7,-25.7],[-70.4,-23.6],[-70.1,-21.4],[-70.2,-19.8],[-70.4,-18.3],[-71.4,-17.8],[-71.5,-17.4],[-73.4,-16.4],[-75.2,-15.3],[-76,-14.6],[-76.4,-13.8],[-76.3,-13.5],[-77.1,-12.2],[-78.1,-10.4],[-79,-8.4],[-79.4,-7.9],[-79.8,-7.2],[-80.5,-6.5],[-81.3,-6.1],[-80.9,-5.7],[-81.4,-4.7],[-81.1,-4],[-80.3,-3.4],[-79.8,-2.7],[-80,-2.2],[-80.4,-2.7],[-81,-2.2],[-80.8,-2],[-80.9,-1.1],[-80.6,-0.9],[-80.4,-0.3],[-80,0.4],[-80.1,0.8],[-79.5,1],[-78.9,1.4],[-79,1.7],[-78.6,1.8],[-78.7,2.3],[-78.4,2.6],[-77.9,2.7],[-77.5,3.3],[-77.1,3.8],[-77.5,4.1],[-77.3,4.7],[-77.5,5.6],[-77.3,5.8],[-77.5,6.7],[-77.9,7.2],[-78.2,7.5],[-78.4,8.1],[-78.2,8.3],[-78.4,8.4],[-78.6,8.7],[-79.1,9],[-79.6,8.9],[-79.8,8.6],[-80.2,8.3],[-80.4,8.3],[-80.5,8.1],[-80,7.5],[-80.3,7.4],[-80.4,7.3],[-80.9,7.2],[-81.1,7.8],[-81.2,7.6],[-81.5,7.7],[-81.7,8.1],[-82.1,8.2],[-82.4,8.3],[-82.8,8.3],[-82.8,8.1],[-83,8.2],[-83.5,8.4],[-83.7,8.7],[-83.6,8.8],[-83.6,9.1],[-83.9,9.3],[-84.3,9.5],[-84.6,9.6],[-84.7,9.9],[-85,10.1],[-84.9,9.8],[-85.1,9.6],[-85.3,9.8],[-85.7,9.9],[-85.8,10.1],[-85.8,10.4],[-85.7,10.8],[-85.9,10.9],[-85.7,11.1],[-86.1,11.4],[-86.5,11.8],[-86.7,12.1],[-87.2,12.5],[-87.7,12.9],[-87.6,13.1],[-87.4,12.9],[-87.3,13],[-87.5,13.3],[-87.8,13.4],[-87.9,13.1],[-88.5,13.2],[-88.8,13.3],[-89.3,13.5],[-89.8,13.5],[-90.1,13.7],[-90.6,13.9],[-91.2,13.9],[-91.7,14.1],[-92.2,14.5],[-93.4,15.6],[-93.9,15.9],[-94.7,16.2],[-95.3,16.1],[-96.1,15.8],[-96.6,15.7],[-97.3,15.9],[-98,16.1],[-98.9,16.6],[-99.7,16.7],[-100.8,17.2],[-101.7,17.6],[-101.9,17.9],[-102.5,18],[-103.5,18.3],[-103.9,18.7],[-105,19.3],[-105.5,19.9],[-105.7,20.4],[-105.4,20.5],[-105.5,20.8],[-105.3,21.1],[-105.3,21.4],[-105.6,21.9],[-105.7,22.3],[-106,22.8],[-106.9,23.8],[-107.9,24.5],[-108.4,25.2],[-109.3,25.6],[-109.4,25.8],[-109.3,26.4],[-109.8,26.7],[-110.4,27.2],[-110.6,27.9],[-111.2,27.9],[-111.8,28.5],[-112.2,29],[-112.3,29.3],[-112.8,30],[-113.2,30.8],[-113.1,31.2],[-113.9,31.6],[-114.2,31.5],[-114.8,31.8],[-114.9,31.4],[-114.8,30.9],[-114.7,30.2],[-114.3,29.8],[-113.6,29.1],[-113.4,28.8],[-113.3,28.8],[-113.1,28.4],[-113,28.4],[-112.8,27.8],[-112.5,27.5],[-112.2,27.2],[-111.6,26.7],[-111.3,25.7],[-111,25.3],[-110.7,24.8],[-110.7,24.3],[-110.2,24.3],[-109.8,23.8],[-109.4,23.4],[-109.4,23.2],[-109.9,22.8],[-110,22.8],[-110.3,23.4],[-111,24],[-111.7,24.5],[-112.2,24.7],[-112.2,25.5],[-112.3,26],[-112.8,26.3],[-113.5,26.8],[-113.6,26.6],[-113.8,26.9],[-114.5,27.1],[-115.1,27.7],[-115,27.8],[-114.6,27.7],[-114.2,28.1],[-114.2,28.6],[-114.9,29.3],[-115.5,29.6],[-115.9,30.2],[-116.3,30.8],[-116.7,31.6],[-117.1,32.5],[-117.3,33],[-117.9,33.6],[-118.4,33.7],[-118.5,34],[-119.1,34.1],[-119.4,34.3],[-120.4,34.4],[-120.6,34.6],[-120.7,35.2],[-121.7,36.2],[-122.5,37.6],[-122.5,37.8],[-123,38.1],[-123.7,39],[-123.9,39.8],[-124.4,40.3],[-124.2,41.1],[-124.2,42],[-124.5,42.8],[-124.1,43.7],[-123.9,45.5],[-124.1,46.9],[-124.4,47.7],[-124.7,48.2],[-124.6,48.4],[-123.1,48],[-122.6,47.1],[-122.3,47.4],[-122.5,48.2],[-122.8,49],[-123,49],[-124.9,50],[-125.6,50.4],[-127.4,50.8],[-128,51.7],[-127.8,52.3],[-129.1,52.8],[-129.3,53.6],[-130.5,54.3],[-130.5,54.8],[-131.1,55.2],[-132,55.5],[-132.2,56.4],[-133.5,57.2],[-134.1,58.1],[-135,58.2],[-136.6,58.2],[-137.8,58.5],[-139.9,59.5],[-140.8,59.7],[-142.6,60.1],[-144,60],[-145.9,60.5],[-147.1,60.9],[-148.2,60.7],[-148,60],[-148.6,59.9],[-149.7,59.7],[-150.6,59.4],[-151.7,59.2],[-151.9,59.7],[-151.4,60.7],[-150.3,61],[-150.6,61.3],[-151.9,60.7],[-152.6,60.1],[-154,59.4],[-153.3,58.9],[-154.2,58.1],[-155.3,57.7],[-156.3,57.4],[-156.6,57],[-158.1,56.5],[-158.4,56],[-159.6,55.6],[-160.3,55.6],[-161.2,55.4],[-162.2,55],[-163.1,54.7],[-164.8,54.4],[-164.9,54.6],[-163.8,55],[-162.9,55.3],[-161.8,55.9],[-160.6,56],[-160.1,56.4],[-158.7,57],[-158.5,57.2],[-157.7,57.6],[-157.6,58.3],[-157,58.9],[-158.2,58.6],[-158.5,58.8],[-159.1,58.4],[-159.7,58.9],[-160,58.6],[-160.4,59.1],[-161.4,58.7],[-162,58.7],[-162.1,59.3],[-161.9,59.6],[-162.5,60],[-163.8,59.8],[-164.7,60.3],[-165.3,60.5],[-165.4,61.1],[-166.1,61.5],[-165.7,62.1],[-164.9,62.6],[-164.6,63.1],[-163.8,63.2],[-163.1,63.1],[-162.3,63.5],[-161.5,63.5],[-160.8,63.8],[-161,64.2],[-161.5,64.4],[-160.8,64.8],[-161.4,64.8],[-162.5,64.6],[-162.8,64.3],[-163.5,64.6],[-165,64.4],[-166.4,64.7],[-166.8,65.1],[-168.1,65.7],[-166.7,66.1],[-164.5,66.6],[-163.7,66.6],[-163.8,66.1],[-161.7,66.1],[-162.5,66.7],[-163.7,67.1],[-164.4,67.6],[-165.4,68],[-166.8,68.4],[-166.2,68.9],[-164.4,68.9],[-163.2,69.4],[-162.9,69.9],[-161.9,70.3],[-160.9,70.4],[-159,70.9],[-158.1,70.8],[-156.6,71.4],[-155.1,71.1],[-154.3,70.7],[-153.9,70.9],[-152.2,70.8],[-152.3,70.6],[-150.7,70.4],[-149.7,70.5],[-147.6,70.2],[-145.7,70.1],[-144.9,70],[-143.6,70.2],[-142.1,69.9],[-141,69.7],[-139.1,69.5],[-137.5,69],[-136.5,68.9],[-135.6,69.3],[-134.4,69.6],[-132.9,69.5],[-131.4,69.9],[-129.8,70.2],[-129.1,69.8],[-128.4,70],[-128.1,70.5],[-127.4,70.4],[-125.8,69.5],[-124.4,70.2],[-124.3,69.4],[-123.1,69.6],[-122.7,69.9],[-121.5,69.8],[-119.9,69.4],[-117.6,69],[-116.2,68.8],[-115.2,68.9],[-113.9,68.4],[-115.3,67.9],[-113.5,67.7],[-110.8,67.8],[-109.9,68],[-108.9,67.4],[-107.8,67.9],[-108.8,68.3],[-108.2,68.7],[-107,68.7],[-106.1,68.8],[-105.3,68.6],[-104.3,68],[-103.2,68.1],[-101.5,67.6],[-99.9,67.8],[-98.4,67.8],[-98.6,68.4],[-97.7,68.6],[-96.1,68.2],[-96.1,67.3],[-95.5,68.1],[-94.7,68.1],[-94.2,69.1],[-95.3,69.7],[-96.5,70.1],[-96.4,71.2],[-95.2,71.9],[-93.9,71.8],[-92.9,71.3],[-91.5,70.2],[-92.4,69.7],[-90.5,69.5]]],[[[-114.2,73.1],[-114.7,72.7],[-112.4,73],[-111.1,72.5],[-109.9,73],[-109,72.6],[-108.2,71.7],[-107.7,72.1],[-108.4,73.1],[-107.5,73.2],[-106.5,73.1],[-105.4,72.7],[-104.8,71.7],[-104.5,71],[-102.8,70.5],[-101,70],[-101.1,69.6],[-102.7,69.5],[-102.1,69.1],[-102.4,68.8],[-104.2,68.9],[-106,69.2],[-107.1,69.1],[-109,68.8],[-112,68.6],[-113.3,68.5],[-113.9,69],[-115.2,69.3],[-116.1,69.2],[-117.3,70],[-116.7,70.1],[-115.1,70.2],[-113.7,70.2],[-112.4,70.4],[-114.3,70.6],[-116.5,70.5],[-117.9,70.5],[-118.4,70.9],[-116.1,71.3],[-117.7,71.3],[-119.4,71.6],[-118.6,72.3],[-117.9,72.7],[-115.2,73.3],[-114.2,73.1]]],[[[-104.5,73.4],[-105.4,72.8],[-106.9,73.5],[-106.6,73.6],[-105.3,73.6],[-104.5,73.4]]],[[[-76.3,73.1],[-76.3,72.8],[-77.3,72.9],[-78.4,72.9],[-79.5,72.7],[-79.8,72.8],[-80.9,73.3],[-80.8,73.7],[-80.4,73.8],[-78.1,73.7],[-76.3,73.1]]],[[[-86.6,73.2],[-85.8,72.5],[-84.9,73.3],[-82.3,73.8],[-80.6,72.7],[-80.8,72.1],[-78.8,72.4],[-77.8,72.8],[-75.6,72.2],[-74.2,71.8],[-74.1,71.3],[-72.2,71.6],[-71.2,70.9],[-68.8,70.5],[-67.9,70.1],[-67,69.2],[-68.8,68.7],[-66.5,68.1],[-64.9,67.8],[-63.4,66.9],[-61.9,66.9],[-62.2,66.2],[-63.9,65],[-65.1,65.4],[-66.7,66.4],[-68,66.3],[-68.1,65.7],[-67.1,65.1],[-65.7,64.6],[-65.3,64.4],[-64.7,63.4],[-65,62.7],[-66.3,62.9],[-68.8,63.7],[-67.4,62.9],[-66.3,62.3],[-66.2,61.9],[-68.9,62.3],[-71,62.9],[-72.2,63.4],[-71.9,63.7],[-73.4,64.2],[-74.8,64.7],[-74.8,64.4],[-77.7,64.2],[-78.6,64.6],[-77.9,65.3],[-76,65.3],[-74,65.5],[-74.3,65.8],[-73.9,66.3],[-72.7,67.3],[-72.9,67.7],[-73.3,68.1],[-74.8,68.6],[-76.9,68.9],[-76.2,69.1],[-77.3,69.8],[-78.2,69.8],[-79,70.2],[-79.5,69.9],[-81.3,69.7],[-84.9,70],[-87.1,70.3],[-88.7,70.4],[-89.5,70.8],[-88.5,71.2],[-89.9,71.2],[-90.2,72.2],[-89.4,73.1],[-88.4,73.5],[-85.8,73.8],[-86.6,73.2]]],[[[-100.4,73.8],[-99.2,73.6],[-97.4,73.8],[-97.1,73.5],[-98.1,73],[-96.5,72.6],[-96.7,71.7],[-98.4,71.3],[-99.3,71.4],[-100,71.7],[-102.5,72.5],[-102.5,72.8],[-100.4,72.7],[-101.5,73.4],[-100.4,73.8]]],[[[143.6,73.2],[142.1,73.2],[140,73.3],[139.9,73.4],[140.8,73.8],[142.1,73.9],[143.5,73.5],[143.6,73.2]]],[[[-93.2,72.8],[-94.3,72],[-95.4,72.1],[-96,72.9],[-96,73.4],[-95.5,73.9],[-94.5,74.1],[-92.4,74.1],[-90.5,73.9],[-92,73],[-93.2,72.8]]],[[[-120.5,71.4],[-123.1,70.9],[-123.6,71.3],[-125.9,71.9],[-125.6,72.2],[-124.8,73],[-123.9,73.7],[-124.9,74.3],[-121.5,74.4],[-120.1,74.2],[-117.6,74.2],[-116.6,73.9],[-115.5,73.5],[-116.8,73.2],[-119.2,72.5],[-120.5,71.8],[-120.5,71.4]]],[[[150.7,75.1],[149.6,74.7],[148,74.8],[146.1,75.2],[146.4,75.5],[148.2,75.3],[150.7,75.1]]],[[[-93.6,75],[-94.2,74.6],[-95.6,74.7],[-96.8,74.9],[-96.3,75.4],[-94.9,75.6],[-94,75.3],[-93.6,75]]],[[[145.1,75.6],[144.3,74.8],[140.6,74.8],[139,74.6],[137,75.3],[137.5,75.9],[138.8,76.1],[141.5,76.1],[145.1,75.6]]],[[[-98.5,76.7],[-97.7,76.3],[-97.7,75.7],[-98.2,75],[-99.8,74.9],[-100.9,75.1],[-100.9,75.6],[-102.5,75.6],[-102.6,76.3],[-101.5,76.3],[-100,76.6],[-98.6,76.6],[-98.5,76.7]]],[[[-108.2,76.2],[-107.8,75.8],[-106.9,76],[-105.9,76],[-105.7,75.5],[-106.3,75],[-109.7,74.9],[-112.2,74.4],[-113.7,74.4],[-113.9,74.7],[-111.8,75.2],[-116.3,75],[-117.7,75.2],[-116.3,76.2],[-115.4,76.5],[-112.6,76.1],[-110.8,75.5],[-109.1,75.5],[-110.5,76.4],[-109.6,76.8],[-108.6,76.7],[-108.2,76.2]]],[[[57.5,70.7],[56.9,70.6],[53.7,70.8],[53.4,71.2],[51.6,71.5],[51.5,72],[52.5,72.2],[52.4,72.8],[54.4,73.6],[53.5,73.8],[55.9,74.6],[55.6,75.1],[57.9,75.6],[61.2,76.3],[64.5,76.4],[66.2,76.8],[68.2,76.9],[68.9,76.5],[68.2,76.2],[64.6,75.7],[61.6,75.3],[58.5,74.3],[57,73.3],[55.4,72.4],[55.6,71.5],[57.5,70.7]]],[[[-94.7,77.1],[-93.6,76.8],[-91.6,76.8],[-90.7,76.5],[-91,76.1],[-89.8,75.8],[-89.2,75.6],[-87.8,75.6],[-86.4,75.5],[-84.8,75.7],[-82.8,75.8],[-81.1,75.7],[-80.1,75.3],[-79.8,74.9],[-80.5,74.7],[-81.9,74.4],[-83.2,74.6],[-86.1,74.4],[-88.1,74.4],[-89.8,74.5],[-92.4,74.8],[-92.8,75.4],[-92.9,75.9],[-93.9,76.3],[-96,76.4],[-97.1,76.8],[-96.7,77.2],[-94.7,77.1]]],[[[-116.2,77.6],[-116.3,76.9],[-117.1,76.5],[-118,76.5],[-119.9,76.1],[-121.5,75.9],[-122.9,76.1],[-121.2,76.9],[-119.1,77.5],[-117.6,77.5],[-116.2,77.6]]],[[[-93.8,77.5],[-94.3,77.5],[-96.2,77.6],[-96.4,77.8],[-94.4,77.8],[-93.7,77.6],[-93.8,77.5]]],[[[-110.2,77.7],[-112.1,77.4],[-113.5,77.7],[-112.7,78.1],[-111.3,78.2],[-109.9,78],[-110.2,77.7]]],[[[24.7,77.9],[22.5,77.4],[20.7,77.7],[21.4,77.9],[20.8,78.3],[22.9,78.5],[23.3,78.1],[24.7,77.9]]],[[[-109.7,78.6],[-110.9,78.4],[-112.5,78.4],[-112.5,78.6],[-111.5,78.9],[-111,78.8],[-109.7,78.6]]],[[[-95.8,78.1],[-97.3,77.8],[-98.1,78.1],[-98.6,78.5],[-98.6,78.9],[-97.3,78.8],[-96.8,78.8],[-95.6,78.4],[-95.8,78.1]]],[[[-100.1,78.3],[-99.7,77.9],[-101.3,78],[-102.9,78.3],[-105.2,78.4],[-104.2,78.7],[-105.4,78.9],[-105.5,79.3],[-103.5,79.2],[-100.8,78.8],[-100.1,78.3]]],[[[105.1,78.3],[99.4,77.9],[101.3,79.2],[102.1,79.3],[102.8,79.3],[105.4,78.7],[105.1,78.3]]],[[[18.3,79.7],[21.5,79],[19,78.6],[18.5,77.8],[17.6,77.6],[17.1,76.8],[15.9,76.8],[13.8,77.4],[14.7,77.7],[13.2,78],[11.2,78.9],[10.4,79.7],[13.2,80],[13.7,79.7],[15.1,79.7],[15.5,80],[17,80.1],[18.3,79.7]]],[[[25.4,80.4],[27.4,80.1],[25.9,79.5],[23,79.4],[20.1,79.6],[19.9,79.8],[18.5,79.9],[17.4,80.3],[20.5,80.6],[21.9,80.4],[22.9,80.7],[25.4,80.4]]],[[[51.1,80.5],[49.8,80.4],[48.9,80.3],[48.8,80.2],[47.6,80],[46.5,80.2],[47.1,80.6],[44.8,80.6],[46.8,80.8],[48.3,80.8],[48.5,80.5],[49.1,80.8],[50,80.9],[51.5,80.7],[51.1,80.5]]],[[[99.9,78.9],[97.8,78.8],[95,79],[93.3,79.4],[92.5,80.1],[91.2,80.3],[93.8,81],[95.9,81.3],[97.9,80.7],[100.2,79.8],[99.9,78.9]]],[[[-87,79.7],[-85.8,79.3],[-87.2,79],[-89,78.3],[-90.8,78.2],[-92.9,78.3],[-94,78.8],[-93.9,79.1],[-93.1,79.4],[-95,79.4],[-96.1,79.7],[-96.7,80.2],[-96,80.6],[-95.3,80.9],[-94.3,81],[-94.7,81.2],[-92.4,81.3],[-91.1,80.7],[-89.4,80.5],[-87.8,80.3],[-87,79.7]]],[[[-68.5,83.1],[-65.8,83],[-63.7,82.9],[-61.9,82.6],[-61.9,82.4],[-64.3,81.9],[-66.8,81.7],[-67.7,81.5],[-65.5,81.5],[-67.8,80.9],[-69.5,80.6],[-71.2,79.8],[-73.2,79.6],[-73.9,79.4],[-76.9,79.3],[-75.5,79.2],[-76.2,79],[-75.4,78.5],[-76.3,78.2],[-77.9,77.9],[-78.4,77.5],[-79.8,77.2],[-79.6,77],[-77.9,77],[-77.9,76.8],[-80.6,76.2],[-83.2,76.5],[-86.1,76.3],[-87.6,76.4],[-89.5,76.5],[-89.6,77],[-87.8,77.2],[-88.3,77.9],[-87.6,78],[-85,77.5],[-86.3,78.2],[-88,78.4],[-87.2,78.8],[-85.4,79],[-85.1,79.3],[-86.5,79.7],[-86.9,80.3],[-84.2,80.2],[-83.4,80.1],[-81.8,80.5],[-84.1,80.6],[-87.6,80.5],[-89.4,80.9],[-90.2,81.3],[-91.4,81.6],[-91.6,81.9],[-90.1,82.1],[-88.9,82.1],[-87,82.3],[-85.5,82.7],[-84.3,82.6],[-83.2,82.3],[-82.4,82.9],[-81.1,83],[-79.3,83.1],[-76.3,83.2],[-75.7,83.1],[-72.8,83.2],[-70.7,83.2],[-68.5,83.1]]],[[[-27.1,83.5],[-20.8,82.7],[-22.7,82.3],[-26.5,82.3],[-31.9,82.2],[-31.4,82],[-27.9,82.1],[-24.8,81.8],[-22.9,82.1],[-22.1,81.7],[-23.2,81.2],[-20.6,81.5],[-15.8,81.9],[-12.8,81.7],[-12.2,81.3],[-16.3,80.6],[-16.8,80.3],[-20,80.2],[-17.7,80.1],[-18.9,79.4],[-19.7,78.8],[-19.7,77.6],[-18.5,77],[-20,76.9],[-21.7,76.6],[-19.8,76.1],[-19.6,75.2],[-20.7,75.2],[-19.4,74.3],[-21.6,74.2],[-20.4,73.8],[-20.8,73.5],[-22.2,73.3],[-23.6,73.3],[-22.3,72.6],[-22.3,72.2],[-24.3,72.6],[-24.8,72.3],[-23.4,72.1],[-22.1,71.5],[-21.8,70.7],[-23.5,70.5],[-24.3,70.9],[-25.5,71.4],[-25.2,70.8],[-26.4,70.2],[-23.7,70.2],[-22.3,70.1],[-25,69.3],[-27.7,68.5],[-30.7,68.1],[-31.8,68.1],[-32.8,67.7],[-34.2,66.7],[-36.4,66],[-37,65.9],[-38.4,65.7],[-39.8,65.5],[-40.7,64.8],[-40.7,64.1],[-41.2,63.5],[-42.8,62.7],[-42.4,61.9],[-42.9,61.1],[-43.4,60.1],[-44.8,60],[-46.3,60.9],[-48.3,60.9],[-49.2,61.4],[-49.9,62.4],[-51.6,63.6],[-52.1,64.3],[-52.3,65.2],[-53.7,66.1],[-53.3,66.8],[-54,67.2],[-53,68.4],[-51.5,68.7],[-51.1,69.1],[-50.9,69.9],[-52,69.6],[-52.6,69.4],[-53.5,69.3],[-54.7,69.6],[-54.8,70.3],[-54.4,70.8],[-53.4,70.8],[-51.4,70.6],[-53.1,71.2],[-54,71.5],[-55,71.4],[-55.8,71.7],[-54.7,72.6],[-55.3,73],[-56.1,73.7],[-57.3,74.7],[-58.6,75.1],[-58.6,75.5],[-61.3,76.1],[-63.4,76.2],[-66.1,76.1],[-68.5,76.1],[-69.7,76.4],[-71.4,77],[-68.8,77.3],[-66.8,77.4],[-71,77.6],[-73.3,78],[-73.2,78.4],[-69.4,78.9],[-65.7,79.4],[-65.3,79.8],[-68,80.1],[-67.1,80.5],[-63.7,81.2],[-62.2,81.3],[-62.6,81.8],[-60.3,82],[-57.2,82.2],[-54.1,82.2],[-53,81.9],[-50.4,82.4],[-48,82.1],[-46.6,82],[-44.5,81.7],[-46.9,82.2],[-46.8,82.6],[-43.4,83.2],[-39.9,83.2],[-38.6,83.5],[-35.1,83.6],[-27.1,83.5]]]]};
+/* Shared globe engine for the theme prototypes. Needs d3-array + d3-geo (global d3) and LAND. */
+window.PAGlobe = function (canvas, opts) {
+  var render = opts.render;
+  var speed = opts.speed == null ? 3 : opts.speed; // deg / s
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var ctx = canvas.getContext('2d');
+  var proj = d3.geoOrthographic().clipAngle(90).precision(0.4);
+  var path = d3.geoPath(proj, ctx);
+  var rot = (opts.start || [-140, 12]).concat([0]);
+  var w = 0, h = 0, dpr = 1, raf = 0, last = 0, t = 0, running = false, onScreen = true;
+  var intro = reduce || opts.intro === false ? 1 : 0;
+  var introDur = opts.introDuration || 1.8;
+  var drag = null, vel = [0, 0], idle = -1e9;
+
+  function size() {
+    var r = canvas.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = r.width; h = r.height;
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+    var scale = (opts.scale || 0.44) * Math.min(w, h);
+    var off = (opts.offset && opts.offset(w, h)) || [0.5, 0.5];
+    proj.scale(scale).translate([w * off[0], h * off[1]]);
+    draw();
+  }
+  function draw() {
+    if (!w) return;
+    proj.rotate(rot);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    render({ ctx: ctx, proj: proj, path: path, w: w, h: h, t: t, intro: easeOut(intro), reduce: reduce, center: [-rot[0], -rot[1]] });
+    if (opts.onCenter) opts.onCenter(-rot[1], -rot[0]);
+  }
+  function easeOut(x) { return 1 - Math.pow(1 - x, 3); }
+  function frame(now) {
+    var dt = Math.min(0.05, (now - (last || now)) / 1000); last = now; t += dt;
+    if (intro < 1) intro = Math.min(1, intro + dt / introDur);
+    if (!drag) {
+      if (Math.abs(vel[0]) + Math.abs(vel[1]) > 0.02) { rot[0] += vel[0]; rot[1] = clamp(rot[1] + vel[1]); vel[0] *= 0.92; vel[1] *= 0.92; }
+      else if (!reduce && now - idle > 2200) rot[0] += speed * dt;
+    }
+    draw();
+    var settled = reduce && !drag && Math.abs(vel[0]) + Math.abs(vel[1]) <= 0.02;
+    if (settled) running = false;
+    raf = running ? requestAnimationFrame(frame) : 0;
+  }
+  function clamp(v) { return Math.max(-70, Math.min(70, v)); }
+  function start() { if (running || !onScreen || document.hidden) return; running = true; last = 0; raf = requestAnimationFrame(frame); }
+  function stop() { running = false; cancelAnimationFrame(raf); }
+
+  canvas.addEventListener('pointerdown', function (e) {
+    drag = [e.clientX, e.clientY]; vel = [0, 0];
+    canvas.setPointerCapture(e.pointerId); canvas.classList.add('is-dragging'); start();
+  });
+  canvas.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    var k = 70 / proj.scale();
+    vel = [(e.clientX - drag[0]) * k, -(e.clientY - drag[1]) * k];
+    rot[0] += vel[0]; rot[1] = clamp(rot[1] + vel[1]);
+    drag = [e.clientX, e.clientY];
+  });
+  function up() { if (!drag) return; drag = null; idle = performance.now(); canvas.classList.remove('is-dragging'); }
+  canvas.addEventListener('pointerup', up);
+  canvas.addEventListener('pointercancel', up);
+  canvas.addEventListener('keydown', function (e) {
+    var m = { ArrowLeft: [-10, 0], ArrowRight: [10, 0], ArrowUp: [0, -10], ArrowDown: [0, 10] }[e.key];
+    if (!m) return;
+    e.preventDefault(); rot[0] -= m[0]; rot[1] = clamp(rot[1] + m[1]); idle = performance.now(); draw();
+  });
+  var firstSeen = true;
+  new IntersectionObserver(function (en) {
+    onScreen = en[0].isIntersecting;
+    // Below the fold at load: skip the intro so the globe is complete whenever it is reached.
+    if (firstSeen && !onScreen) { intro = 1; draw(); }
+    firstSeen = false;
+    onScreen ? start() : stop();
+  }).observe(canvas);
+  document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
+  new ResizeObserver(size).observe(canvas);
+  size();
+  start();
+  return { redraw: draw, rotateTo: function (lon, lat) { rot = [-lon, -lat, 0]; idle = performance.now(); start(); } };
+};
+
+PAGlobe.places = [
+  { id: 'vn', vi: 'Việt Nam', en: 'Vietnam', lon: 107.8, lat: 16.05, approx: true },
+  { id: 'nz', vi: 'New Zealand', en: 'New Zealand', lon: 174.0, lat: -41.3, approx: true, since: 2024 }
+];
+PAGlobe.fmt = function (lat, lon) {
+  return Math.abs(lat).toFixed(2) + '°' + (lat >= 0 ? 'N' : 'S') + ' ' + Math.abs(lon).toFixed(2) + '°' + (lon >= 0 ? 'E' : 'W');
+};
+
+/* VI | EN switch: elements carry data-en; the Vietnamese text is in the HTML. */
+window.PALang = function (buttons) {
+  var nodes = document.querySelectorAll('[data-en]');
+  nodes.forEach(function (n) { n.dataset.vi = n.innerHTML; });
+  function set(lang) {
+    document.documentElement.lang = lang;
+    nodes.forEach(function (n) { n.innerHTML = lang === 'en' ? n.dataset.en : n.dataset.vi; });
+    buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === lang)); });
+    document.dispatchEvent(new CustomEvent('pa:lang', { detail: lang }));
+    try { localStorage.setItem('pa-lang', lang); } catch (e) {}
+  }
+  buttons.forEach(function (b) { b.addEventListener('click', function () { set(b.dataset.lang); }); });
+  var saved = 'vi';
+  try { saved = localStorage.getItem('pa-lang') || 'vi'; } catch (e) {}
+  if (saved === 'en') set('en');
+  return set;
+};
+</script>
+<script>
+(function () {
+  var root = document.documentElement, lang = 'vi', gl;
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var C = {};
+  function readColors() { var s = getComputedStyle(root); ['ink', 'ink-2', 'rule', 'band', 'accent', 'paper', 'sheet', 'pen', 'pencil'].forEach(function (k) { C[k] = s.getPropertyValue('--' + k).trim(); }); }
+  readColors();
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { readColors(); drawTiming(); });
+  function dark() { return parseInt(C.paper.slice(1, 3), 16) < 0x80; }
+  var HAND = '"Patrick Hand", cursive', MONO = '500 11px "Reddit Mono", monospace';
+
+  PALang([].slice.call(document.querySelectorAll('.lang button')));
+  document.addEventListener('pa:lang', function (e) { lang = e.detail; gl && gl.redraw(); drawTiming(); setDistance(); marks(); });
+
+  /* ---------- shared ticker ---------- */
+  var jobs = [];
+  function animate(el, fn) {
+    var job = { fn: fn, on: false, t: 0 }; jobs.push(job);
+    new IntersectionObserver(function (es) { job.on = es[0].isIntersecting; }).observe(el);
+    new ResizeObserver(function () { fn(0, job.t); }).observe(el);
+    return job;
+  }
+  if (!reduce) { var last = 0; (function tick(now) { var dt = Math.min(0.05, (now - (last || now)) / 1000); last = now; if (!document.hidden) jobs.forEach(function (j) { if (j.on) { j.t += dt; j.fn(dt, j.t); } }); requestAnimationFrame(tick); })(0); }
+  function fit(c) {
+    var r = c.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+    if (c.width !== Math.round(r.width * dpr) || c.height !== Math.round(r.height * dpr)) { c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr); }
+    var ctx = c.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, r.width, r.height);
+    return { ctx: ctx, w: r.width, h: r.height };
+  }
+  function pointer(c) {
+    var p = { x: -1e4, y: -1e4, in: false, tap: 0 };
+    function set(e) { var r = c.getBoundingClientRect(); p.x = e.clientX - r.left; p.y = e.clientY - r.top; }
+    c.addEventListener('pointermove', function (e) { set(e); p.in = true; });
+    c.addEventListener('pointerleave', function () { p.in = false; });
+    c.addEventListener('pointerdown', function (e) { set(e); p.in = true; p.tap = 1; });
+    return p;
+  }
+
+  /* ---------- chapters ease in once ---------- */
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }); }, { rootMargin: '0px 0px -15% 0px' });
+  document.querySelectorAll('section.ch').forEach(function (s) { reduce ? s.classList.add('on') : io.observe(s); });
+
+  /* ---------- hand-drawn marks: red-pen circles and scribbled underlines ---------- */
+  function rnd(seed) { return function () { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }; }
+  function roughEllipse(w, h, seed) {
+    var r = rnd(seed), cx = w / 2, cy = h / 2, a0 = -2.2 + r() * 0.6, turns = 1.12, n = 40, d = '';
+    var p1 = r() * 6, p2 = r() * 6;
+    for (var i = 0; i <= n; i++) {
+      var t = i / n, a = a0 + t * turns * Math.PI * 2, k = 1 + 0.05 * Math.sin(a * 2 + p1) + 0.04 * Math.sin(a * 3 + p2) + t * 0.06;
+      d += (i ? 'L' : 'M') + (cx + Math.cos(a) * (w / 2) * k).toFixed(1) + ' ' + (cy + Math.sin(a) * (h / 2) * k).toFixed(1);
+    }
+    return d;
+  }
+  function scribble(w, seed) {
+    var r = rnd(seed), d = 'M0 ' + (4 + r() * 2).toFixed(1);
+    for (var x = 10; x <= w; x += 10) d += ' L' + x + ' ' + (3 + Math.sin(x * 0.07 + r()) * 1.6 - x / w * 2).toFixed(1);
+    d += ' M' + (w * 0.08).toFixed(1) + ' 10 L' + (w * 0.95).toFixed(1) + ' ' + (7 + r() * 2).toFixed(1);
+    return d;
+  }
+  function marks() {
+    document.querySelectorAll('.circ, .scrib').forEach(function (el, i) {
+      var old = el.querySelector('.mk'); if (old) old.remove();
+      var w = el.offsetWidth, h = el.offsetHeight, circ = el.classList.contains('circ');
+      var pad = circ ? [14, 9] : [2, 0];
+      var W = w + pad[0] * 2, H = circ ? h + pad[1] * 2 : 14;
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', 'mk'); svg.setAttribute('width', W); svg.setAttribute('height', H);
+      svg.style.left = -pad[0] + 'px'; svg.style.top = circ ? -pad[1] + 'px' : (h - 6) + 'px';
+      var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', circ ? roughEllipse(W, H, 7 + i * 13) : scribble(W, 11 + i));
+      path.setAttribute('pathLength', '1');
+      svg.appendChild(path); el.appendChild(svg);
+    });
+  }
+  document.fonts && document.fonts.ready.then(marks); marks();
+  addEventListener('resize', function () { clearTimeout(marks.t); marks.t = setTimeout(marks, 150); });
+
+  /* ---------- header rider ---------- */
+  var bot = document.getElementById('bot'), forms = bot.querySelectorAll('svg'), cur = -1;
+  function ride() {
+    var max = root.scrollHeight - innerHeight, p = max > 0 ? Math.min(1, scrollY / max) : 0;
+    bot.parentNode.style.setProperty('--x', (p * (bot.parentNode.getBoundingClientRect().width - 18)).toFixed(1) + 'px');
+    var k = p < 0.3 ? 0 : p < 0.62 ? 1 : 2;
+    if (k !== cur) { forms.forEach(function (f, i) { f.classList.toggle('on', i === k); }); cur = k; }
+  }
+  addEventListener('scroll', ride, { passive: true }); addEventListener('resize', ride); ride();
+
+  /* ---------- hero globe ---------- */
+  var grat = d3.geoGraticule10();
+  var A = PAGlobe.places[0], B = PAGlobe.places[1];
+  var journey = (function () { var f = d3.geoInterpolate([A.lon, A.lat], [B.lon, B.lat]), c = []; for (var i = 0; i <= 64; i++) c.push(f(i / 64)); return { type: 'LineString', coordinates: c }; })();
+  gl = PAGlobe(document.getElementById('globe'), {
+    start: [-140, 14], speed: 2.2, scale: 0.44, introDuration: 1.6,
+    onCenter: function (lat, lon) { document.getElementById('center').textContent = PAGlobe.fmt(lat, lon); },
+    render: function (s) {
+      var ctx = s.ctx;
+      ctx.beginPath(); s.path(grat); ctx.strokeStyle = C.rule; ctx.lineWidth = 0.7; ctx.stroke();
+      ctx.globalAlpha = s.intro;
+      ctx.beginPath(); s.path(LAND); ctx.fillStyle = C.band; ctx.fill(); ctx.strokeStyle = C.ink; ctx.lineWidth = 0.9; ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.beginPath(); s.path({ type: 'Sphere' }); ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4; ctx.stroke();
+      if (s.intro < 1) return;
+      ctx.beginPath(); s.path(journey); ctx.strokeStyle = C.pen; ctx.lineWidth = 2; ctx.setLineDash([7, 5]); ctx.lineDashOffset = s.reduce ? 0 : -s.t * 10; ctx.stroke(); ctx.setLineDash([]);
+      PAGlobe.places.forEach(function (pl) {
+        if (d3.geoDistance([pl.lon, pl.lat], s.center) > Math.PI / 2 - 0.05) return;
+        var p = s.proj([pl.lon, pl.lat]);
+        ctx.strokeStyle = C.pen; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(p[0], p[1], 9, 0.3, Math.PI * 2.15); ctx.stroke();
+        ctx.fillStyle = C.ink; ctx.fillRect(p[0] - 2.5, p[1] - 2.5, 5, 5);
+        ctx.font = '21px ' + HAND; ctx.fillStyle = C.pen;
+        var label = pl[lang], tw = ctx.measureText(label).width;
+        ctx.font = MONO;
+        var sub = (pl.since ? pl.since + ' · ' : '') + '≈ ' + PAGlobe.fmt(pl.lat, pl.lon), sw = ctx.measureText(sub).width, right = p[0] + Math.max(tw, sw) + 24 < s.w;
+        ctx.font = '21px ' + HAND; ctx.fillText(label, right ? p[0] + 15 : p[0] - 15 - tw, p[1] - 10);
+        ctx.font = MONO; ctx.fillStyle = C['ink-2'];
+        ctx.fillText(sub, right ? p[0] + 15 : p[0] - 15 - sw, p[1] + 6);
+      });
+    }
+  });
+
+  /* ---------- line follower: P control, the visitor tunes Kp ---------- */
+  (function () {
+    var c = document.getElementById('lf'), kpIn = document.getElementById('kp'), kpOut = document.getElementById('kpv'), stat = document.getElementById('lfstat');
+    var N = 420, track = [], robot = null, err = 0, trail = [], hist = [], lastW = 0, lostT = 0, lost = 0, laps = 0, Kp = 7.5;
+    kpIn.addEventListener('input', function () { Kp = +kpIn.value; kpOut.textContent = Kp.toFixed(1); });
+    document.getElementById('lfreset').addEventListener('click', function () { reset(); lost = 0; });
+    var H = 0;
+    function build(w, h) {
+      track = [];
+      for (var i = 0; i < N; i++) {
+        var a = i / N * Math.PI * 2, r = 1 + 0.17 * Math.sin(3 * a) + 0.07 * Math.cos(5 * a + 1);
+        track.push([w / 2 + Math.cos(a) * r * w * 0.36, H / 2 + Math.sin(a) * r * H * 0.34]);
+      }
+    }
+    function nearest(x, y) { var b = 1e9, bi = 0; for (var i = 0; i < N; i++) { var dx = track[i][0] - x, dy = track[i][1] - y, d = dx * dx + dy * dy; if (d < b) { b = d; bi = i; } } return [Math.sqrt(b), bi]; }
+    function reset(i) {
+      i = i || 0; var p0 = track[i], p1 = track[(i + 1) % N];
+      robot = { x: p0[0], y: p0[1], a: Math.atan2(p1[1] - p0[1], p1[0] - p0[0]) }; trail = []; err = 0; lostT = 0;
+    }
+    animate(c, function (dt) {
+      var f = fit(c), ctx = f.ctx, w = f.w, h = f.h; if (!w) return;
+      H = h * 0.76; var s = Math.min(w, H);
+      if (w !== lastW) { lastW = w; build(w, h); reset(); hist = []; }
+      var lw = s * 0.045;
+      // floor: pencil grid
+      ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.setLineDash([1, 4]); ctx.beginPath();
+      for (var gx = 20; gx < w; gx += 20) { ctx.moveTo(gx, 0); ctx.lineTo(gx, H); }
+      for (var gy = 20; gy < H; gy += 20) { ctx.moveTo(0, gy); ctx.lineTo(w, gy); }
+      ctx.stroke(); ctx.setLineDash([]);
+      // electrical tape on the floor: slightly uneven
+      ctx.beginPath(); track.forEach(function (p, i) { i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }); ctx.closePath();
+      ctx.strokeStyle = C.ink; ctx.lineWidth = lw; ctx.lineJoin = 'round'; ctx.stroke();
+      ctx.strokeStyle = dark() ? 'rgba(255,255,255,.08)' : 'rgba(255,255,255,.18)'; ctx.lineWidth = lw * 0.25; ctx.setLineDash([14, 22]); ctx.stroke(); ctx.setLineDash([]);
+      // sense
+      var L = s * 0.12, W = s * 0.09, sp = W * 0.26, ahead = L * 0.62;
+      var fx = Math.cos(robot.a), fy = Math.sin(robot.a), nx = -fy, ny = fx, hits = [], sum = 0, cnt = 0;
+      for (var k = -2; k <= 2; k++) { var on = nearest(robot.x + fx * ahead + nx * k * sp, robot.y + fy * ahead + ny * k * sp)[0] < lw / 2; hits.push(on); if (on) { sum += k; cnt++; } }
+      if (cnt) err = sum / cnt / 2;
+      // act
+      robot.a += Kp * err * dt;
+      robot.x += fx * s * 0.42 * dt; robot.y += fy * s * 0.42 * dt;
+      var nr = nearest(robot.x, robot.y);
+      if (nr[0] > lw * 3) lostT += dt; else lostT = 0;
+      if (lostT > 0.9 || robot.x < -40 || robot.x > w + 40 || robot.y < -40 || robot.y > H + 40) { lost++; reset(nr[1]); }
+      if (dt) { trail.push([robot.x, robot.y]); if (trail.length > 70) trail.shift(); hist.push(err); if (hist.length > 260) hist.shift(); }
+      ctx.beginPath(); trail.forEach(function (p, i) { i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); });
+      ctx.strokeStyle = C.pen; ctx.lineWidth = 1.4; ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]);
+      // robot
+      ctx.save(); ctx.translate(robot.x, robot.y); ctx.rotate(robot.a);
+      ctx.lineWidth = 1.4; ctx.strokeStyle = C.ink; ctx.fillStyle = C.sheet;
+      ctx.fillRect(-L / 2, -W / 2, L, W); ctx.strokeRect(-L / 2, -W / 2, L, W);
+      ctx.fillStyle = C.ink; ctx.fillRect(-L * 0.34, -W * 0.74, L * 0.36, W * 0.2); ctx.fillRect(-L * 0.34, W * 0.54, L * 0.36, W * 0.2);
+      ctx.beginPath(); ctx.arc(-L * 0.05, 0, W * 0.16, 0, 7); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(L / 2, 0); ctx.lineTo(ahead, 0); ctx.stroke();
+      ctx.fillStyle = C.sheet; ctx.fillRect(ahead - 3, -W * 0.64, 6, W * 1.28); ctx.strokeRect(ahead - 3, -W * 0.64, 6, W * 1.28);
+      hits.forEach(function (on, i) { ctx.fillStyle = on ? C.pen : C.sheet; ctx.beginPath(); ctx.arc(ahead, (i - 2) * sp, 2.8, 0, 7); ctx.fill(); ctx.stroke(); });
+      ctx.restore();
+      // e(t) strip
+      var y0 = H + 10, sh = h - y0 - 4;
+      ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, y0 + sh / 2); ctx.lineTo(w, y0 + sh / 2); ctx.stroke();
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 1.6; ctx.beginPath();
+      hist.forEach(function (e, i) { var x = w - (hist.length - i) * (w / 260), y = y0 + sh / 2 - e * sh * 0.45; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+      ctx.stroke();
+      ctx.font = MONO; ctx.fillStyle = C['ink-2']; ctx.fillText('e(t)', 4, y0 + 11);
+      stat.textContent = 'IR ' + hits.map(function (b) { return b ? '■' : '□'; }).join('') + '  e=' + (err >= 0 ? '+' : '') + err.toFixed(2) + '  ' + (lang === 'en' ? 'lost ' : 'lạc ') + lost;
+      if (lostT > 0.2) { ctx.font = '24px ' + HAND; ctx.fillStyle = C.pen; ctx.fillText(lang === 'en' ? 'lost it!' : 'lạc rồi!', robot.x + 16, robot.y - 14); }
+    });
+  })();
+
+  /* ---------- UAV: PD hover hold; the visitor is the wind ---------- */
+  (function () {
+    var c = document.getElementById('uav'), stat = document.getElementById('uavstat'), ptr = pointer(c);
+    var pos = null, vel = [0, 0], trail = [], gust = 0;
+    animate(c, function (dt, t) {
+      var f = fit(c), ctx = f.ctx, w = f.w, h = f.h, s = Math.min(w, h); if (!w) return;
+      var tx = w * 0.5 + Math.sin(t * 0.4) * w * 0.07, ty = h * 0.5 + Math.sin(t * 0.6) * h * 0.05;
+      if (!pos) pos = [tx, ty];
+      var ax = -9 * (pos[0] - tx) - 3.6 * vel[0], ay = -9 * (pos[1] - ty) - 3.6 * vel[1], wind = 0;
+      if (ptr.in) {
+        var dx = pos[0] - ptr.x, dy = pos[1] - ptr.y, d = Math.hypot(dx, dy) || 1, R = s * 0.55;
+        if (d < R) { wind = (1 - d / R); ax += dx / d * s * 14 * wind; ay += dy / d * s * 14 * wind; }
+        if (ptr.tap) { vel[0] += dx / d * s * 2.2; vel[1] += dy / d * s * 2.2; ptr.tap = 0; gust = 1; }
+      }
+      gust = Math.max(0, gust - dt * 1.5);
+      vel[0] += ax * dt; vel[1] += ay * dt; pos[0] += vel[0] * dt; pos[1] += vel[1] * dt;
+      pos[0] = Math.max(s * 0.2, Math.min(w - s * 0.2, pos[0])); pos[1] = Math.max(s * 0.2, Math.min(h - s * 0.2, pos[1]));
+      if (dt) { trail.push(pos.slice()); if (trail.length > 160) trail.shift(); }
+      // set point
+      ctx.strokeStyle = C.pen; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(tx - 7, ty); ctx.lineTo(tx + 7, ty); ctx.moveTo(tx, ty - 7); ctx.lineTo(tx, ty + 7); ctx.stroke();
+      ctx.beginPath(); trail.forEach(function (p, i) { i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }); ctx.strokeStyle = C.accent; ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]);
+      // wind lines from the pointer
+      if (ptr.in && wind > 0) {
+        ctx.strokeStyle = C.pencil; ctx.lineWidth = 1; ctx.globalAlpha = 0.6;
+        for (var k = -2; k <= 2; k++) {
+          var ang = Math.atan2(pos[1] - ptr.y, pos[0] - ptr.x) + k * 0.12, ph = (t * 3 + k * 0.3) % 1, r0 = 14 + ph * 40;
+          ctx.beginPath(); ctx.moveTo(ptr.x + Math.cos(ang) * r0, ptr.y + Math.sin(ang) * r0); ctx.lineTo(ptr.x + Math.cos(ang) * (r0 + 16), ptr.y + Math.sin(ang) * (r0 + 16)); ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+      }
+      var tilt = Math.max(-1, Math.min(1, -vel[0] / (s * 1.2))), pitch = Math.max(-1, Math.min(1, -vel[1] / (s * 1.2)));
+      var yaw = Math.PI / 4 + Math.sin(t * 0.3) * 0.25, R = s * 0.19, r = s * 0.085, cx = pos[0], cy = pos[1];
+      // shadow
+      ctx.fillStyle = '#000'; ctx.globalAlpha = dark() ? 0.4 : 0.07;
+      for (var i = 0; i < 4; i++) { var a = yaw + i * Math.PI / 2; ctx.beginPath(); ctx.arc(cx + 16 + Math.cos(a) * R, cy + 22 + Math.sin(a) * R, r, 0, 7); ctx.fill(); }
+      ctx.globalAlpha = 1;
+      var pts = [];
+      for (i = 0; i < 4; i++) { a = yaw + i * Math.PI / 2; pts.push([cx + Math.cos(a) * R * (1 + tilt * Math.cos(a) * 0.12), cy + Math.sin(a) * R * (1 + pitch * Math.sin(a) * 0.12)]); }
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); ctx.lineTo(pts[2][0], pts[2][1]); ctx.moveTo(pts[1][0], pts[1][1]); ctx.lineTo(pts[3][0], pts[3][1]); ctx.stroke();
+      pts.forEach(function (p, i) {
+        var a = yaw + i * Math.PI / 2, effort = 1 + Math.max(0, (Math.cos(a) * tilt + Math.sin(a) * pitch)) * 2 + gust;
+        ctx.fillStyle = C.band; ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, 7); ctx.fill(); ctx.stroke();
+        var dir = i % 2 ? 1 : -1, ang = t * 34 * effort * dir;
+        for (var g = 0; g < 3; g++) { var b = ang - dir * g * 0.24; ctx.globalAlpha = g ? 0.25 : 1; ctx.strokeStyle = C.ink; ctx.lineWidth = g ? 1 : 1.7; ctx.beginPath(); ctx.moveTo(p[0] - Math.cos(b) * r * 0.9, p[1] - Math.sin(b) * r * 0.9); ctx.lineTo(p[0] + Math.cos(b) * r * 0.9, p[1] + Math.sin(b) * r * 0.9); ctx.stroke(); }
+        ctx.globalAlpha = 1; ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(p[0], p[1], 2.2, 0, 7); ctx.fill();
+      });
+      ctx.save(); ctx.translate(cx, cy); ctx.rotate(yaw - Math.PI / 4);
+      var bw = s * 0.055; ctx.fillStyle = C.sheet; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4; ctx.fillRect(-bw, -bw, 2 * bw, 2 * bw); ctx.strokeRect(-bw, -bw, 2 * bw, 2 * bw);
+      ctx.fillStyle = C.pen; ctx.beginPath(); ctx.moveTo(bw * 1.7, 0); ctx.lineTo(bw * 1.1, -bw * 0.45); ctx.lineTo(bw * 1.1, bw * 0.45); ctx.fill();
+      ctx.restore();
+      var off = Math.hypot(pos[0] - tx, pos[1] - ty) / s;
+      stat.textContent = (lang === 'en' ? 'off set-point ' : 'lệch ') + (off * 100).toFixed(0) + '%  roll ' + (tilt * 20).toFixed(1) + '°  pitch ' + (pitch * 20).toFixed(1) + '°';
+    });
+  })();
+
+  /* ---------- 2019: a damped response written by a sweeping trace ---------- */
+  (function () {
+    var c = document.getElementById('settle');
+    animate(c, function (dt, t) {
+      var f = fit(c), ctx = f.ctx, w = f.w, h = f.h; if (!w) return;
+      ctx.strokeStyle = 'rgba(190,220,210,.14)'; ctx.lineWidth = 1; ctx.setLineDash([1, 3]); ctx.beginPath();
+      for (var i = 1; i < 20; i++) { ctx.moveTo(w * i / 20, 0); ctx.lineTo(w * i / 20, h); }
+      for (var j = 1; j < 6; j++) { ctx.moveTo(0, h * j / 6); ctx.lineTo(w, h * j / 6); }
+      ctx.stroke(); ctx.setLineDash([]);
+      var period = 9, p = reduce ? 1 : Math.min(1, (t % period) / (period * 0.8));
+      function y(x) { var u = x * 14; return h / 2 - Math.exp(-u * 0.28) * Math.sin(u * 1.9) * h * 0.42 + (1 - Math.exp(-u * 0.6)) * 0; }
+      ctx.strokeStyle = '#e64aa9'; ctx.shadowColor = '#e64aa9'; ctx.shadowBlur = 6; ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (var x = 0; x <= w * p; x += 2) { var yy = y(x / w) + (Math.random() - 0.5) * 1.2; x ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy); }
+      ctx.stroke(); ctx.shadowBlur = 0;
+      if (p < 1) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(w * p, y(p), 3, 0, 7); ctx.fill(); }
+    });
+  })();
+
+  /* ---------- 2024: pencil route map ---------- */
+  var distKm = Math.round(d3.geoDistance([A.lon, A.lat], [B.lon, B.lat]) * 6371 / 100) * 100;
+  function setDistance() { document.getElementById('dist').textContent = distKm.toLocaleString(lang === 'en' ? 'en-US' : 'vi-VN') + ' km'; marks(); }
+  setDistance();
+  (function () {
+    var c = document.getElementById('route'), drawn = reduce ? 1 : 0, started = false;
+    var sec = document.getElementById('ch-2024');
+    new IntersectionObserver(function (es) { if (es[0].isIntersecting) started = true; }, { threshold: 0.35 }).observe(c);
+    var region = { type: 'MultiPoint', coordinates: [[94, 30], [180, -50]] };
+    var arc = (function () { var f = d3.geoInterpolate([A.lon, A.lat], [B.lon, B.lat]), cc = []; for (var i = 0; i <= 80; i++) cc.push(f(i / 80)); return cc; })();
+    animate(c, function (dt) {
+      var f = fit(c), ctx = f.ctx, w = f.w, h = f.h; if (!w) return;
+      if (started) drawn = Math.min(1, drawn + dt / 2.4);
+      var proj = d3.geoEquirectangular().fitExtent([[16, 16], [w - 16, h - 16]], region), path = d3.geoPath(proj, ctx);
+      ctx.save(); ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.clip();
+      ctx.beginPath(); path(d3.geoGraticule().step([10, 10])()); ctx.strokeStyle = C.rule; ctx.lineWidth = 0.6; ctx.stroke();
+      ctx.beginPath(); path(LAND); ctx.fillStyle = C.band; ctx.fill(); ctx.strokeStyle = C.pencil; ctx.lineWidth = 1; ctx.stroke();
+      var n = Math.max(1, Math.round(arc.length * drawn));
+      ctx.beginPath(); for (var i = 0; i < n; i++) { var p = proj(arc[i]); i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }
+      ctx.strokeStyle = C.pen; ctx.lineWidth = 2.4; ctx.setLineDash([8, 6]); ctx.stroke(); ctx.setLineDash([]);
+      var a = proj([A.lon, A.lat]), b = proj([B.lon, B.lat]), head = proj(arc[n - 1]);
+      ctx.strokeStyle = C.pen; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(a[0], a[1], 9, 0.4, 6.6); ctx.stroke();
+      if (drawn >= 1) { ctx.beginPath(); ctx.arc(b[0], b[1], 10, 0.2, 6.5); ctx.stroke(); }
+      else { ctx.fillStyle = C.pen; ctx.beginPath(); ctx.arc(head[0], head[1], 4, 0, 7); ctx.fill(); }
+      ctx.font = '22px ' + HAND; ctx.fillStyle = C.ink;
+      ctx.fillText(A[lang], a[0] + 14, a[1] - 8);
+      if (drawn >= 1) ctx.fillText(B[lang], b[0] - ctx.measureText(B[lang]).width - 14, b[1] + 6);
+      ctx.restore();
+    });
+  })();
+
+  /* ---------- loop signal ---------- */
+  (function () {
+    var sig = document.getElementById('sig'), pts = [[8, 100], [72, 100], [490, 100], [490, 200], [72, 200], [72, 100]], lens = [], tot = 0;
+    for (var i = 1; i < pts.length; i++) { var l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); lens.push(l); tot += l; }
+    animate(sig.ownerSVGElement, function (dt, t) {
+      var d = ((t / 6) % 1) * tot;
+      for (var k = 0; k < lens.length; k++) { if (d <= lens[k]) { var f = d / lens[k]; sig.setAttribute('cx', pts[k][0] + (pts[k + 1][0] - pts[k][0]) * f); sig.setAttribute('cy', pts[k][1] + (pts[k + 1][1] - pts[k][1]) * f); return; } d -= lens[k]; }
+    });
+  })();
+
+  /* ---------- someday: humanoid that looks at you ---------- */
+  (function () {
+    var c = document.getElementById('hu'), ptr = pointer(c);
+    var JOINTS = ['lS', 'lE', 'lW', 'rS', 'rE', 'rW', 'lH', 'lK', 'lA', 'rH', 'rK', 'rA'], pulses = [], glow = {}, net = 0, nextFire = 0.4, look = 0, wv = 0, stay = 0;
+    function smooth(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+    function along(pts, p) {
+      var lens = [], tot = 0; for (var i = 1; i < pts.length; i++) { var l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); lens.push(l); tot += l; }
+      var d = p * tot; for (var k = 0; k < lens.length; k++) { if (d <= lens[k]) { var q = d / (lens[k] || 1); return [pts[k][0] + (pts[k + 1][0] - pts[k][0]) * q, pts[k][1] + (pts[k + 1][1] - pts[k][1]) * q]; } d -= lens[k]; }
+      return pts[pts.length - 1];
+    }
+    animate(c, function (dt, t) {
+      var f = fit(c), ctx = f.ctx, w = f.w, h = f.h; if (!w) return;
+      var u = h / 110, ox = w / 2, oy = h * 0.05;
+      function P(x, y) { return [ox + x * u, oy + y * u]; }
+      stay = ptr.in ? stay + dt : 0;
+      var tgtLook = ptr.in ? Math.max(-1, Math.min(1, (ptr.x - ox) / (w * 0.4))) : Math.sin(t * 0.4) * 0.3;
+      look += (tgtLook - look) * Math.min(1, dt * 4);
+      wv += ((stay > 1.2 ? 1 : 0) - wv) * Math.min(1, dt * 3);
+      var la1 = 0.16 + Math.sin(t * 1.3) * 0.04, la2 = la1 + 0.12;
+      var ra1 = (0.16 + Math.sin(t * 1.3 + 1) * 0.04) * (1 - wv) + 2.25 * wv;
+      var ra2 = (ra1 + 0.12) * (1 - wv) + (2.75 + Math.sin(t * 7) * 0.35) * wv;
+      var J = {}; J.lS = P(-14, 30); J.rS = P(14, 30);
+      J.lE = [J.lS[0] - Math.sin(la1) * 17 * u, J.lS[1] + Math.cos(la1) * 17 * u]; J.lW = [J.lE[0] - Math.sin(la2) * 15 * u, J.lE[1] + Math.cos(la2) * 15 * u];
+      J.rE = [J.rS[0] + Math.sin(ra1) * 17 * u, J.rS[1] + Math.cos(ra1) * 17 * u]; J.rW = [J.rE[0] + Math.sin(ra2) * 15 * u, J.rE[1] + Math.cos(ra2) * 15 * u];
+      J.lH = P(-7, 58); J.rH = P(7, 58); J.lK = P(-8, 78); J.rK = P(8, 78); J.lA = P(-8, 97); J.rA = P(8, 97);
+      var head = P(look * 2.4, 15), neck = P(0, 24), chest = P(0, 30), pelvis = P(0, 56);
+      ctx.strokeStyle = C['ink-2']; ctx.lineWidth = 1; var gy = J.lA[1] + 3 * u;
+      ctx.beginPath(); ctx.moveTo(ox - 30 * u, gy); ctx.lineTo(ox + 30 * u, gy); for (var k = -30; k < 30; k += 5) { ctx.moveTo(ox + k * u, gy); ctx.lineTo(ox + (k - 3) * u, gy + 3.5 * u); } ctx.stroke();
+      ctx.setLineDash([9, 3, 2, 3]); ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5;
+      function line(a, b) { ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); }
+      ctx.beginPath(); ctx.arc(head[0], head[1], 9 * u, 0, 7); ctx.stroke();
+      line(neck, chest);
+      var t1 = P(-14, 28), t2 = P(14, 28), t3 = P(10, 54), t4 = P(-10, 54);
+      ctx.beginPath(); ctx.moveTo(t1[0], t1[1]); ctx.lineTo(t2[0], t2[1]); ctx.lineTo(t3[0], t3[1]); ctx.lineTo(t4[0], t4[1]); ctx.closePath(); ctx.stroke();
+      line(J.lS, J.lE); line(J.lE, J.lW); line(J.rS, J.rE); line(J.rE, J.rW); line(P(-10, 56), P(10, 56));
+      line(J.lH, J.lK); line(J.lK, J.lA); line(J.rH, J.rK); line(J.rK, J.rA);
+      line(J.lA, [J.lA[0] - 6 * u, J.lA[1]]); line(J.rA, [J.rA[0] + 6 * u, J.rA[1]]);
+      ctx.setLineDash([]);
+      // eyes: a visor line that slides with the gaze
+      ctx.strokeStyle = C.pen; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(head[0] - 5 * u + look * 2.5 * u, head[1] - 1.5 * u); ctx.lineTo(head[0] + 5 * u + look * 2.5 * u, head[1] - 1.5 * u); ctx.stroke();
+      nextFire -= dt * (ptr.in ? 2 : 1);
+      if (nextFire <= 0 && dt) { nextFire = 0.35 + Math.random() * 0.4; net = 1; pulses.push({ j: JOINTS[(Math.random() * JOINTS.length) | 0], p: 0 }); }
+      net = Math.max(0, net - dt * 2.2);
+      var layers = [[-5, [-1, 2.5, 6]], [0, [-0.5, 2, 4.5, 7]], [5, [1, 5]]], nodes = layers.map(function (L) { return L[1].map(function (y) { return [head[0] + L[0] * u, head[1] + y * u * 0.75]; }); });
+      ctx.lineWidth = 0.8; ctx.strokeStyle = C.accent; ctx.globalAlpha = 0.25 + net * 0.6; ctx.beginPath();
+      for (var a = 0; a < 2; a++) nodes[a].forEach(function (p) { nodes[a + 1].forEach(function (q) { ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); }); });
+      ctx.stroke(); ctx.globalAlpha = 1;
+      nodes.forEach(function (L) { L.forEach(function (p) { ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(p[0], p[1], 1.4 + net * 0.8, 0, 7); ctx.fill(); }); });
+      function route(j) { var arm = 'SEW'.indexOf(j[1]) >= 0, r = [neck, arm ? chest : pelvis], ch = arm ? 'SEW' : 'HKA'; for (var i = 0; i < 3; i++) { r.push(J[j[0] + ch[i]]); if (ch[i] === j[1]) break; } return r; }
+      pulses = pulses.filter(function (pl) { pl.p += dt * 1.6; if (pl.p >= 1) { glow[pl.j] = 1; return false; } var q = along(route(pl.j), pl.p); ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(q[0], q[1], 2.4, 0, 7); ctx.fill(); return true; });
+      JOINTS.forEach(function (j) {
+        var g = glow[j] || 0; glow[j] = Math.max(0, g - dt * 1.5);
+        ctx.fillStyle = C.sheet; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(J[j][0], J[j][1], 2.9, 0, 7); ctx.fill(); ctx.stroke();
+        if (g > 0) { ctx.globalAlpha = g; ctx.fillStyle = C.accent; ctx.strokeStyle = C.accent; ctx.beginPath(); ctx.arc(J[j][0], J[j][1], 2.9, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(J[j][0], J[j][1], 2.9 + (1 - g) * 9, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; }
+      });
+      if (wv > 0.6) { ctx.font = '22px ' + HAND; ctx.fillStyle = C.pen; ctx.globalAlpha = (wv - 0.6) / 0.4; ctx.fillText(lang === 'en' ? 'hi.' : 'chào.', J.rW[0] + 10, J.rW[1] - 6); ctx.globalAlpha = 1; }
+      ctx.font = MONO; ctx.fillStyle = C['ink-2']; ctx.fillText('PA-HX · REV ?', 10, h - 11);
+    });
+  })();
+
+  /* ---------- stories: scope captures ---------- */
+  var CH = { 1: '#f2d21b', 2: '#25c4e6', 3: '#e64aa9' };
+  var waves = {
+    sine: function (x, t) { return Math.sin(x * 2.2 + t * 1.2) * 0.55; },
+    square: function (x, t) { return (Math.sin(x * 1.6 + t * 1.6) > 0 ? 0.5 : -0.5) + Math.sin(x * 40) * 0.015; },
+    damped: function (x, t) { var u = ((x + t * 0.8) % 6.28); return Math.exp(-u * 0.55) * Math.cos(u * 6) * 0.8; }
+  };
+  [].slice.call(document.querySelectorAll('.an')).forEach(function (a, idx) {
+    var c = a.querySelector('canvas'), fn = waves[a.dataset.wave], col = CH[a.dataset.ch], hover = false, phase = 0, lock = reduce ? 1 : 0;
+    a.addEventListener('pointerenter', function () { hover = true; }); a.addEventListener('pointerleave', function () { hover = false; });
+    animate(c, function (dt, t) {
+      var f = fit(c), ctx = f.ctx, w = f.w, h = f.h; if (!w) return;
+      if (t > 0.5 + idx * 0.35) lock = Math.min(1, lock + dt * 1.4);
+      ctx.strokeStyle = 'rgba(190,220,210,0.16)'; ctx.lineWidth = 1; ctx.setLineDash([1, 3]); ctx.beginPath();
+      for (var i = 1; i < 10; i++) { ctx.moveTo(w * i / 10, 0); ctx.lineTo(w * i / 10, h); }
+      for (var j = 1; j < 8; j++) { ctx.moveTo(0, h * j / 8); ctx.lineTo(w, h * j / 8); }
+      ctx.stroke(); ctx.setLineDash([]);
+      phase += dt * (hover ? 1.4 : 0.35);
+      var e = lock * lock * (3 - 2 * lock), jit = (1 - e) * (Math.random() - 0.5) * 2.4;
+      ctx.strokeStyle = col; ctx.lineWidth = 1.8; ctx.shadowColor = col; ctx.shadowBlur = 4; ctx.beginPath();
+      for (var x = 0; x <= w; x += 2) { var y = h / 2 - (fn(x / w * 6.28 + jit, phase) * e + (Math.random() - 0.5) * 0.35 * (1 - e)) * h / 2; x ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.stroke(); ctx.shadowBlur = 0;
+      ctx.font = MONO; ctx.fillStyle = col; ctx.fillText('CH' + a.dataset.ch, 8, h - 8);
+      ctx.textAlign = 'right'; ctx.fillStyle = lock >= 1 ? '#7be0a0' : '#f2a33a'; ctx.fillText(lock >= 1 ? "TRIG'D" : 'AUTO…', w - 8, 16); ctx.textAlign = 'left';
+    });
+  });
+
+  /* ---------- trace: timing diagram with a red-pen "you are here" ---------- */
+  var tm = [[1992, 'Ra đời', 'Born'], [2019, 'Bước ngoặt', 'Turning point'], [2024, 'New Zealand', 'New Zealand'], [2025, 'Dữ liệu · GIS', 'Data · GIS'], [2026, 'Phần mềm · AI', 'Software · AI']];
+  var tsvg = document.getElementById('timing'), segs = [], TW = 900, futureX = 1e9;
+  function drawTiming() {
+    TW = tsvg.getBoundingClientRect().width || 900;
+    var H = 150, top = 62, bh = 34, sl = 8, y0 = top, y1 = top + bh, mid = y0 + bh / 2, weights = [], tot = 0;
+    tm.forEach(function (m, i) { var g = i < tm.length - 1 ? tm[i + 1][0] - m[0] : 2, w = 1 + Math.log2(g + 1); weights.push(w); tot += w; });
+    tot += 1.6;
+    var x = 0, out = '<defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="' + C.paper + '"/><line x1="0" y1="0" x2="0" y2="7" stroke="' + C['ink-2'] + '" stroke-width="1.2"/></pattern></defs>';
+    segs = [];
+    tm.forEach(function (m, i) {
+      var w = weights[i] / tot * (TW - 2), xa = x + 1, xb = x + w + 1, cur = i === tm.length - 1, label = lang === 'en' ? m[2] : m[1];
+      segs.push([xa, xb, m[0], i < tm.length - 1 ? tm[i + 1][0] : m[0] + 1]);
+      out += '<path class="ln' + (cur ? ' cur' : '') + '" d="M' + xa + ' ' + mid + ' L' + (xa + sl) + ' ' + y0 + ' H' + (xb - sl) + ' L' + xb + ' ' + mid + ' L' + (xb - sl) + ' ' + y1 + ' H' + (xa + sl) + ' Z"/>';
+      var inside = xb - xa - 2 * sl > label.length * 6.6;
+      if (inside) out += '<text x="' + (xa + sl + 6) + '" y="' + (mid + 4.5) + '"' + (cur ? ' class="curt"' : '') + '>' + label + '</text>';
+      else out += '<text x="' + (xa + sl) + '" y="' + (y1 + 34) + '">' + label + '</text><line class="tick" x1="' + (xa + sl + 4) + '" x2="' + (xa + sl + 4) + '" y1="' + y1 + '" y2="' + (y1 + 22) + '"/>';
+      out += '<text class="yr" x="' + xa + '" y="' + (!inside || i % 2 ? y0 - 8 : y1 + 16) + '">' + m[0] + '</text>';
+      if (cur) { var hx = (xa + xb) / 2; out += '<path class="herel" d="M' + (hx + 34) + ' ' + (y0 - 46) + ' C' + (hx + 10) + ' ' + (y0 - 40) + ' ' + hx + ' ' + (y0 - 30) + ' ' + hx + ' ' + (y0 - 6) + ' M' + (hx - 5) + ' ' + (y0 - 13) + ' L' + hx + ' ' + (y0 - 5) + ' L' + (hx + 6) + ' ' + (y0 - 12) + '"/><text class="here" x="' + (hx + 38) + '" y="' + (y0 - 42) + '">' + (lang === 'en' ? 'I am here' : 'mình đang ở đây') + '</text>'; }
+      x += w;
+    });
+    var fa = x + 1, fb = TW - 1; futureX = fa;
+    out += '<path class="x" d="M' + fa + ' ' + mid + ' L' + (fa + sl) + ' ' + y0 + ' H' + fb + ' V' + y1 + ' H' + (fa + sl) + ' Z"/>';
+    out += '<path class="ln" d="M' + fa + ' ' + mid + ' L' + (fa + sl) + ' ' + y0 + ' H' + fb + ' M' + fa + ' ' + mid + ' L' + (fa + sl) + ' ' + y1 + ' H' + fb + '"/>';
+    out += '<text class="yr" x="' + fb + '" y="' + (y1 + 16) + '" text-anchor="end">?</text>';
+    out += '<g class="cursor" id="cursor" style="display:none"><line y1="' + (top - 4) + '" y2="' + (y1 + 4) + '"/><rect y="' + (y1 + 6) + '" height="16" width="60" rx="1"/><text y="' + (y1 + 18) + '"></text></g>';
+    tsvg.setAttribute('viewBox', '0 0 ' + TW + ' ' + H); tsvg.innerHTML = out;
+  }
+  drawTiming(); new ResizeObserver(drawTiming).observe(tsvg.parentNode);
+  tsvg.addEventListener('pointermove', function (e) {
+    var cur = document.getElementById('cursor'), r = tsvg.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * TW, label = '?';
+    segs.forEach(function (s) { if (x >= s[0] && x < s[1]) label = '≈ ' + Math.floor(s[2] + (x - s[0]) / (s[1] - s[0]) * (s[3] - s[2])); });
+    if (x >= futureX) label = lang === 'en' ? 'future' : 'tương lai';
+    cur.style.display = ''; var ln = cur.querySelector('line'), rc = cur.querySelector('rect'), tx = cur.querySelector('text');
+    ln.setAttribute('x1', x); ln.setAttribute('x2', x);
+    var rw = label.length * 7 + 12, rx = Math.min(Math.max(x - rw / 2, 0), TW - rw);
+    rc.setAttribute('x', rx); rc.setAttribute('width', rw); tx.setAttribute('x', rx + 6); tx.textContent = label;
+  });
+  tsvg.addEventListener('pointerleave', function () { document.getElementById('cursor').style.display = 'none'; });
+})();
+</script>
