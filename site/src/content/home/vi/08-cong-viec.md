@@ -17,16 +17,16 @@ Robot thành dữ liệu. Dữ liệu thành bản đồ. Bản đồ thành ph�
 Công cụ đã đổi. Vòng lặp thì không: nhìn kỹ, đơn giản hoá, xây, đo, rồi làm lại.
 
 ## mo-ta-so-do
-Sơ đồ vòng kín: vấn đề, quan sát, đơn giản hoá, xây, hệ thống; đo lường quay về
+Sơ đồ vòng kín: vấn đề, quan sát và phân tích, đơn giản hoá, xây, hệ thống; đo lường quay về
 
 ## so-do-van-de
 Vấn đề
 
 ## so-do-nhin-ky
-Nhìn kỹ
+Phân tích
 
 ## so-do-don-gian-hoa
-Đơn giản hoá
+Khái quát hóa
 
 ## so-do-xay
 Xây

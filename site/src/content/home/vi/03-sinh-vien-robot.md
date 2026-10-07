@@ -14,14 +14,16 @@ Sinh viên
 Một con robot chỉ biết một việc
 
 ## doan-van
-> Đi theo một **vạch kẻ đen** trên sàn.
+> Đi theo một **vạch kẻ trắng** trên sàn. Và _dừng lại_ khi có một vạch ngang
 
 Lệch trái thì rẽ phải. Lệch phải thì rẽ trái. Nghe thì đơn giản, cho đến khi nó chạy nhanh hơn một chút.
-
 Đo, sửa, rồi đo lại. Mọi thứ về sau vẫn là vòng lặp ấy, chỉ to hơn.
+Một tai nạn hài hước xảy ra khi chúng tôi thử nghiệm trên sân, ai đó chạm vào mạch, thế là khói bốc lên. 
+Một ngày khác, chip mạch cầu H nóng ran, đỏ lòm. Mạch lại cháy tiếp.
+Cho đến những ngày cuối, nó đã làm được điều chúng tôi mong muốn: Giao bóng tới vị trí trên sân đấu, tuy chậm, nhưng với chúng tôi thì đó đã là một thành quả lớn lao.
 
 ## mo-ta-mo-hinh-3d
-Mô hình 3D thô của robot dò đường: tấm đế, hai bánh dẫn động, bánh tự lựa, thanh 5 cảm biến hồng ngoại phía trước. Kéo để xoay.
+Mô hình 3D thô của robot dò đường: tấm đế, hai bánh dẫn động, bánh tự lựa - tôi lấy từ **lọ khử mùi hôi nách**, thanh 5 cảm biến hồng ngoại phía trước. Kéo để xoay.
 
 ## chu-thich-mo-hinh-3d
 mô hình 3D thô · kéo để xoay

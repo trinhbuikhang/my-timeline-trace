@@ -16,7 +16,8 @@ Bây giờ
 
 ## dang-xay
 - **GeoNote**
-- Các hệ thống phần mềm cá nhân
+- **CRM**
+- Các tool cá nhân
 
 ## dang-tim-hieu-tieu-de
 Đang tìm hiểu
@@ -31,10 +32,10 @@ Bây giờ
 
 ## dang-nghi
 - Sản phẩm độc lập
-- Tự động hoá kỹ thuật
+- Tự động hoá quy trình nghiệp vụ
 
 ## cau-hoi-nhan
 CÂU HỎI CÒN MỞ
 
 ## cau-hoi
-Tiếp theo mình nên xây gì?
+Tiếp theo mình nên làm gì để sinh tồn trong kỷ nguyên AI? Trở thành nô lệ AI hay biến AI thành trợ thủ mạnh mẽ?

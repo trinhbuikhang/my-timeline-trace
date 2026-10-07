@@ -14,10 +14,10 @@ Một ngày nào đó
 REV ? · chưa xác định
 
 ## tieu-de
-Một thứ biết nhìn, biết hiểu, rồi làm việc cạnh con người.
+Một thứ biết lắng nghe, và thấu hiểu. Không phải là những dòng chữ vô hồn nhảy múa trên màn hình. Nó sẽ bắt tay với con người ngoài thế giới thực.
 
 ## doan-van
-Một robot hình người có AI. Chưa có bản vẽ nào, chỉ có **nét đứt**.
+Một robot hình người có bộ não AI, và có tâm hồn của bạn. Chưa có bản vẽ nào, chỉ có **nét đứt**.
 
 Từ bám theo một vạch kẻ, đến rời khỏi mặt đất, đến đây.
 
@@ -65,49 +65,49 @@ nghiêng
 nắm đây
 
 ## hd-robot-bay-dong-tac
-nắm tay tôi, chỗ vòng đỏ, rồi kéo một đường. tôi sẽ làm theo.
+Ê, nhìn gì bro, cầm tay tôi đi, chỗ vòng màu đỏ á. Vẽ một đường bạn thích. Tôi sẽ làm theo.
 
 ## hd-robot-nho-giup
-cái này một mình tôi không nhấc nổi. bạn cầm đầu bên kia nhé?
+Cái này nặng vãi d**. Bro nhấc đầu bên kia nhé?
 
 ## hd-robot-dang-ghi
 đang ghi…
 
 ## hd-robot-ngan-qua
-ngắn quá. kéo thêm một đoạn nữa?
+Ngắn quá. Kéo thêm một đoạn nữa?
 
 ## hd-robot-thu
-để tôi thử…
+Để tôi thử…
 
 ## hd-robot-tuot-tay
-nặng quá hả? thử lại nhé.
+Nặng quá hả? Bro đùa phải không? Làm lại đi.
 
 ## hd-robot-goi
-có ai ở đó không?
+Có ai ở đó không?
 
 ## hd-robot-chao
-chào. thấy bạn rồi.
+Chào. Tôi đã đợi bạn suốt trăm năm.
 
 ## hd-robot-the-nay-a
-thế này à?
+Thế này á?
 
 ## hd-robot-hieu-roi
-hiểu rồi. tôi học bằng cách nhìn bạn làm.
+Hiểu rồi. Dễ ẹc nhé bro.
 
 ## hd-robot-nhac-lai
-vòng đỏ là tay tôi. nắm vào rồi kéo.
+Vòng đỏ là tay tôi. Nắm vào rồi lắc lắc nhé.
 
 ## hd-robot-tu-tu
-từ từ! tôi chưa theo kịp.
+Từ từ! Gì mà vội vã thế anh.
 
 ## hd-robot-giu
-rồi. giữ vậy…
+Rồi. Giữ vậy…
 
 ## hd-robot-len-chut
-lên chút nữa.
+Lên chút nữa. Nay chưa ăn cơm à?
 
 ## hd-robot-cao-qua
-cao quá rồi.
+Cao quá rồi. Bro khỏe như trâu ấy
 
 ## hd-robot-xong
-được rồi. không ai nhấc một mình.
+Hura!! Thử thách thành công. Không ai bị bỏ lại phía sau...

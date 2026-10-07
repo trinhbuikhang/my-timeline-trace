@@ -13,13 +13,13 @@ BẢN 30 GIÂY
 ## doan-van
 > Tôi từng là người lính.
 
-Năm 2022 tôi ra quân. Không phải trong vinh quang. Tôi phá sản. Tôi đã lừa dối những người bạn tin mình, làm người thân thất vọng, và để các con gánh hậu quả từ lựa chọn của tôi.
+Năm 2022 tôi ra quân. Không phải trong vinh quang. Tôi phá sản. Tôi đã lừa dối tất cả, làm người thân thất vọng, và để họ gánh hậu quả từ lựa chọn của tôi.
 
-Tôi không kể để được thương hại. Tôi kể vì đó là điểm xuất phát thật.
+Tôi không viết ra để được thương hại, mà để giữ lại những hồi ức chân thật về sai lầm trong quá khứ để hướng tới những điều tốt đẹp trong tương lai, bằng cách làm tốt những điều ở hiện tại.
 
-> Quân phục thì cởi rồi. **Kỷ luật** thì tôi giữ lại.
+> Quân phục đã cởi bỏ. Nhưng **kỷ luật** thì tôi giữ lại.
 
-Giờ tôi giải quyết vấn đề bằng cách xây hệ thống, bắt đầu từ việc sửa chính mình.
+Giờ tôi giải quyết vấn đề bằng cách phân tích hệ thống, lập kế hoạch, nhưng trước hết, tôi bắt đầu từ việc sửa đổi chính mình - hay đúng hơn, tìm phiên bản tốt nhất của bản thân.
 
 ## link-doc-tiep
 đọc đầy đủ → 2022

@@ -11,4 +11,4 @@
 Nạp điện cho phòng lab
 
 ## doan-van
-Pharaoh Alone là một dự án độc lập. Nếu điều gì đó ở đây giúp bạn nghĩ, học hay xây, một ly cà phê giúp phòng lab chạy tiếp.
+Pharaoh Alone là một dự án độc lập. Nếu điều gì đó ở đây đồng điệu với bạn, từ lý tưởng đến tâm hồn, từ tro tàn hay một chồi non, một ly cà phê giúp phòng lab chạy tiếp.

@@ -21,11 +21,11 @@ Không còn sàn để bám
 
 Nó phải tự giữ thăng bằng, từng vài phần nghìn giây, giữa một bầu không khí không bao giờ đứng yên. Ba cánh quạt, không phải bốn: thiếu một động cơ, nên cánh đuôi phải nghiêng bằng servo chỉ để giữ hướng.
 
-Thêm một **trục z**. Bài toán nào cũng khó gấp đôi.
+Thêm một **trục z**. Bài toán không chỉ khó gấp đôi.
 
 > Và nói thật: nó _chưa bao giờ thực sự bay_.
 
-Mô phỏng bên cạnh là thứ nó đáng lẽ phải làm được. Ngoài đời, nó có nhấc lên khỏi mặt đất, nhưng chưa bao giờ giữ được thăng bằng đủ lâu để gọi là bay. Bấm NGOÀI ĐỜI để xem đại khái. Tôi giữ nó ở đây vì đó là sai số đầu tiên tôi không giấu.
+Chúng tôi tạo một mô hình mô phỏng, nó bay hoàn hảo. Nhưng thực tế, nó có nhấc lên khỏi mặt đất, nhưng chưa bao giờ giữ được thăng bằng đủ lâu để gọi là bay. Bấm NGOÀI ĐỜI để xem đại khái. Tôi giữ nó ở đây vì đó là sai số đầu tiên tôi không giấu.
 
 ## mo-ta-mo-hinh-3d
 Mô hình 3D thô của UAV ba cánh quạt: ba tay đòn lệch nhau 120 độ, động cơ đuôi nghiêng bằng servo để giữ hướng. Kéo để xoay.

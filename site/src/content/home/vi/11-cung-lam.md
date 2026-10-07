@@ -14,12 +14,12 @@ Cùng làm
 kênh mở · hai chiều
 
 ## nguon-cau-noi
-— HMAS Cerberus, Úc · khoá sinh tồn trên tàu
+— HMAS Cerberus, Úc · khoá sinh tồn trên tàu chiến đấu
 
 ## doan-van
-2019. Lần đầu tiên tôi được ra nước ngoài, để học một khoá sinh tồn trên tàu ở Úc: cháy, nổ, hoá chất, những thứ xảy ra với một con tàu khi có giao tranh. Trên một con tàu đang cháy, không ai sống sót một mình. Câu tôi mang về từ chuyến đi đó không phải về lửa, mà về con người.
+2019. Lần đầu tiên tôi được ra nước ngoài, để học một khoá sinh tồn trên tàu ở Úc: cháy, nổ, hoá chất, những thứ xảy ra với một con tàu khi có giao tranh. Trên một con tàu đang cháy, không ai sống sót một mình. Điều tôi mang về từ chuyến đi đó không phải về hiểm họa và cách sinh tồn, mà về con người.
 
-Bây giờ tôi dùng nó như một cách làm việc: hiểu vấn đề của nhau trước, rồi mới xây. Nếu vấn đề của bạn cần đến bản đồ, dữ liệu, tự động hoá hay một cái máy biết chuyển động, tôi muốn được nghe. Không phải chào hàng. Một cuộc nói chuyện.
+Bây giờ tôi dùng nó như một cách làm việc: hiểu vấn đề của nhau trước, rồi mới tiến hành hợp tác làm việc. Nếu vấn đề của bạn cần đến bản đồ, dữ liệu, tự động hoá hay một cái máy biết chuyển động, hoặc bất cứ thứ gì trong vũ trụ này, tôi muốn được nghe và chia sẻ. Không phải chào hàng, mà là một cuộc nói chuyện.
 
 ## mo-ta-dau-noi
 Hai đầu nối, BẠN và KHANG. Chân cắm đang lệch nên chưa cắm được. Kéo đầu BẠN lên hoặc xuống, hoặc dùng phím mũi tên, cho thẳng hàng thì mới khớp; khi khớp, tín hiệu chạy hai chiều và đường sai số từ năm 2022 nhỏ đi.
