@@ -27,7 +27,7 @@ rough 3D · drag to turn it
 ↑ drawn from memory, not from the real thing.
 
 ## mo-ta-mo-phong
-Line-following robot simulation: five sensors read the line, a P controller steers. Kp is adjustable.
+Line-following robot simulation: five sensors read the line, a P controller steers. At each cross line it stops for a moment. Kp is adjustable.
 
 ## nut-dat-lai
 RESET
@@ -45,6 +45,9 @@ lost
 
 ## hd-lac-roi
 lost it!
+
+## hd-dung
+stop
 
 ## hd-nhan-cam-bien
 5 × IR

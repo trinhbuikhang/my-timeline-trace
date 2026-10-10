@@ -24,7 +24,7 @@ Từ bám theo một vạch kẻ, đến rời khỏi mặt đất, đến đây
 Thử đi: nó nhìn bạn, học theo bạn, và cần bạn nhấc giúp một đầu.
 
 ## mo-ta-robot
-Phác thảo robot hình người bằng nét đứt. Nó nhìn theo bạn, học một động tác khi bạn kéo tay nó, rồi cùng bạn nhấc một tấm ván lên kệ. Bàn phím: phím mũi tên để kéo, Enter để thả.
+Phác thảo robot hình người bằng bút chì, kéo ngang chỗ trống để xoay nó. Nó nhìn theo bạn, học một động tác khi bạn kéo tay nó, rồi cùng bạn nhấc một tấm ván lên kệ. Bàn phím: phím mũi tên để kéo, Enter để thả.
 
 ## buoc-1
 Nhìn

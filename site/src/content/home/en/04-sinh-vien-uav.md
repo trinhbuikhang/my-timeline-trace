@@ -34,7 +34,7 @@ rough 3D · drag to turn it
 ↑ drawn from memory, not from the real frame.
 
 ## mo-ta-mo-phong
-Tri-rotor UAV hover simulation. Move the pointer or tap to blow wind; a PD controller holds it in place. Real life mode shows it lifting, shaking hard, then tipping over.
+Tri-rotor UAV hover simulation. Move the pointer or tap to blow wind with a mini fan; a PD controller holds it in place. Real life mode shows it lifting, shaking hard, then tipping over.
 
 ## nut-mo-phong
 SIMULATION
