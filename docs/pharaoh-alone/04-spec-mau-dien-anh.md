@@ -1,6 +1,7 @@
 # Spec · Màu theo quy tắc điện ảnh, chủ đạo nâu vàng (10/10/2026)
 
-> Trạng thái: **bản đề xuất, chờ Khang duyệt.** Chưa đổi dòng CSS nào.
+> Trạng thái: **Khang đã duyệt (10/10/2026). Đã làm M-1, M-2, M-3, M-4, M-6**; M-5 (grade ảnh) chờ ảnh thật. Câu hỏi mục 10 chưa trả lời nên đang dùng mặc định: nâu vàng ở giữa (hue ~36°), giữ bút đỏ, 2019 lạnh, giữ nền tối.
+> Giá trị cuối cùng nằm trong `site/src/d2/d2.css`; bảng dưới là bản đề xuất, vài màu đã chỉnh nhẹ cho đạt AA (ghi ở mục 9).
 > Phạm vi: toàn bộ giao diện D2 (`site/src/d2/`), trang story, bản xem thử `themes/d2-workbench.html`.
 > Đi cùng: `05-spec-am-thanh.md`. Hai spec dùng chung một ý: **ấm, analog, có hạt**.
 
@@ -53,7 +54,7 @@ Những quy tắc colorist dùng, chuyển sang web:
 | `--ink` | `#211a12` | 14.6 · chữ | Chữ chính, nâu gần đen |
 | `--ink-2` | `#5e5243` | 6.5 · chữ | Chú thích, mono phụ |
 | `--pencil` | `#5a4f42` | 6.8 · chữ | Ghi chú tay, nét phác |
-| `--accent` | `#8a5a17` | 5.0 · chữ | **Nâu vàng chủ đạo**: link, số mục, nút đang chọn (thay đồng `#b5532a`) |
+| `--accent` | `#865716` | 5.3 · chữ | **Nâu vàng chủ đạo**: link, số mục, nút đang chọn (thay đồng `#b5532a`) |
 | `--gold` (mới) | `#a9771f` | 3.35 · đồ hoạ | Nét sáng, vệt đèn LED, tiến độ, đường tín hiệu |
 | `--glow` (mới) | `#e6c27a` | trang trí | Quầng sáng, highlight lớn; chữ `--ink` trên nền này đạt 9+ |
 | `--pen` | `#a8321f` | 5.7 · chữ | Bút đỏ: vòng tròn, cảnh báo, đếm ngược dừng |
@@ -106,7 +107,9 @@ Mỗi mood là một **phép chỉnh màu** trên cùng bảng màu, không ph�
 | `field` | Ngoài trời, hiện trường | Bão hoà thấp, shadow ngả `--cool`, như phim âm bản bạc màu | tam giác |
 | `ink` | Đêm, nghĩ một mình | Nền tối gần đơn sắc, chỉ còn `--ink` và một vệt `--gold` | răng cưa |
 
-`accent` tuỳ chọn trong frontmatter vẫn được giữ, nhưng **bị kẹp** vào dải hue 20–50° (nâu vàng tới đỏ đất) khi build. Nếu lệch ra ngoài thì build cảnh báo, để không story nào phá tông chung.
+`accent` tuỳ chọn trong frontmatter vẫn được giữ, nhưng chỉ được nhận khi hue nằm trong dải 20–50° (nâu vàng tới đỏ đất) **và** đạt 4.5:1 trên giấy sáng (`site/src/lib/color.mjs`). Không đạt thì build cảnh báo và bỏ qua màu đó, để không story nào phá tông chung. Màu riêng chỉ áp trên nền sáng; nền tối và mood `ember`/`ink` giữ accent của mình.
+
+Mood mặc định khi bỏ trống đổi từ `ink` sang `paper`, vì `ink` giờ là trang nền tối.
 
 ## 5. Color script cho trang chủ
 
@@ -140,7 +143,7 @@ Chuyển giữa các chương bằng **chuyển màu mềm theo vị trí cuộn
 
 - Mỗi `section.ch` mang `data-grade="warm|cold|golden|neutral|dream"`. CSS định nghĩa một bộ biến nhỏ cho mỗi grade: `--g-tint` (màu phủ), `--g-sat`, `--g-lift`.
 - Một lớp phủ cố định `body::before` dùng `mix-blend-mode: soft-light` với `background: var(--g-tint)`; chỉ đổi `--g-tint` khi chương vào giữa màn hình. Cần một IntersectionObserver riêng: observer hiện có (`main.js:45`) bỏ theo dõi chương ngay sau lần hiện đầu tiên. Chuyển màu bằng `transition` 900 ms (giọng "story", chậm, mềm).
-- Lớp phủ không áp lên canvas máy hiện sóng và ảnh đã grade sẵn (đặt `isolation: isolate` cho các khung đó), để không chỉnh màu hai lần.
+- Lớp phủ nằm trên mọi thứ, kể cả canvas (một lớp `fixed` không thể loại trừ phần tử bên dưới). Vì vậy tint giữ rất nhẹ (10–16%), và ảnh đã grade lúc build (M-5) phải tính đến lớp này.
 - `prefers-reduced-motion`: đổi grade tức thì, không chuyển dần. `prefers-contrast: more` và `forced-colors: active`: tắt lớp phủ, tắt hạt.
 
 ### 6.3 Hạt phim và vignette
@@ -152,19 +155,19 @@ Chuyển giữa các chương bằng **chuyển màu mềm theo vị trí cuộn
 
 Mọi ảnh thật (polaroid, ảnh story) đi qua **cùng một grade** khi build, không chỉnh bằng tay từng ảnh:
 
-- Bước build bằng `sharp` (đã có trong `site/package.json`, Astro dùng cho ảnh): nâng điểm đen nhẹ, cuộn highlight, split-tone (highlight hổ phách, shadow đá phiến), giảm bão hoà ~10%, thêm hạt nhẹ. Tham số lưu một chỗ (ví dụ `site/src/lib/grade.mjs`) để ảnh mới luôn khớp.
+- Bước build bằng `sharp` (thư viện ảnh Astro dùng; sẽ thêm vào dependencies khi làm M-5): nâng điểm đen nhẹ, cuộn highlight, split-tone (highlight hổ phách, shadow đá phiến), giảm bão hoà ~10%, thêm hạt nhẹ. Tham số lưu một chỗ (ví dụ `site/src/lib/grade.mjs`) để ảnh mới luôn khớp.
 - Ảnh gốc giữ nguyên; chỉ bản xuất ra web là bản đã grade.
 - Ảnh vẫn phải qua kiểm tra quy tắc công ty: không màn hình, logo, dữ liệu, khách hàng của nơi làm việc.
 
 ## 7. Tiêu chí nghiệm thu
 
-- [ ] Chụp toàn trang (sáng + tối), chuyển thang xám: thứ bậc chữ vẫn rõ.
-- [ ] Mọi cặp chữ/nền đạt AA (4.5:1), nét đồ hoạ mang nghĩa đạt 3:1, kiểm bằng script ở mục 9 cho cả hai nền và năm mood.
-- [ ] `grep` không còn mã màu hex/rgb viết cứng trong `d2.css` ngoài khối token, và trong `main.js` ngoài màu trắng/đen thuần cho mặt nạ.
-- [ ] Diện tích màu nhấn trên một màn hình ≤ 10% (ước lượng bằng ảnh chụp).
-- [ ] 2019 vẫn là chương tối, lạnh; các chương khác đọc rõ là "cùng một phim".
-- [ ] `prefers-reduced-motion`, `prefers-contrast: more`, `forced-colors` hoạt động như mục 6.
-- [ ] `pnpm check`, `pnpm build` qua; dựng lại `themes/d2-workbench.html`; chụp lại `docs/pharaoh-alone/screens/`.
+- [x] Chụp toàn trang (sáng + tối), chuyển thang xám: thứ bậc chữ vẫn rõ.
+- [x] Mọi cặp chữ/nền đạt AA (4.5:1), nét đồ hoạ mang nghĩa đạt 3:1, kiểm bằng `pnpm colors` cho nền sáng, nền tối và các mood đổi token (`field`, `ember`, `ink`).
+- [x] `grep` không còn mã màu hex/rgb viết cứng trong `d2.css` ngoài khối token (trừ bóng đổ nâu và vignette), và trong `main.js` ngoài màu trắng/đen thuần cho mặt nạ.
+- [x] Diện tích màu nhấn trên một màn hình ≤ 10% (ước lượng bằng ảnh chụp).
+- [x] 2019 vẫn là chương tối, lạnh; các chương khác đọc rõ là "cùng một phim".
+- [x] `prefers-reduced-motion`, `prefers-contrast: more`, `forced-colors` hoạt động như mục 6 (kiểm bằng Playwright).
+- [x] `pnpm check`, `pnpm build` qua; dựng lại `themes/d2-workbench.html`; chụp lại `docs/pharaoh-alone/screens/`.
 
 ## 8. Thứ tự làm
 
@@ -181,7 +184,9 @@ Bước M-1 và M-2 cho kết quả nhìn thấy ngay, đảo ngược dễ, nê
 
 ## 9. Ghi chú kiểm tra
 
-Số tương phản trong mục 4 tính theo công thức độ chói tương đối của WCAG 2.x. Ví dụ đã đo: `--accent #8a5a17` trên `--paper #f3ece0` = 5.03; `#c08a2c` chỉ đạt 2.59 nên bị loại khỏi vai trò đồ hoạ và đổi sang `--gold #a9771f` (3.35). Script M-6 sẽ đọc thẳng token từ `d2.css` để con số này không lệch khi màu đổi.
+Số tương phản trong mục 4 tính theo công thức độ chói tương đối của WCAG 2.x. Ví dụ: `#c08a2c` chỉ đạt 2.59 nên bị loại khỏi vai trò đồ hoạ và đổi sang `--gold #a9771f` (3.35). `pnpm colors` (`site/scripts/colors.mjs`) đọc thẳng token từ `d2.css`, in từng cặp và chạy trước `astro build`: một cặp dưới ngưỡng là build dừng.
+
+Chỉnh khi làm: `--accent` `#8a5a17` → `#865716` (bản cũ chỉ đạt 4.47 trên `--band`); thêm `--prop-pen #922c1a` cho dấu mộc trên giấy đạo cụ (bút đỏ nền tối đọc không rõ trên giấy kem); `--prop-ink-2` nền tối `#574b3c`.
 
 ## 10. Câu hỏi cho Khang
 

@@ -14,7 +14,8 @@ Run from `site/` (pnpm 11, Node 24):
 ```bash
 pnpm install
 pnpm dev          # http://localhost:4321/vi/
-pnpm build        # static output in dist/
+pnpm build        # contrast audit (pnpm colors), then static output in dist/
+pnpm colors       # WCAG contrast of every colour token in src/d2/d2.css
 pnpm check        # type check
 pnpm text         # what needs translating, and mistyped "## key" names
 pnpm text:mark    # after translating: record the current Vietnamese as translated

@@ -90,6 +90,8 @@ Viết tiếp. Cách nhau một dòng trống là sang đoạn mới.
 ```
 
 - **`category`** chọn một trong: `LIFE`, `ENGINEERING`, `BUILDING`, `THOUGHTS`, `PEOPLE`.
+- **`mood`** (không bắt buộc) đổi không khí màu của cả trang bài: `paper` (ban ngày, mặc định khi bỏ trống), `dusk` (hoàng hôn, ấm), `field` (ngoài trời, bạc màu), `ember` (than hồng, nền tối), `ink` (đêm, nền tối gần đơn sắc).
+- **`accent`** (không bắt buộc) là màu nhấn riêng của bài, dạng `"#865716"`. Chỉ nhận màu thuộc họ nâu vàng tới đỏ đất và đủ đậm để đọc trên nền giấy; màu khác bị bỏ qua và lúc build sẽ báo lý do.
 - **Bản nháp chưa muốn đăng:** thêm dòng `draft: true`. Bài vẫn hiện khi bạn xem trên máy (`pnpm dev`), nhưng không lên site thật.
 - **Trong bài**, `**chữ**` là chữ đậm bình thường, không khoanh tròn như trang chủ.
 - **Trang chủ** tự hiện 3 bài mới nhất. Trang `/vi/stories/` liệt kê tất cả.

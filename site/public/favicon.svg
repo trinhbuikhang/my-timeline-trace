@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <style>.b{fill:none;stroke:#141414;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}@media (prefers-color-scheme:dark){.b{stroke:#ececea}}</style>
-  <circle cx="16" cy="5.6" r="3.6" fill="none" stroke="#b5532a" stroke-width="2.2"/>
+  <circle cx="16" cy="5.6" r="3.6" fill="none" stroke="#865716" stroke-width="2.2"/>
   <path class="b" d="M11.5 11 H20.5 L19.5 20 H12.5 Z M11.5 11.5 L8 20 M20.5 11.5 L24 20 M14 20 L13 30 M18 20 L19 30"/>
 </svg>

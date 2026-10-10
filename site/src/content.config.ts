@@ -23,7 +23,7 @@ const stories = defineCollection({
     date: z.coerce.date().optional(),
     category: z.enum(['LIFE', 'ENGINEERING', 'BUILDING', 'THOUGHTS', 'PEOPLE']).default('LIFE'),
     summary: z.string().default(''),
-    mood: z.enum(MOODS).default('ink'),
+    mood: z.enum(MOODS).default('paper'),
     /** Optional accent override for this story only. */
     accent: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
     learned: z.array(z.string()).default([]),

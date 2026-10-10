@@ -16,6 +16,11 @@ Dựa trên [`01-analysis-and-design.md`](01-analysis-and-design.md). Concept đ
 
 ---
 
+## Spec mới (10/10/2026)
+
+- `04-spec-mau-dien-anh.md`: màu theo quy tắc điện ảnh, nâu vàng chủ đạo. **Đã làm** M-1…M-4, M-6; M-5 chờ ảnh.
+- `05-spec-am-thanh.md`: âm thanh bốn lớp (tương tác, không gian, nhạc nền, giọng đọc). Đã duyệt, chưa làm.
+
 ## Trạng thái (05/10/2026)
 
 **Đã chọn giao diện D · Datasheet cơ điện tử** (xem `03-theme-directions.md`). A, B, C giữ lại làm tham khảo.
@@ -216,9 +221,9 @@ Là developer, tôi muốn một project Astro sạch để bắt đầu code.
 ### S-05 · Story moods — mỗi câu chuyện một thế giới — **M** · Dep: S-03
 - [x] Frontmatter `mood` (`ink | dusk | paper | field | ember`) + `accent` tuỳ chọn
 - [x] Trang chủ (theme D): mood chọn dạng sóng trên máy hiện sóng — dusk = sin, paper = vuông, ember = dao động tắt dần, field = tam giác, ink = răng cưa; rê chuột thì sóng chạy nhanh hơn
-- [ ] Trang story áp dụng toàn bộ mood: nền, chữ, màu nhấn, texture, ảnh bìa; chuyển mood mượt khi vào trang
-- [ ] Mood sáng `paper` đạt tương phản AA
-- [ ] Cho phép một story tự định nghĩa mood riêng (CSS variables trong frontmatter)
+- [x] Trang story áp dụng mood cho nền, chữ, màu nhấn (grade, `04-spec-mau-dien-anh.md` mục 4.4). Còn: texture, ảnh bìa
+- [x] Mọi mood đạt tương phản AA (`pnpm colors`)
+- [x] Story tự chọn `accent`, kẹp trong họ nâu vàng (thay cho CSS variables tuỳ ý: giữ cả site cùng một tông)
 
 ### S-04 · Typography cho prose tiếng Việt — **S** · Dep: S-03
 - [ ] Kiểm tra `hyphens`, `text-wrap: pretty`, khoảng cách dấu câu, trích dẫn `“ ”`

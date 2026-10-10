@@ -1,15 +1,16 @@
 # Spec · Âm thanh theo phần, theo story, theo nguồn (10/10/2026)
 
-> Trạng thái: **bản đề xuất, chờ Khang duyệt.** Site hiện chưa có dòng âm thanh nào.
+> Trạng thái: **Khang đã duyệt (10/10/2026)**, có bổ sung: **âm thanh gồm cả nhạc nền** (mục 6A). Chưa làm; site hiện chưa có dòng âm thanh nào.
 > Đi cùng: `04-spec-mau-dien-anh.md`. Âm thanh nối với màu ở cùng một chất: **ấm, analog, có hạt**. Nghe như băng từ, bút chì, rơ-le, không nghe như "bíp" điện tử.
 
 ## 1. Mục tiêu và nguyên tắc
 
 1. **Tắt mặc định.** Người đọc tự bật. Không phát gì trước khi họ bấm.
 2. **Có nghĩa hoặc không có**, giống nguyên tắc chuyển động (`01-analysis-and-design.md`, Motion principles). Mỗi âm thanh phải phản hồi một hành động, kể một chương, hoặc đặt người đọc vào một nơi chốn.
-3. **Ba lớp, ba nguồn**, vì độ phức tạp khác nhau:
+3. **Bốn lớp, bốn nguồn**, vì độ phức tạp khác nhau:
    - **Lớp tương tác** (mô phỏng, nút): tổng hợp bằng Web Audio, không cần file.
    - **Lớp không gian** (nền của chương, của story): bản ghi môi trường, nhỏ và lặp.
+   - **Lớp nhạc nền** (theo chương, theo story): một chủ đề nhạc chung, biến tấu theo từng phần (mục 6A).
    - **Lớp giọng** (Khang đọc story): bản ghi giọng nói, có văn bản đi kèm.
 4. **Không mang thông tin chỉ bằng âm thanh.** Mọi thứ nghe được đều đã thấy được trên trang (chữ "dừng", vòng đếm ngược, TRIG'D…).
 5. **Nhẹ.** Bật âm thanh mới tải file. Người không bật không tốn một byte nào.
@@ -40,6 +41,7 @@
                  ┌ bus "ui"    (nút, chuyển trang)        ┐
 nguồn ──────────►├ bus "sim"   (xe, UAV, người máy, scope) ├─► master ─► limiter ─► loa
                  ├ bus "bed"   (nền chương / story)        │     ▲
+                 ├ bus "music" (nhạc nền, các stem)  ── ducking ┤     │
                  └ bus "voice" (giọng đọc)  ── ducking ────┘     └ nút âm lượng / tắt
 ```
 
@@ -51,6 +53,7 @@ nguồn ──────────►├ bus "sim"   (xe, UAV, người máy
   | voice | 0 dB | Chuẩn hoá −16 LUFS khi xuất file |
   | sim | −10 dB | Ngắn, theo thao tác |
   | ui | −14 dB | Rất ngắn (< 120 ms) |
+  | music | −18 dB | Thanh âm lượng riêng; **giảm 6 dB khi đang tương tác với mô phỏng, 12 dB khi voice phát** |
   | bed | −22 dB | Dưới ngưỡng chú ý; **giảm thêm 9 dB khi voice đang phát** (ducking 250 ms) |
 
 - **Limiter** (`DynamicsCompressorNode`, ngưỡng −6 dB, ratio 12) ở cuối, để nhiều mô phỏng chạy cùng lúc không bị vỡ tiếng.
@@ -140,6 +143,65 @@ sound:
 - Thiếu file → build **cảnh báo**, không lỗi (khác với key chữ tiếng Việt thiếu thì lỗi), vì âm thanh là phần thêm.
 - Cập nhật `HUONG-DAN.md` cùng lúc khi thêm trường này (theo `CLAUDE.md`).
 
+## 6A. Lớp nhạc nền
+
+Nhạc làm việc mà màu làm cho mắt: giữ cả site là **một bộ phim**. Áp dụng cách làm nhạc phim và nhạc game:
+
+### 6A.1 Một chủ đề, nhiều biến tấu (leitmotif)
+
+- Một **chủ đề chính** ngắn (4–8 ô nhịp), giọng ấm: piano mộc / guitar mộc / rhodes, qua bộ lọc băng từ, có tiếng hiss nhẹ. Cùng chất "analog có hạt" với bảng màu nâu vàng.
+- Mỗi chương là một **biến tấu** của chủ đề đó, đi theo color script trong spec màu:
+
+| Chương | Nhạc | Khớp với màu |
+|---|---|---|
+| Hero, `#pitch` | Chủ đề trơn, một nhạc cụ, chậm | Trung tính ấm |
+| `#ch-student`, `#ch-uav` | Nhịp nhẹ, lạc quan, thêm tiếng chuông/marimba nhỏ | Ấm nhất |
+| `#ch-2019` | Gần như tắt: một nốt kéo dài, hoặc im lặng hẳn | Chương lạnh duy nhất |
+| `#ch-2022` | Chủ đề trở lại, đi lên dần | Ấm dần |
+| `#ch-2024` | Rộng hơn, có dây (pad), cảm giác đi xa | Giờ vàng |
+| `#ch-work` | Tối giản, nhịp đều, gần như ostinato | Tiết chế nhất |
+| `#now` | Chủ đề ở giọng hiện tại, gọn | Ấm hiện tại |
+| `#someday` | Chủ đề lên quãng cao, reverb dài, mơ | Sáng, mơ |
+| `#together` … `#support` | Chủ đề trơn khép lại | Trở về |
+
+### 6A.2 Kỹ thuật phát: stem dọc + chuyển ngang
+
+- **Stem dọc (vertical remixing):** chủ đề được xuất thành 3–4 stem cùng nhịp, cùng độ dài: `nen` (pad/hoà âm), `giai-dieu`, `nhip`, `mau` (chuông, dây). Mỗi chương bật/tắt và trộn các stem với mức khác nhau, chuyển dần 2–4 s. Vì cùng nhịp nên đổi chương không bị "giật bài".
+- **Chuyển ngang (horizontal re-sequencing)** chỉ cho chỗ cần đổi hẳn (2019, someday): chờ tới ô nhịp kế tiếp rồi chuyển, dùng `AudioContext.currentTime` để canh đúng phách.
+- Tất cả stem dùng chung một BPM và một độ dài vòng lặp (ví dụ 72 BPM, 16 ô nhịp ≈ 53 s), lặp liền bằng `AudioBufferSourceNode.loop` (không dùng `<audio loop>` vì có khoảng hở).
+- **Tương tác làm nhạc lùi lại:** khi người đọc đang kéo, thổi, điều khiển mô phỏng, nhạc giảm 6 dB để tiếng mô phỏng nổi lên; thả tay 1.5 s sau nhạc trở lại.
+
+### 6A.3 Nhạc cho story
+
+- Mặc định theo mood, mỗi mood một cách phối của cùng chủ đề:
+
+| Mood | Phối |
+|---|---|
+| `paper` | Không nhạc (chỉ khung âm thanh) |
+| `dusk` | Chủ đề chậm, piano, hơi buồn |
+| `ember` | Hoà âm thứ, cello, tiếng trống trầm thưa |
+| `field` | Guitar mộc, nhẹ, ngoài trời |
+| `ink` | Một nhạc cụ, rất thưa, nhiều khoảng lặng |
+
+- Story có thể chọn bài riêng hoặc tắt nhạc qua trường `sound` (mục 6.3), thêm khoá `nhac`:
+
+```yaml
+sound:
+  nhac: chu-de/dusk          # audio/nhac/chu-de/dusk/*.webm (các stem)
+  # nhac: null               # story này không nhạc
+```
+
+- Story có giọng đọc: nhạc chỉ chạy ở đầu, cuối và giữa các phần; khi giọng phát thì nhạc giảm 12 dB.
+
+### 6A.4 Nguồn nhạc
+
+Theo thứ tự ưu tiên:
+
+1. **Khang tự sáng tác / tự chơi**, hoặc bạn bè viết riêng cho site, có văn bản đồng ý cho phát hành công khai.
+2. **Nhạc CC0 hoặc CC-BY** có thể tải stem hoặc tự tách stem; ghi công đủ.
+3. **Nhạc tổng hợp sinh ra trong `sound.js`** (generative): dùng làm bản tạm cho A-0/A-1 và làm phương án dự phòng không tốn byte nào: hoà âm và giai điệu chủ đề được viết thành dữ liệu nốt, phát bằng oscillator + bộ lọc băng từ.
+4. Nhạc thương mại "royalty free" chỉ khi giấy phép cho phép phát trên web công khai **và** cho phép để file trong repo công khai. Nếu không rõ thì không dùng.
+
 ## 7. Nguồn âm thanh và bản quyền
 
 Repo công khai, nên mọi file đẩy lên là phát hành.
@@ -151,21 +213,21 @@ Repo công khai, nên mọi file đẩy lên là phát hành.
 | CC0 (ví dụ Freesound lọc CC0) | Có | Ghi nguồn trong `site/public/audio/NGUON.md` dù CC0 không bắt buộc |
 | CC-BY | Có, kèm ghi công | Ghi công trong `NGUON.md` và trang credits ở footer |
 | CC-BY-NC, CC-BY-ND, "royalty free" không rõ giấy phép, nhạc thương mại | **Không** | Site có trang ủng hộ, nên không chắc là "phi thương mại" |
-| Nhạc có lời | Không ở MVP | |
+| Nhạc có lời | Không ở bản đầu | Nhạc nền không lời để không tranh với chữ và giọng đọc |
 
 Mỗi file có một dòng trong `NGUON.md`: tên file, nguồn, tác giả, giấy phép, ngày tải, chỉnh sửa gì.
 
 ## 8. Quy chuẩn file
 
-| | Nền (bed) | Giọng | Hiệu ứng (nếu có file) |
-|---|---|---|---|
-| Độ dài | 30–60 s, lặp liền | Theo bài | < 1 s |
-| Kênh | Stereo | Mono | Mono |
-| Mã hoá | Opus 64 kbps / AAC 96 kbps | Opus 32 kbps / AAC 64 kbps | Opus 64 kbps |
-| Độ to | −30 LUFS (để nằm dưới) | −16 LUFS, đỉnh −1 dBTP | Đỉnh −6 dBFS |
-| Đầu/cuối | Cắt tại điểm 0, crossfade vòng lặp 500 ms | 300 ms im lặng | |
+| | Nền (bed) | Nhạc (mỗi stem) | Giọng | Hiệu ứng (nếu có file) |
+|---|---|---|---|---|
+| Độ dài | 30–60 s, lặp liền | Đúng một vòng nhạc (ví dụ 16 ô nhịp), mọi stem dài bằng nhau tới từng mẫu | Theo bài | < 1 s |
+| Kênh | Stereo | Stereo | Mono | Mono |
+| Mã hoá | Opus 64 kbps / AAC 96 kbps | Opus 80 kbps / AAC 128 kbps | Opus 32 kbps / AAC 64 kbps | Opus 64 kbps |
+| Độ to | −30 LUFS (để nằm dưới) | Bản trộn đủ stem −23 LUFS | −16 LUFS, đỉnh −1 dBTP | Đỉnh −6 dBFS |
+| Đầu/cuối | Cắt tại điểm 0, crossfade vòng lặp 500 ms | Không fade, cắt đúng phách để lặp liền | 300 ms im lặng | |
 
-Ngân sách: một chương nền ≤ 400 KB, trang chủ tổng ≤ 2 MB **chỉ khi đã bật** và cuộn hết trang. Script `pnpm audio` (về sau) chuẩn hoá độ to và xuất hai định dạng bằng `ffmpeg`.
+Ngân sách: một chương nền ≤ 400 KB; bộ stem chủ đề ≤ 2 MB (tải một lần, dùng cho cả trang); trang chủ tổng ≤ 4 MB **chỉ khi đã bật** và cuộn hết trang. Script `pnpm audio` (về sau) chuẩn hoá độ to và xuất hai định dạng bằng `ffmpeg`.
 
 ## 9. Tiêu chí nghiệm thu
 
@@ -173,6 +235,7 @@ Ngân sách: một chương nền ≤ 400 KB, trang chủ tổng ≤ 2 MB **ch�
 - [ ] Bật âm thanh → các mô phỏng phát theo tham số; tắt → im trong ≤ 300 ms.
 - [ ] Rời tab → âm tắt dần; quay lại → tiếp tục.
 - [ ] Ba mô phỏng chạy cùng lúc không vỡ tiếng (limiter).
+- [ ] Nhạc đổi biến tấu khi sang chương mà không lệch phách, không hở khi lặp; có thanh âm lượng nhạc riêng và tắt nhạc riêng được.
 - [ ] Mọi thông tin vẫn đọc được khi tắt tiếng.
 - [ ] Bàn phím: nút âm thanh focus được, `M` hoạt động, thanh đọc story dùng được hoàn toàn bằng phím.
 - [ ] `NGUON.md` có đủ dòng cho mọi file trong `site/public/audio/`.
@@ -186,6 +249,7 @@ Ngân sách: một chương nền ≤ 400 KB, trang chủ tổng ≤ 2 MB **ch�
 | A-1 | Âm thanh tổng hợp cho xe dò đường, UAV/quạt, người máy | M | Nghe thử, chỉnh |
 | A-2 | Phần tương tác còn lại (globe, scope, mate, timing, support) | S | |
 | A-3 | Nền chương trang chủ | M | Bản ghi |
+| A-3b | Nhạc nền: bản generative tạm trong `sound.js`, rồi thay bằng stem thật theo 6A | M → L | Chủ đề nhạc / bản thu |
 | A-4 | Mood → khung âm thanh trên trang story | S | |
 | A-5 | Trường `sound` trong schema story + `HUONG-DAN.md` | M | |
 | A-6 | Giọng đọc + thanh đọc + đồng bộ đoạn | L | Bản ghi giọng |
@@ -196,5 +260,5 @@ A-0 và A-1 không cần file nào, làm được ngay; các bước sau chờ n
 
 1. Có muốn tự đọc story không? Đọc cả bản tiếng Anh, hay chỉ tiếng Việt?
 2. Có sẵn bản ghi nào (lab hồi sinh viên, sân bay, New Zealand, nhà) không, hay bắt đầu bằng tổng hợp + CC0?
-3. Có muốn nhạc nền không, hay chỉ âm thanh môi trường? (Đề xuất: không nhạc ở MVP.)
+3. ~~Có muốn nhạc nền không?~~ **Có** (Khang, 10/10/2026). Còn hỏi: Khang tự chơi/sáng tác chủ đề, hay dùng nhạc CC0/CC-BY, hay bắt đầu bằng bản generative?
 4. Âm thanh tắt mặc định ở mọi trang, hay trang story có giọng đọc thì hiện lời mời "nghe bài này"?

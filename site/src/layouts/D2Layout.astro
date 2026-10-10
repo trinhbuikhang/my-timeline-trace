@@ -16,9 +16,12 @@ interface Props {
   description?: string;
   /** The home page carries the chapters the header links to; other pages link back to them. */
   home?: boolean;
+  /** Story pages: the mood grades the whole page (d2.css, data-mood); accent is already checked by the caller. */
+  mood?: string;
+  accent?: string;
 }
 
-const { lang, title, description, home = false } = Astro.props;
+const { lang, title, description, home = false, mood, accent } = Astro.props;
 const t = useT(lang);
 const fullTitle = title ? `${title} — Pharaoh Alone` : 'Pharaoh Alone';
 const other: Lang = lang === 'vi' ? 'en' : 'vi';
@@ -32,14 +35,14 @@ if (!home) header = header.replace(/href="#/g, `href="/${lang}/#`);
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} data-mood={mood} data-accent={accent ? '' : undefined} style={accent ? `--story-accent: ${accent}` : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description ?? t('meta.description')} />
-    <meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#161513" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f3ece0" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#14100b" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <link rel="alternate" hreflang={other} href={new URL(alternate, Astro.site)} />

@@ -4,7 +4,7 @@
   var root = document.documentElement, lang = root.lang === 'en' ? 'en' : 'vi', gl;
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var C = {};
-  function readColors() { var s = getComputedStyle(root); ['ink', 'ink-2', 'rule', 'band', 'accent', 'paper', 'sheet', 'pen', 'pencil'].forEach(function (k) { C[k] = s.getPropertyValue('--' + k).trim(); }); }
+  function readColors() { var s = getComputedStyle(root); ['ink', 'ink-2', 'rule', 'band', 'accent', 'gold', 'glow', 'cool', 'paper', 'sheet', 'pen', 'pencil', 'scope', 'scope-ink', 'scope-dim', 'scope-grid', 'ph-1', 'ph-2', 'ph-3'].forEach(function (k) { C[k] = s.getPropertyValue('--' + k).trim(); }); }
   readColors();
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { readColors(); drawTiming(); });
   function dark() { return parseInt(C.paper.slice(1, 3), 16) < 0x80; }
@@ -44,6 +44,11 @@
   /* ---------- chapters ease in once ---------- */
   var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }); }, { rootMargin: '0px 0px -15% 0px' });
   document.querySelectorAll('section.ch').forEach(function (s) { reduce ? s.classList.add('on') : io.observe(s); });
+  /* ---------- colour script: the chapter crossing the middle of the screen sets the page grade (d2.css, data-grade) ---------- */
+  var gio = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (!e.isIntersecting) return; var g = e.target.getAttribute('data-grade'); g ? root.setAttribute('data-grade', g) : root.removeAttribute('data-grade'); });
+  }, { rootMargin: '-50% 0px -50% 0px' });
+  document.querySelectorAll('section.hero, section.ch').forEach(function (s) { gio.observe(s); });
 
   /* ---------- hand-drawn marks: red-pen circles and scribbled underlines ---------- */
   function rnd(seed) { return function () { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }; }
@@ -396,17 +401,17 @@
     var c = document.getElementById('settle');
     animate(c, function (dt, t) {
       var f = fit(c), ctx = f.ctx, w = f.w, h = f.h; if (!w) return;
-      ctx.strokeStyle = 'rgba(190,220,210,.14)'; ctx.lineWidth = 1; ctx.setLineDash([1, 3]); ctx.beginPath();
+      ctx.strokeStyle = C['scope-grid']; ctx.lineWidth = 1; ctx.setLineDash([1, 3]); ctx.beginPath();
       for (var i = 1; i < 20; i++) { ctx.moveTo(w * i / 20, 0); ctx.lineTo(w * i / 20, h); }
       for (var j = 1; j < 6; j++) { ctx.moveTo(0, h * j / 6); ctx.lineTo(w, h * j / 6); }
       ctx.stroke(); ctx.setLineDash([]);
       var period = 9, p = reduce ? 1 : Math.min(1, (t % period) / (period * 0.8));
       function y(x) { var u = x * 14; return h / 2 - Math.exp(-u * 0.28) * Math.sin(u * 1.9) * h * 0.42 + (1 - Math.exp(-u * 0.6)) * 0; }
-      ctx.strokeStyle = '#e64aa9'; ctx.shadowColor = '#e64aa9'; ctx.shadowBlur = 6; ctx.lineWidth = 2;
+      ctx.strokeStyle = C['ph-1']; ctx.shadowColor = C['ph-3']; ctx.shadowBlur = 6; ctx.lineWidth = 2;
       ctx.beginPath();
       for (var x = 0; x <= w * p; x += 2) { var yy = y(x / w) + (Math.random() - 0.5) * 1.2; x ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy); }
       ctx.stroke(); ctx.shadowBlur = 0;
-      if (p < 1) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(w * p, y(p), 3, 0, 7); ctx.fill(); }
+      if (p < 1) { ctx.fillStyle = C['scope-ink']; ctx.beginPath(); ctx.arc(w * p, y(p), 3, 0, 7); ctx.fill(); }
     });
   })();
 
@@ -863,29 +868,30 @@
   })();
 
   /* ---------- stories: scope captures ---------- */
-  var CH = { 1: '#f2d21b', 2: '#25c4e6', 3: '#e64aa9' };
+  // amber phosphor: channels differ by brightness and dash, not only by hue
+  var CH = { 1: ['ph-1', []], 2: ['ph-2', [2, 3]], 3: ['ph-3', [7, 4]] };
   var waves = {
     sine: function (x, t) { return Math.sin(x * 2.2 + t * 1.2) * 0.55; },
     square: function (x, t) { return (Math.sin(x * 1.6 + t * 1.6) > 0 ? 0.5 : -0.5) + Math.sin(x * 40) * 0.015; },
     damped: function (x, t) { var u = ((x + t * 0.8) % 6.28); return Math.exp(-u * 0.55) * Math.cos(u * 6) * 0.8; }
   };
   [].slice.call(document.querySelectorAll('.an')).forEach(function (a, idx) {
-    var c = a.querySelector('canvas'), fn = waves[a.dataset.wave], col = CH[a.dataset.ch], hover = false, phase = 0, lock = reduce ? 1 : 0;
+    var c = a.querySelector('canvas'), fn = waves[a.dataset.wave], chan = CH[a.dataset.ch] || CH[1], hover = false, phase = 0, lock = reduce ? 1 : 0;
     a.addEventListener('pointerenter', function () { hover = true; }); a.addEventListener('pointerleave', function () { hover = false; });
     animate(c, function (dt, t) {
       var f = fit(c), ctx = f.ctx, w = f.w, h = f.h; if (!w) return;
       if (t > 0.5 + idx * 0.35) lock = Math.min(1, lock + dt * 1.4);
-      ctx.strokeStyle = 'rgba(190,220,210,0.16)'; ctx.lineWidth = 1; ctx.setLineDash([1, 3]); ctx.beginPath();
+      ctx.strokeStyle = C['scope-grid']; ctx.lineWidth = 1; ctx.setLineDash([1, 3]); ctx.beginPath();
       for (var i = 1; i < 10; i++) { ctx.moveTo(w * i / 10, 0); ctx.lineTo(w * i / 10, h); }
       for (var j = 1; j < 8; j++) { ctx.moveTo(0, h * j / 8); ctx.lineTo(w, h * j / 8); }
       ctx.stroke(); ctx.setLineDash([]);
       phase += dt * (hover ? 1.4 : 0.35);
       var e = lock * lock * (3 - 2 * lock), jit = (1 - e) * (Math.random() - 0.5) * 2.4;
-      ctx.strokeStyle = col; ctx.lineWidth = 1.8; ctx.shadowColor = col; ctx.shadowBlur = 4; ctx.beginPath();
+      var col = C[chan[0]]; ctx.strokeStyle = col; ctx.lineWidth = 1.8; ctx.shadowColor = col; ctx.shadowBlur = 4; ctx.setLineDash(chan[1]); ctx.beginPath();
       for (var x = 0; x <= w; x += 2) { var y = h / 2 - (fn(x / w * 6.28 + jit, phase) * e + (Math.random() - 0.5) * 0.35 * (1 - e)) * h / 2; x ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
-      ctx.stroke(); ctx.shadowBlur = 0;
+      ctx.stroke(); ctx.shadowBlur = 0; ctx.setLineDash([]);
       ctx.font = MONO; ctx.fillStyle = col; ctx.fillText('CH' + a.dataset.ch, 8, h - 8);
-      ctx.textAlign = 'right'; ctx.fillStyle = lock >= 1 ? '#7be0a0' : '#f2a33a'; ctx.fillText(lock >= 1 ? "TRIG'D" : 'AUTO…', w - 8, 16); ctx.textAlign = 'left';
+      ctx.textAlign = 'right'; ctx.fillStyle = lock >= 1 ? C['ph-1'] : C['scope-dim']; ctx.fillText(lock >= 1 ? "TRIG'D" : 'AUTO…', w - 8, 16); ctx.textAlign = 'left';
     });
   });
 

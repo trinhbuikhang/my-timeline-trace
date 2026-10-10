@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "node scripts/colors.mjs && astro build",
+    "colors": "node scripts/colors.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "build:land": "node scripts/build-land.mjs",
