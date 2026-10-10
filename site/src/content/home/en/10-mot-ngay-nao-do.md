@@ -21,7 +21,7 @@ From following a line, to leaving the ground, to this.
 Try it: it watches you, learns from you, and needs you to lift one end.
 
 ## mo-ta-robot
-Dashed-line sketch of a humanoid robot. It watches you, learns a move when you drag its hand, then lifts a plank onto a shelf with you. Keyboard: arrow keys to drag, Enter to let go.
+Pencil sketch of a humanoid robot; drag sideways on empty space to turn it. It watches you, learns a move when you drag its hand, then lifts a plank onto a shelf with you. Keyboard: arrow keys to drag, Enter to let go.
 
 ## buoc-1
 See

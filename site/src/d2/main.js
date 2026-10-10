@@ -126,6 +126,8 @@
   (function () {
     var c = document.getElementById('lf'), kpIn = document.getElementById('kp'), kpOut = document.getElementById('kpv'), stat = document.getElementById('lfstat');
     var N = 420, track = [], robot = null, err = 0, trail = [], hist = [], lastW = 0, lostT = 0, lost = 0, laps = 0, Kp = 7.5;
+    // stop lines: tape laid across the track; all sensors dark at once means "wait here a moment"
+    var stops = [], stopT = 0, onBar = false, spd = 1, STOP = 1.3;
     kpIn.addEventListener('input', function () { Kp = +kpIn.value; kpOut.textContent = Kp.toFixed(1); });
     document.getElementById('lfreset').addEventListener('click', function () { reset(); lost = 0; });
     var H = 0;
@@ -135,11 +137,19 @@
         var a = i / N * Math.PI * 2, r = 1 + 0.17 * Math.sin(3 * a) + 0.07 * Math.cos(5 * a + 1);
         track.push([w / 2 + Math.cos(a) * r * w * 0.36, H / 2 + Math.sin(a) * r * H * 0.34]);
       }
+      stops = [0.13, 0.46, 0.79].map(function (k) {
+        var i = Math.floor(k * N), p = track[i], q = track[(i + 2) % N], l = Math.hypot(q[0] - p[0], q[1] - p[1]) || 1;
+        return { x: p[0], y: p[1], tx: (q[0] - p[0]) / l, ty: (q[1] - p[1]) / l };
+      });
+    }
+    function onStop(x, y, lw) {
+      for (var i = 0; i < stops.length; i++) { var b = stops[i], dx = x - b.x, dy = y - b.y; if (Math.abs(dx * b.tx + dy * b.ty) < lw * 0.5 && Math.abs(-dx * b.ty + dy * b.tx) < lw * 2.4) return true; }
+      return false;
     }
     function nearest(x, y) { var b = 1e9, bi = 0; for (var i = 0; i < N; i++) { var dx = track[i][0] - x, dy = track[i][1] - y, d = dx * dx + dy * dy; if (d < b) { b = d; bi = i; } } return [Math.sqrt(b), bi]; }
     function reset(i) {
       i = i || 0; var p0 = track[i], p1 = track[(i + 1) % N];
-      robot = { x: p0[0], y: p0[1], a: Math.atan2(p1[1] - p0[1], p1[0] - p0[0]) }; trail = []; err = 0; lostT = 0;
+      robot = { x: p0[0], y: p0[1], a: Math.atan2(p1[1] - p0[1], p1[0] - p0[0]) }; trail = []; err = 0; lostT = 0; stopT = 0; onBar = false; spd = 1;
     }
     animate(c, function (dt) {
       var f = fit(c), ctx = f.ctx, w = f.w, h = f.h; if (!w) return;
@@ -155,14 +165,25 @@
       ctx.beginPath(); track.forEach(function (p, i) { i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }); ctx.closePath();
       ctx.strokeStyle = C.ink; ctx.lineWidth = lw; ctx.lineJoin = 'round'; ctx.stroke();
       ctx.strokeStyle = dark() ? 'rgba(255,255,255,.08)' : 'rgba(255,255,255,.18)'; ctx.lineWidth = lw * 0.25; ctx.setLineDash([14, 22]); ctx.stroke(); ctx.setLineDash([]);
+      // stop lines across the tape, with a pencil tick on each end
+      stops.forEach(function (b) {
+        ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(Math.atan2(b.ty, b.tx));
+        ctx.fillStyle = C.ink; ctx.fillRect(-lw * 0.5, -lw * 2.4, lw, lw * 4.8);
+        ctx.strokeStyle = C.pencil; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-lw * 1.1, -lw * 2.8); ctx.lineTo(lw * 1.1, -lw * 2.8); ctx.moveTo(-lw * 1.1, lw * 2.8); ctx.lineTo(lw * 1.1, lw * 2.8); ctx.stroke();
+        ctx.restore();
+      });
       // sense
       var L = s * 0.12, W = s * 0.09, sp = W * 0.26, ahead = L * 0.62;
       var fx = Math.cos(robot.a), fy = Math.sin(robot.a), nx = -fy, ny = fx, hits = [], sum = 0, cnt = 0;
-      for (var k = -2; k <= 2; k++) { var on = nearest(robot.x + fx * ahead + nx * k * sp, robot.y + fy * ahead + ny * k * sp)[0] < lw / 2; hits.push(on); if (on) { sum += k; cnt++; } }
+      for (var k = -2; k <= 2; k++) { var sxk = robot.x + fx * ahead + nx * k * sp, syk = robot.y + fy * ahead + ny * k * sp, on = nearest(sxk, syk)[0] < lw / 2 || onStop(sxk, syk, lw); hits.push(on); if (on) { sum += k; cnt++; } }
       if (cnt) err = sum / cnt / 2;
+      // four or five sensors dark: a stop line. brake, wait, pull away
+      if (cnt >= 4) { if (!onBar && dt) { onBar = true; stopT = STOP; } } else onBar = false;
+      stopT = Math.max(0, stopT - dt);
+      spd += ((stopT > 0 ? 0 : 1) - spd) * Math.min(1, dt * (stopT > 0 ? 14 : 3));
       // act
-      robot.a += Kp * err * dt;
-      robot.x += fx * s * 0.42 * dt; robot.y += fy * s * 0.42 * dt;
+      robot.a += Kp * err * dt * spd;
+      robot.x += fx * s * 0.42 * spd * dt; robot.y += fy * s * 0.42 * spd * dt;
       var nr = nearest(robot.x, robot.y);
       if (nr[0] > lw * 3) lostT += dt; else lostT = 0;
       if (lostT > 0.9 || robot.x < -40 || robot.x > w + 40 || robot.y < -40 || robot.y > H + 40) { lost++; reset(nr[1]); }
@@ -179,6 +200,10 @@
       ctx.fillStyle = C.sheet; ctx.fillRect(ahead - 3, -W * 0.64, 6, W * 1.28); ctx.strokeRect(ahead - 3, -W * 0.64, 6, W * 1.28);
       hits.forEach(function (on, i) { ctx.fillStyle = on ? C.pen : C.sheet; ctx.beginPath(); ctx.arc(ahead, (i - 2) * sp, 2.8, 0, 7); ctx.fill(); ctx.stroke(); });
       ctx.restore();
+      if (stopT > 0) { // red pen countdown while it waits at the line
+        ctx.strokeStyle = C.pen; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(robot.x, robot.y, L * 0.85, -Math.PI / 2, -Math.PI / 2 + (stopT / STOP) * Math.PI * 2); ctx.stroke();
+        ctx.font = '22px ' + HAND; ctx.fillStyle = C.pen; var dw = ctx.measureText(word('sinh-vien-robot.hd-dung')).width; ctx.fillText(word('sinh-vien-robot.hd-dung'), robot.x + L * 0.9 + dw > w - 4 ? robot.x - L * 0.9 - dw : robot.x + L * 0.9, robot.y - L * 0.7);
+      }
       // e(t) strip
       var y0 = H + 10, sh = h - y0 - 4;
       ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, y0 + sh / 2); ctx.lineTo(w, y0 + sh / 2); ctx.stroke();
@@ -186,7 +211,7 @@
       hist.forEach(function (e, i) { var x = w - (hist.length - i) * (w / 260), y = y0 + sh / 2 - e * sh * 0.45; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
       ctx.stroke();
       ctx.font = MONO; ctx.fillStyle = C['ink-2']; ctx.fillText('e(t)', 4, y0 + 11);
-      stat.textContent = 'IR ' + hits.map(function (b) { return b ? '■' : '□'; }).join('') + '  e=' + (err >= 0 ? '+' : '') + err.toFixed(2) + '  ' + ((word('sinh-vien-robot.hd-lac') + ' ')) + lost;
+      stat.textContent = 'IR ' + hits.map(function (b) { return b ? '■' : '□'; }).join('') + '  e=' + (err >= 0 ? '+' : '') + err.toFixed(2) + '  ' + ((word('sinh-vien-robot.hd-lac') + ' ')) + lost + (stopT > 0 ? '  ■ ' + word('sinh-vien-robot.hd-dung') : '');
       if (lostT > 0.2) { ctx.font = '24px ' + HAND; ctx.fillStyle = C.pen; ctx.fillText(word('sinh-vien-robot.hd-lac-roi'), robot.x + 16, robot.y - 14); }
     });
   })();
@@ -195,7 +220,7 @@
   (function () {
     var c = document.getElementById('uav'), stat = document.getElementById('uavstat'), ptr = pointer(c);
     var bSim = document.getElementById('uavsim'), bReal = document.getElementById('uavreal');
-    var pos = null, vel = [0, 0], trail = [], gust = 0, real = false, rt = 0, tries = 0, yawOff = 0;
+    var pos = null, vel = [0, 0], trail = [], gust = 0, real = false, rt = 0, tries = 0, yawOff = 0, fanSpin = 0;
     function mode(r) { real = r; rt = 0; tries = r ? 1 : 0; yawOff = 0; trail = []; bSim.setAttribute('aria-pressed', !r); bReal.setAttribute('aria-pressed', r); }
     bSim.addEventListener('click', function () { mode(false); });
     bReal.addEventListener('click', function () { mode(true); });
@@ -233,13 +258,41 @@
       else { ctx.setLineDash([4, 4]); ctx.arc(w * 0.5, h * 0.52, s * 0.3, 0, 7); }
       ctx.stroke(); ctx.setLineDash([]);
       ctx.beginPath(); trail.forEach(function (p, i) { i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }); ctx.strokeStyle = C.accent; ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]);
-      if (ptr.in && wind > 0) {
-        ctx.strokeStyle = C.pencil; ctx.lineWidth = 1; ctx.globalAlpha = 0.6;
-        for (var q = -2; q <= 2; q++) {
-          var ang = Math.atan2(pos[1] - ptr.y, pos[0] - ptr.x) + q * 0.12, ph = (t * 3 + q * 0.3) % 1, r0 = 14 + ph * 40;
-          ctx.beginPath(); ctx.moveTo(ptr.x + Math.cos(ang) * r0, ptr.y + Math.sin(ang) * r0); ctx.lineTo(ptr.x + Math.cos(ang) * (r0 + 16), ptr.y + Math.sin(ang) * (r0 + 16)); ctx.stroke();
+      // the visitor holds a mini fan instead of a cursor; it always faces the drone
+      var fanOn = ptr.in && !real;
+      c.style.cursor = fanOn ? 'none' : '';
+      if (fanOn) {
+        var fa = Math.atan2(pos[1] - ptr.y, pos[0] - ptr.x), fr = Math.max(16, s * 0.085), reach = Math.min(Math.hypot(pos[0] - ptr.x, pos[1] - ptr.y), s * 0.55);
+        fanSpin += dt * (14 + wind * 26 + gust * 50);
+        ctx.save(); ctx.translate(ptr.x, ptr.y); ctx.rotate(fa); if (Math.cos(fa) < 0) ctx.scale(1, -1); // keep the handle pointing down
+        // air: wavy pencil streaks leaving the guard, spreading out, quicker in a gust
+        ctx.strokeStyle = C['ink-2']; ctx.lineWidth = 1.3; ctx.lineCap = 'round';
+        for (var q = -3; q <= 3; q++) {
+          var ph = (t * (1.1 + gust * 1.5 + wind * 0.6) + q * 0.37 + 5) % 1, x0 = fr * 0.5 + ph * (reach + fr), sl = 16 + wind * 14 + gust * 18;
+          ctx.globalAlpha = Math.min(1, 0.45 + wind * 0.6 + gust * 0.4) * Math.sin(ph * Math.PI);
+          ctx.beginPath();
+          for (var sx = 0; sx <= sl; sx += 3) { var xx = x0 + sx, yy = q * (fr * 0.26 + xx * 0.09) + Math.sin(xx * 0.09 - t * 14 + q) * (2 + gust * 3); sx ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy); }
+          ctx.stroke();
         }
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha = 1; ctx.lineWidth = 1.4; ctx.strokeStyle = C.ink; ctx.fillStyle = C.sheet;
+        // handle and motor pod behind the head
+        ctx.beginPath(); ctx.moveTo(-fr * 0.62, fr * 0.18); ctx.lineTo(-fr * 0.98, fr * 2.3); ctx.lineTo(-fr * 0.58, fr * 2.36); ctx.lineTo(-fr * 0.3, fr * 0.24); ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = C.pen; ctx.beginPath(); ctx.arc(-fr * 0.6, fr * 1.1, fr * 0.09, 0, 7); ctx.fill();
+        ctx.fillStyle = C.sheet; ctx.beginPath(); ctx.ellipse(-fr * 0.5, 0, fr * 0.3, fr * 0.36, 0, 0, 7); ctx.fill(); ctx.stroke();
+        // rear cage, then the blur disc and three blades seen at an angle, then the front guard
+        ctx.lineWidth = 0.9; ctx.strokeStyle = C['ink-2']; ctx.beginPath(); ctx.ellipse(-fr * 0.16, 0, fr * 0.3, fr, 0, 0, 7); ctx.stroke();
+        ctx.fillStyle = C.band; ctx.globalAlpha = Math.min(0.8, 0.3 + wind * 0.5 + gust * 0.4); ctx.beginPath(); ctx.ellipse(0, 0, fr * 0.3, fr * 0.92, 0, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+        ctx.strokeStyle = C.ink; ctx.lineWidth = 1.1; ctx.fillStyle = C.sheet;
+        for (var bl = 0; bl < 3; bl++) {
+          var ba = fanSpin + bl * Math.PI * 2 / 3, tip = [Math.cos(ba) * fr * 0.84 * 0.3, Math.sin(ba) * fr * 0.84], tg = [-Math.sin(ba) * fr * 0.42 * 0.3, Math.cos(ba) * fr * 0.42];
+          ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(tip[0] / 2 + tg[0], tip[1] / 2 + tg[1], tip[0], tip[1]); ctx.quadraticCurveTo(tip[0] / 2 - tg[0] * 0.2, tip[1] / 2 - tg[1] * 0.2, 0, 0); ctx.fill(); ctx.stroke();
+        }
+        ctx.lineWidth = 1.6; ctx.beginPath(); ctx.ellipse(fr * 0.06, 0, fr * 0.32, fr, 0, 0, 7); ctx.stroke();
+        ctx.lineWidth = 0.8; ctx.beginPath(); ctx.ellipse(fr * 0.08, 0, fr * 0.18, fr * 0.55, 0, 0, 7);
+        for (var sp = 0; sp < 8; sp++) { var sa = sp * Math.PI / 4; ctx.moveTo(fr * 0.1, 0); ctx.lineTo(fr * 0.06 + Math.cos(sa) * fr * 0.32, Math.sin(sa) * fr); }
+        ctx.stroke();
+        ctx.fillStyle = C.pen; ctx.beginPath(); ctx.arc(fr * 0.1, 0, fr * 0.11, 0, 7); ctx.fill();
+        ctx.restore();
       }
       // Y3 layout: two front arms at ±60°, one tail arm; the tail motor tilts on a servo
       var yaw = -Math.PI / 2 + Math.sin(t * 0.3) * 0.25 + yawOff, sc = 1 + alt * 0.12, R = s * 0.2 * sc, r = s * 0.08 * sc;
@@ -505,6 +558,9 @@
     var JOINTS = ['lS', 'lE', 'lW', 'rS', 'rE', 'rW', 'lH', 'lK', 'lA', 'rH', 'rK', 'rA'], pulses = [], glow = {}, net = 0, nextFire = 0.4, look = 0, wv = 0, stay = 0, focused = false;
     var L1 = 17, L2 = 15, X0 = -4, PL = 46, REST = 58, GOAL = 40;
     var stage, phase, phaseT, bub, grab, rec, play, aim, arm, shift, pk, geo = null, hailed, quiet;
+    // the view turns about the vertical axis; drag sideways on empty space, it drifts back to three-quarters
+    var YAW0 = 0.38, TC = Math.cos(0.17), TS = Math.sin(0.17), PZ = -10, yv = YAW0, spin = { drag: null, idle: 9 }, armZ = 0;
+    var LT = (function (v) { var l = Math.hypot(v[0], v[1], v[2]); return v.map(function (x) { return x / l; }); })([-0.45, -0.75, -0.5]);
     function smooth(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
     function say(txt, live) { if (bub && bub.txt === txt && bub.live === !!live) return; bub = { txt: txt, at: live && bub && bub.live ? bub.at : job.t, live: !!live }; }
     function along(pts, p) {
@@ -533,11 +589,20 @@
     reset();
 
     // input: one pointer path for mouse, pen and touch; touches only stop the page from scrolling when they land on a handle
-    function local(cx, cy) { var r = c.getBoundingClientRect(); return geo ? [(cx - r.left - geo.ox) / geo.u, (cy - r.top - geo.oy) / geo.u] : [0, 0]; }
-    function hit(p) {
-      if (!geo) return null; var rad = Math.max(18 / geo.u, 7);
-      if (stage === 2 && !pk.done && p[0] > X0 + PL * 0.45 && p[0] < geo.rx + rad && Math.abs(p[1] - (pk.gy + (pk.ry - pk.gy) * (p[0] - X0) / (geo.rx - X0))) < rad) return 'plank';
-      if ((stage === 1 || stage === 3) && !phase && Math.hypot(p[0] - geo.rw[0], p[1] - geo.rw[1]) < rad) return 'hand';
+    // screen (canvas px) to body units on the plane z = z0
+    function body(sx, sy, z0) {
+      if (!geo) return [0, 0];
+      var cw = Math.abs(geo.cw) < 0.3 ? (geo.cw < 0 ? -0.3 : 0.3) : geo.cw, X = (sx - geo.ox) / geo.u, x = (X - z0 * geo.sw) / cw, Z = -x * geo.sw + z0 * geo.cw;
+      return [x, ((sy - geo.oy) / geo.u + Z * TS) / TC];
+    }
+    function local(cx, cy, z0) { var r = c.getBoundingClientRect(); return body(cx - r.left, cy - r.top, z0); }
+    function hit(sx, sy) {
+      if (!geo || geo.cw < 0.5) return null; // turned too far round: dragging only spins it
+      if (stage === 2 && !pk.done) {
+        var p = body(sx, sy, PZ), rad = Math.max(18 / geo.u, 7);
+        if (p[0] > X0 + PL * 0.45 && p[0] < geo.rx + rad && Math.abs(p[1] - (pk.gy + (pk.ry - pk.gy) * (p[0] - X0) / (geo.rx - X0))) < rad) return 'plank';
+      }
+      if ((stage === 1 || stage === 3) && !phase && Math.hypot(sx - geo.rwS[0], sy - geo.rwS[1]) < Math.max(18, 7 * geo.u)) return 'hand';
       return null;
     }
     function start(what, p) {
@@ -546,6 +611,7 @@
       if (what === 'plank') { grab = 'plank'; pk.held = true; aim = p; }
     }
     function release() {
+      spin.drag = null;
       if (grab === 'hand') {
         var pts = rec.pts, dur = pts.length ? pts[pts.length - 1].t : 0, len = 0;
         for (var i = 1; i < pts.length; i++) len += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
@@ -555,17 +621,23 @@
       if (grab === 'plank') { pk.held = false; if (!pk.done) say(word('mot-ngay-nao-do.hd-robot-tuot-tay')); }
       grab = null; aim = null;
     }
-    c.addEventListener('touchstart', function (e) { var t = e.touches[0]; if (t && hit(local(t.clientX, t.clientY))) e.preventDefault(); }, { passive: false });
+    c.addEventListener('touchstart', function (e) { var t = e.touches[0], r = c.getBoundingClientRect(); if (t && hit(t.clientX - r.left, t.clientY - r.top)) e.preventDefault(); }, { passive: false });
     c.addEventListener('pointerdown', function (e) {
-      var p = local(e.clientX, e.clientY), h = hit(p);
+      var r = c.getBoundingClientRect(), sx = e.clientX - r.left, sy = e.clientY - r.top, h = hit(sx, sy);
       if (stage === 0) stay = Math.max(stay, 1.2);
-      if (h) { c.setPointerCapture(e.pointerId); start(h, p); e.preventDefault(); }
+      c.setPointerCapture(e.pointerId);
+      if (h) { start(h, body(sx, sy, h === 'plank' ? PZ : 0)); e.preventDefault(); }
+      else { spin.drag = e.clientX; spin.idle = 0; }
     });
-    c.addEventListener('pointermove', function (e) { if (grab) aim = local(e.clientX, e.clientY); });
+    c.addEventListener('pointermove', function (e) {
+      if (grab) aim = local(e.clientX, e.clientY, grab === 'plank' ? PZ : 0);
+      else if (spin.drag !== null) { yv -= (e.clientX - spin.drag) * 0.012; spin.drag = e.clientX; spin.idle = 0; }
+    });
     c.addEventListener('pointerup', release); c.addEventListener('pointercancel', release);
     c.addEventListener('focus', function () { focused = true; }); c.addEventListener('blur', function () { focused = false; if (grab) release(); });
     c.addEventListener('keydown', function (e) {
       var k = e.key, dx = k === 'ArrowLeft' ? -3 : k === 'ArrowRight' ? 3 : 0, dy = k === 'ArrowUp' ? -3 : k === 'ArrowDown' ? 3 : 0;
+      if (e.shiftKey && dx && !grab) { e.preventDefault(); yv -= dx * 0.05; spin.idle = 0; return; } // Shift + ←/→ turns it
       if (dx || dy) {
         e.preventDefault();
         if (!grab && geo) { if (stage === 2 && !pk.done) start('plank', [geo.rx, pk.ry]); else if ((stage === 1 || stage === 3) && !phase) start('hand', geo.rw.slice()); }
@@ -583,7 +655,6 @@
     function draw(dt, t) {
       var f = fit(c), ctx = f.ctx, w = f.w, h = f.h; if (!w) return;
       var u = h / 110, ox = w * (0.5 - 0.15 * smooth(shift)), oy = h * 0.05;
-      function P(x, y) { return [ox + x * u, oy + y * u]; }
       phaseT += dt; quiet += dt;
       var free = stage === 0 || (stage === 3 && !grab && !phase);
       stay = ptr.in || focused ? stay + dt : 0;
@@ -636,54 +707,173 @@
       }
       ease(arm.l, tl, kArm); ease(arm.r, tr, kArm);
 
-      // ---- skeleton ----
+      // ---- view ----
+      if (spin.drag === null) {
+        spin.idle += dt;
+        if (grab || spin.idle > 3.5) { var vt = YAW0 + (reduce ? 0 : Math.sin(t * 0.35) * 0.07), dv = Math.atan2(Math.sin(vt - yv), Math.cos(vt - yv)); yv += dv * Math.min(1, dt * (grab ? 6 : 1.6)); }
+      }
+      var cw = Math.cos(yv), sw = Math.sin(yv);
+      // body units: x right, y down, z away from the viewer (the robot faces -z). returns [sx, sy, depth]
+      function V(p) { var X = p[0] * cw + p[2] * sw, Z = -p[0] * sw + p[2] * cw; return [ox + X * u, oy + (p[1] * TC - Z * TS) * u, p[1] * TS + Z * TC]; }
+      function add(a, b, k) { return [a[0] + b[0] * k, a[1] + b[1] * k, a[2] + b[2] * k]; }
+      function sub(a, b) { return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; }
+      function nrm(a) { var l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; }
+      function cross(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+      function rotY(v, a) { return [v[0] * Math.cos(a) + v[2] * Math.sin(a), v[1], -v[0] * Math.sin(a) + v[2] * Math.cos(a)]; }
+
+      // ---- skeleton (the arm angles above stay in the body plane; reaching for the plank adds depth) ----
       var tgtLook = grab === 'hand' && aim ? Math.max(-1, Math.min(1, aim[0] / 30)) : phase === 'replay' ? -0.8 : grab === 'plank' ? 1 : ptr.in ? Math.max(-1, Math.min(1, (ptr.x - ox) / (w * 0.4))) : Math.sin(t * 0.4) * 0.3;
       look += (tgtLook - look) * Math.min(1, dt * 4);
-      var J = {}; J.lS = P(-14, 30); J.rS = P(14, 30);
-      J.lE = [J.lS[0] - Math.sin(arm.l[0]) * L1 * u, J.lS[1] + Math.cos(arm.l[0]) * L1 * u]; J.lW = [J.lE[0] - Math.sin(arm.l[1]) * L2 * u, J.lE[1] + Math.cos(arm.l[1]) * L2 * u];
-      J.rE = [J.rS[0] + Math.sin(arm.r[0]) * L1 * u, J.rS[1] + Math.cos(arm.r[0]) * L1 * u]; J.rW = [J.rE[0] + Math.sin(arm.r[1]) * L2 * u, J.rE[1] + Math.cos(arm.r[1]) * L2 * u];
-      J.lH = P(-7, 58); J.rH = P(7, 58); J.lK = P(-8, 78); J.rK = P(8, 78); J.lA = P(-8, 97); J.rA = P(8, 97);
-      var head = P(look * 2.4, 15), neck = P(0, 24), chest = P(0, 30), pelvis = P(0, 56);
+      armZ += ((stage === 2 && !pk.done ? PZ : 0) - armZ) * Math.min(1, dt * 4);
+      var B = { lS: [-14, 30, 0], rS: [14, 30, 0], lH: [-7, 58, 0], rH: [7, 58, 0], lK: [-8, 78, 0], rK: [8, 78, 0], lA: [-8, 97, 0], rA: [8, 97, 0] };
+      B.lE = [-14 - Math.sin(arm.l[0]) * L1, 30 + Math.cos(arm.l[0]) * L1, armZ * 0.45]; B.lW = [B.lE[0] - Math.sin(arm.l[1]) * L2, B.lE[1] + Math.cos(arm.l[1]) * L2, armZ];
+      B.rE = [14 + Math.sin(arm.r[0]) * L1, 30 + Math.cos(arm.r[0]) * L1, armZ * 0.45]; B.rW = [B.rE[0] + Math.sin(arm.r[1]) * L2, B.rE[1] + Math.cos(arm.r[1]) * L2, armZ];
+      var J = {}; for (var jn in B) J[jn] = V(B[jn]);
+      var hy = -look * 0.5, hc = [look * 1.2, 14, 0], head = V(hc), neck = V([0, 24, 0]), chest = V([0, 30, 0]), pelvis = V([0, 56, 0]);
       var rx = X0 + Math.sqrt(PL * PL - Math.pow(Math.max(-PL * 0.7, Math.min(PL * 0.7, pk.ry - pk.gy)), 2));
-      geo = { ox: ox, oy: oy, u: u, rx: rx, rw: [(J.rW[0] - ox) / u, (J.rW[1] - oy) / u] };
+      geo = { ox: ox, oy: oy, u: u, cw: cw, sw: sw, rx: rx, rw: [B.rW[0], B.rW[1]], rwS: J.rW };
+      var pa = stage >= 2 ? Math.min(1, shift * 1.6) : 0, GY = 100;
 
-      ctx.strokeStyle = C['ink-2']; ctx.lineWidth = 1; var gy = J.lA[1] + 3 * u, gx0 = Math.min(ox - 30 * u, 6), gx1 = stage >= 2 ? Math.min(w - 6, P(X0 + PL + 14, 0)[0]) : ox + 30 * u;
-      ctx.beginPath(); ctx.moveTo(gx0, gy); ctx.lineTo(gx1, gy); for (var g = gx0; g < gx1; g += 5 * u) { ctx.moveTo(g, gy); ctx.lineTo(g - 3 * u, gy + 3.5 * u); } ctx.stroke();
+      // floor: a pencil grid patch and a soft contact shadow
+      var fx1 = stage >= 2 ? X0 + PL + 16 : 34;
+      ctx.strokeStyle = C.pencil; ctx.lineWidth = 0.8; ctx.globalAlpha = 0.45; ctx.beginPath();
+      for (var gx = -34; gx <= fx1 + 0.1; gx += 8) { var g0 = V([gx, GY, -22]), g1 = V([gx, GY, 22]); ctx.moveTo(g0[0], g0[1]); ctx.lineTo(g1[0], g1[1]); }
+      for (var gz = -22; gz <= 22.1; gz += 8.8) { var g2 = V([-34, GY, gz]), g3 = V([fx1, GY, gz]); ctx.moveTo(g2[0], g2[1]); ctx.lineTo(g3[0], g3[1]); }
+      ctx.stroke();
+      ctx.fillStyle = '#000'; ctx.globalAlpha = dark() ? 0.35 : 0.08; ctx.beginPath();
+      for (var sa = 0; sa <= 24; sa++) { var sp0 = V([Math.cos(sa / 24 * Math.PI * 2) * 17, GY, Math.sin(sa / 24 * Math.PI * 2) * 9]); sa ? ctx.lineTo(sp0[0], sp0[1]) : ctx.moveTo(sp0[0], sp0[1]); }
+      ctx.fill(); ctx.globalAlpha = 1;
 
-      // plank stage: trestle, the phantom shelf it belongs on, and the plank itself
-      var pa = stage >= 2 ? Math.min(1, shift * 1.6) : 0;
+      // ---- solids: boxes become faces; faces, sticks and joints are sorted far to near ----
+      var items = [];
+      function sketchEdge(a, b, i, k) {
+        for (var pass = 0; pass < 2; pass++) {
+          var j = pass ? 0.8 : 0.3, h1 = Math.sin(i * 12.99 + k * 3.1 + pass * 7.1) * j, h2 = Math.cos(i * 78.23 + k * 5.7 + pass * 3.7) * j;
+          var dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1, o = pass ? 1.4 / l : 0;
+          ctx.lineWidth = pass ? 0.7 : 1.3; ctx.beginPath(); ctx.moveTo(a[0] - dx * o + h1, a[1] - dy * o + h2); ctx.lineTo(b[0] + dx * o - h2, b[1] + dy * o + h1); ctx.stroke();
+        }
+      }
+      // corners in bit order: 1 = +x, 2 = +y, 4 = +z of the box's own axes. 'z-' is the front
+      var FACES = { 'x+': [1, 3, 7, 5], 'x-': [0, 4, 6, 2], 'y+': [2, 6, 7, 3], 'y-': [0, 1, 5, 4], 'z+': [4, 5, 7, 6], 'z-': [0, 2, 3, 1] };
+      function hexa(v, opt) {
+        opt = opt || {};
+        var cen = [0, 0, 0]; v.forEach(function (p) { cen = add(cen, p, 1 / 8); });
+        Object.keys(FACES).forEach(function (key) {
+          var ix = FACES[key], wp = ix.map(function (i) { return v[i]; }), fc = [0, 0, 0]; wp.forEach(function (p) { fc = add(fc, p, 0.25); });
+          var n = nrm(sub(fc, cen)), facing = n[1] * TS + (-n[0] * sw + n[2] * cw) * TC;
+          if (facing > -0.03) return;
+          var sp = wp.map(V), d = (sp[0][2] + sp[1][2] + sp[2][2] + sp[3][2]) / 4, lt = n[0] * LT[0] + n[1] * LT[1] + n[2] * LT[2], idx = items.length;
+          // front-face points by (s, t): s runs -x to +x, t runs -y to +y
+          var fp = function (s, t2) { return V(add(add(add(add([0, 0, 0], v[0], (1 - s) * (1 - t2)), v[1], s * (1 - t2)), v[2], (1 - s) * t2), v[3], s * t2)); };
+          items.push({ d: d, fn: function () {
+            ctx.globalAlpha = opt.alpha == null ? 1 : opt.alpha;
+            ctx.beginPath(); sp.forEach(function (p, k) { k ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }); ctx.closePath();
+            ctx.fillStyle = C.sheet; ctx.fill();
+            if (lt < 0.3) { // pencil shading on faces turned from the light
+              var gap = lt < -0.25 ? 2.6 : lt < 0.05 ? 3.8 : 6, x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+              sp.forEach(function (p) { x0 = Math.min(x0, p[0]); x1 = Math.max(x1, p[0]); y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); });
+              ctx.save(); ctx.clip(); ctx.strokeStyle = C.pencil; ctx.lineWidth = 0.7; ctx.globalAlpha *= 0.6; ctx.beginPath();
+              for (var cc = x0 + y0 - ((x0 + y0) % gap); cc < x1 + y1; cc += gap) { ctx.moveTo(x0, cc - x0); ctx.lineTo(x1, cc - x1); }
+              ctx.stroke(); ctx.restore();
+            }
+            ctx.strokeStyle = C.ink; for (var k = 0; k < 4; k++) sketchEdge(sp[k], sp[(k + 1) % 4], idx, k);
+            if (key === 'z-' && opt.front) opt.front(fp);
+            ctx.globalAlpha = 1;
+          } });
+        });
+      }
+      function box(o, ex, ey, ez, opt) { var v = []; for (var i = 0; i < 8; i++) v.push(add(add(add(o, ex, i & 1 ? 1 : -1), ey, i & 2 ? 1 : -1), ez, i & 4 ? 1 : -1)); hexa(v, opt); }
+      // a square-section bar from a to b; e3 points away from the viewer, so its 'z-' side is the front
+      function limb(a, b, hw, hd, shrink, opt) {
+        var e1 = nrm(sub(b, a)), e2 = cross(e1, [0, 0, 1]); if (Math.hypot(e2[0], e2[1], e2[2]) < 0.1) e2 = [1, 0, 0]; e2 = nrm(e2);
+        var e3 = cross(e2, e1), len = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]) / 2 * (shrink || 0.9);
+        box(add(a, sub(b, a), 0.5), add([0, 0, 0], e2, hw), add([0, 0, 0], e1, len), add([0, 0, 0], e3, hd), opt);
+        return { e1: e1, e2: e2, e3: e3 };
+      }
+      function stick(a, b, lw, col, alpha) {
+        var A = V(a), Bq = V(b);
+        items.push({ d: (A[2] + Bq[2]) / 2 - 0.5, fn: function () { ctx.globalAlpha = alpha == null ? 1 : alpha; ctx.strokeStyle = col || C.ink; ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(Bq[0], Bq[1]); ctx.stroke(); ctx.globalAlpha = 1; } });
+      }
+      function poly(fp, pts, close) { ctx.beginPath(); pts.forEach(function (q, i) { var p = fp(q[0], q[1]); i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }); if (close) ctx.closePath(); }
+      function oval(fp, s0, t0, rs, rt, n) { var pts = []; for (var i = 0; i < n; i++) pts.push([s0 + Math.cos(i / n * Math.PI * 2) * rs, t0 + Math.sin(i / n * Math.PI * 2) * rt]); poly(fp, pts, true); }
+
+      // legs, knee caps and feet (toes forward)
+      [['l', -1], ['r', 1]].forEach(function (sd) {
+        var n = sd[0], sg = sd[1];
+        limb(B[n + 'H'], B[n + 'K'], 4, 4.4);
+        limb(B[n + 'K'], B[n + 'A'], 3.3, 3.7);
+        box([B[n + 'K'][0], 78, -4.3], [2.4, 0, 0], [0, 2.6, 0], [0, 0, 1]);
+        box([B[n + 'A'][0] + sg * 0.6, 98.2, -2.8], [3.6, 0, 0], [0, 1.8, 0], [0, 0, 6.4], { front: function (fp) { ctx.strokeStyle = C.ink; ctx.lineWidth = 0.8; poly(fp, [[0.2, 0.5], [0.8, 0.5]]); ctx.stroke(); } });
+      });
+      // hips, waist, torso (wider at the shoulders), chest plate with a core that glows when it thinks
+      box([0, 56, 0], [10.5, 0, 0], [0, 3.4, 0], [0, 0, 5.6], { front: function (fp) { ctx.strokeStyle = C.ink; ctx.lineWidth = 0.8; poly(fp, [[0.5, 0.1], [0.5, 0.9]]); ctx.stroke(); } });
+      box([0, 51.5, 0], [7, 0, 0], [0, 1.6, 0], [0, 0, 4.4]);
+      var tv = []; for (var ti = 0; ti < 8; ti++) { var lo = ti & 2; tv.push([(ti & 1 ? 1 : -1) * (lo ? 11 : 15), lo ? 50 : 27, (ti & 4 ? 1 : -1) * (lo ? 5.4 : 7)]); }
+      hexa(tv, { front: function (fp) {
+        ctx.strokeStyle = C.ink; ctx.lineWidth = 0.9;
+        poly(fp, [[0.2, 0.08], [0.8, 0.08], [0.76, 0.5], [0.24, 0.5]], true); ctx.stroke();
+        ctx.lineWidth = 0.8; ctx.beginPath(); [0.66, 0.74, 0.82].forEach(function (tt) { var a = fp(0.36, tt), b = fp(0.64, tt); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); }); ctx.stroke();
+        oval(fp, 0.5, 0.29, 0.085, 0.11, 14); ctx.fillStyle = C.accent; ctx.globalAlpha = 0.25 + net * 0.6; ctx.fill(); ctx.globalAlpha = 1; ctx.strokeStyle = C.accent; ctx.lineWidth = 1.2; ctx.stroke();
+      } });
+      // neck and head: helmet, dark visor with two eyes, a speaker grille, and the little net on the forehead
+      box([0, 24.5, 0.5], [3, 0, 0], [0, 2.5, 0], [0, 0, 3]);
+      var blink = (t % 4.3) < 0.13 ? 0.15 : 1;
+      box(hc, rotY([9, 0, 0], hy), [0, 8, 0], rotY([0, 0, 8], hy), { front: function (fp) {
+        poly(fp, [[0.14, 0.42], [0.86, 0.42], [0.92, 0.5], [0.92, 0.66], [0.84, 0.74], [0.16, 0.74], [0.08, 0.66], [0.08, 0.5]], true);
+        ctx.fillStyle = C.ink; ctx.fill();
+        ctx.fillStyle = C.accent; [0.32, 0.68].forEach(function (es) { oval(fp, es + look * 0.04, 0.58, 0.075, 0.075 * blink, 10); ctx.fill(); });
+        ctx.strokeStyle = C.ink; ctx.lineWidth = 0.8; ctx.beginPath(); [0.82, 0.88].forEach(function (tt) { var a = fp(0.38, tt), b = fp(0.62, tt); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); }); ctx.stroke();
+        var layers = [[0.24, [0.12, 0.24, 0.36]], [0.5, [0.08, 0.18, 0.28, 0.38]], [0.76, [0.16, 0.32]]], nodes = layers.map(function (L) { return L[1].map(function (tt) { return fp(L[0], tt); }); });
+        ctx.lineWidth = 0.8; ctx.strokeStyle = C.accent; ctx.globalAlpha = 0.25 + net * 0.6; ctx.beginPath();
+        for (var a = 0; a < 2; a++) nodes[a].forEach(function (p) { nodes[a + 1].forEach(function (q) { ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); }); });
+        ctx.stroke(); ctx.globalAlpha = 1; ctx.fillStyle = C.accent;
+        nodes.forEach(function (L) { L.forEach(function (p) { ctx.beginPath(); ctx.arc(p[0], p[1], 1.3 + net * 0.8, 0, 7); ctx.fill(); }); });
+      } });
+      [-1, 1].forEach(function (sg) { box(add(hc, rotY([sg * 10, 0.5, 0], hy), 1), rotY([1.2, 0, 0], hy), [0, 3, 0], rotY([0, 0, 3.2], hy)); });
+      var aTop = add(hc, rotY([2.5, -14, 1], hy), 1); stick(add(hc, rotY([2.5, -8, 1], hy), 1), aTop, 1.4);
+      var aT = V(aTop); items.push({ d: aT[2] - 0.6, fn: function () { ctx.fillStyle = C.pen; ctx.beginPath(); ctx.arc(aT[0], aT[1], 1.6 * u * 0.6 + 1, 0, 7); ctx.fill(); } });
+      // arms: shoulder caps, upper arm, forearm, a hand with a two-finger gripper
+      [['l', -1], ['r', 1]].forEach(function (sd) {
+        var n = sd[0], sg = sd[1];
+        box([sg * 15.8, 29.4, 0], [4.2, 0, 0], [0, 3.6, 0], [0, 0, 4.8]);
+        limb(B[n + 'S'], B[n + 'E'], 3, 3);
+        var fa = limb(B[n + 'E'], B[n + 'W'], 2.6, 2.6), Wp = B[n + 'W'];
+        limb(Wp, add(Wp, fa.e1, 5.5), 2.3, 1.9, 1);
+        [-1, 1].forEach(function (f) { var root = add(add(Wp, fa.e1, 5.3), fa.e2, f * 1.5); stick(root, add(add(root, fa.e1, 3), fa.e2, -f * 0.7), 1.6); });
+      });
+      // the plank stage: trestle legs, and the plank as a real board
+      if (pa) {
+        var tx = X0 + PL - 2;
+        [-4, 4].forEach(function (z) { stick([tx, REST + 1.5, PZ + z], [tx - 6, GY, PZ + z], 1.2, C.ink, pa); stick([tx, REST + 1.5, PZ + z], [tx + 6, GY, PZ + z], 1.2, C.ink, pa); });
+        stick([tx, REST + 1.5, PZ - 4], [tx, REST + 1.5, PZ + 4], 1.6, C.ink, pa);
+        limb([X0, pk.gy, PZ], [rx, pk.ry, PZ], 1.5, 5.5, 1, { alpha: pa, front: function (fp) {
+          ctx.strokeStyle = C['ink-2']; ctx.lineWidth = 0.7; ctx.beginPath();
+          for (var gs = 0.12; gs < 0.95; gs += 0.15) { var a = fp(0, gs), m = fp(0.5, gs + 0.03), b = fp(1, gs); ctx.moveTo(a[0], a[1]); ctx.quadraticCurveTo(m[0], m[1], b[0], b[1]); }
+          ctx.stroke();
+        } });
+      }
+      // joints sit just in front of their limbs and light up when a pulse lands
+      JOINTS.forEach(function (j) {
+        var p = J[j], gl = glow[j] || 0; glow[j] = Math.max(0, gl - dt * 1.5);
+        items.push({ d: p[2] - 6, fn: function () {
+          ctx.fillStyle = C.sheet; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(p[0], p[1], 2.9, 0, 7); ctx.fill(); ctx.stroke();
+          if (gl > 0) { ctx.globalAlpha = gl; ctx.fillStyle = C.accent; ctx.strokeStyle = C.accent; ctx.beginPath(); ctx.arc(p[0], p[1], 2.9, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(p[0], p[1], 2.9 + (1 - gl) * 9, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; }
+        } });
+      });
+      items.sort(function (a, b) { return b.d - a.d; }).forEach(function (it) { it.fn(); });
+
+      // phantom shelf, plank readouts
       if (pa) {
         ctx.globalAlpha = pa;
-        var tx = P(X0 + PL - 2, REST + 1.5);
-        ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(tx[0] - 6 * u, gy); ctx.lineTo(tx[0], tx[1]); ctx.lineTo(tx[0] + 6 * u, gy); ctx.moveTo(tx[0] - 4 * u, tx[1]); ctx.lineTo(tx[0] + 4 * u, tx[1]); ctx.stroke();
-        var s0 = P(X0, GOAL + 1.5), s1 = P(X0 + PL, GOAL + 1.5);
+        var s0 = V([X0, GOAL + 1.5, PZ]), s1 = V([X0 + PL, GOAL + 1.5, PZ]), s0t = V([X0, GOAL - 1.5, PZ]), s1t = V([X0 + PL, GOAL - 1.5, PZ]);
         ctx.strokeStyle = C.pen; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.2;
-        if (!pk.done) { ctx.strokeRect(s0[0], s0[1] - 3 * u, s1[0] - s0[0], 3 * u); }
-        ctx.beginPath(); ctx.moveTo(s0[0] - 2 * u, s0[1]); ctx.lineTo(s1[0] + 2 * u, s1[1]); [X0 + 6, X0 + PL - 6].forEach(function (bx) { var b = P(bx, GOAL + 1.5); ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0], b[1] + 5 * u); ctx.lineTo(b[0] + 4 * u, b[1]); }); ctx.stroke(); ctx.setLineDash([]);
-        if (!pk.done) { ctx.font = '600 10px "Reddit Mono Variable", "Reddit Mono", monospace'; ctx.fillStyle = C.pen; ctx.fillText(word('mot-ngay-nao-do.hd-nhan-ke'), s0[0] + 2 * u, s0[1] - 3 * u - 6); }
+        if (!pk.done) { ctx.beginPath(); ctx.moveTo(s0[0], s0[1]); ctx.lineTo(s1[0], s1[1]); ctx.lineTo(s1t[0], s1t[1]); ctx.lineTo(s0t[0], s0t[1]); ctx.closePath(); ctx.stroke(); }
+        ctx.beginPath(); [X0 + 6, X0 + PL - 6].forEach(function (bx) { var b = V([bx, GOAL + 1.5, PZ]), b2 = V([bx, GOAL + 6.5, PZ]), b3 = V([bx + 4, GOAL + 1.5, PZ]); ctx.moveTo(b[0], b[1]); ctx.lineTo(b2[0], b2[1]); ctx.lineTo(b3[0], b3[1]); }); ctx.stroke(); ctx.setLineDash([]);
+        if (!pk.done) { ctx.font = '600 10px "Reddit Mono Variable", "Reddit Mono", monospace'; ctx.fillStyle = C.pen; ctx.fillText(word('mot-ngay-nao-do.hd-nhan-ke'), s0t[0] + 2 * u, s0t[1] - 6); }
         ctx.globalAlpha = 1;
-      }
-
-      ctx.setLineDash([9, 3, 2, 3]); ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5;
-      function line(a, b) { ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); }
-      ctx.beginPath(); ctx.arc(head[0], head[1], 9 * u, 0, 7); ctx.stroke();
-      line(neck, chest);
-      var t1 = P(-14, 28), t2 = P(14, 28), t3 = P(10, 54), t4 = P(-10, 54);
-      ctx.beginPath(); ctx.moveTo(t1[0], t1[1]); ctx.lineTo(t2[0], t2[1]); ctx.lineTo(t3[0], t3[1]); ctx.lineTo(t4[0], t4[1]); ctx.closePath(); ctx.stroke();
-      line(J.lS, J.lE); line(J.lE, J.lW); line(J.rS, J.rE); line(J.rE, J.rW); line(P(-10, 56), P(10, 56));
-      line(J.lH, J.lK); line(J.lK, J.lA); line(J.rH, J.rK); line(J.rK, J.rA);
-      line(J.lA, [J.lA[0] - 6 * u, J.lA[1]]); line(J.rA, [J.rA[0] + 6 * u, J.rA[1]]);
-      ctx.setLineDash([]);
-      ctx.strokeStyle = C.pen; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(head[0] - 5 * u + look * 2.5 * u, head[1] - 1.5 * u); ctx.lineTo(head[0] + 5 * u + look * 2.5 * u, head[1] - 1.5 * u); ctx.stroke();
-
-      if (pa) { // the plank, drawn in front of the body
-        var a0 = P(X0, pk.gy), a1 = P(rx, pk.ry), ang = Math.atan2(a1[1] - a0[1], a1[0] - a0[0]), len = Math.hypot(a1[0] - a0[0], a1[1] - a0[1]);
-        ctx.save(); ctx.globalAlpha = pa; ctx.translate(a0[0], a0[1]); ctx.rotate(ang);
-        ctx.fillStyle = C.sheet; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4; ctx.fillRect(0, -1.5 * u, len, 3 * u); ctx.strokeRect(0, -1.5 * u, len, 3 * u);
-        ctx.strokeStyle = C['ink-2']; ctx.lineWidth = 0.7; ctx.beginPath(); for (var gx = 6 * u; gx < len - 2 * u; gx += 7 * u) { ctx.moveTo(gx, -1.5 * u); ctx.quadraticCurveTo(gx + 2 * u, 0, gx, 1.5 * u); } ctx.stroke();
-        ctx.restore(); ctx.globalAlpha = 1;
+        var a1 = V([rx, pk.ry, PZ]);
         if (!pk.done) {
-          var deg = Math.atan2(pk.ry - pk.gy, rx - X0) * 180 / Math.PI, mid = P((X0 + rx) / 2 + 6, (pk.gy + pk.ry) / 2 + 3.5);
+          var deg = Math.atan2(pk.ry - pk.gy, rx - X0) * 180 / Math.PI, mid = V([(X0 + rx) / 2 + 6, (pk.gy + pk.ry) / 2 + 3.5, PZ]);
           ctx.font = MONO; ctx.fillStyle = Math.abs(deg) < 3 ? C.accent : C['ink-2']; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillText((word('mot-ngay-nao-do.hd-nghieng') + ' ') + (deg > 0 ? '+' : '') + deg.toFixed(1) + '°', mid[0], mid[1]); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
           if (!pk.held) ring(a1, t);
           if (pk.hold > 0) { ctx.strokeStyle = C.accent; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(a1[0], a1[1], 11, -Math.PI / 2, -Math.PI / 2 + Math.min(1, pk.hold / 1.1) * Math.PI * 2); ctx.stroke(); }
@@ -691,39 +881,29 @@
       }
       function ring(p, t) { var r = 9 + (Math.sin(t * 4) + 1) * 2.5; ctx.strokeStyle = C.pen; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, 7); ctx.stroke(); }
 
-      // the move being taught (pencil) and its mirror being tried (red)
+      // the move being taught (pencil) and its mirror being tried (red), in the body plane
       if (rec && rec.pts.length > 1) {
         var fade = phase === 'learned' ? Math.max(0, 1 - phaseT / 3) : 1;
         ctx.globalAlpha = fade * 0.8; ctx.strokeStyle = C.pencil; ctx.lineWidth = 1.3; ctx.setLineDash([2, 3]); ctx.beginPath();
-        rec.pts.forEach(function (q, i) { var s = P(q.x, q.y); i ? ctx.lineTo(s[0], s[1]) : ctx.moveTo(s[0], s[1]); }); ctx.stroke();
+        rec.pts.forEach(function (q, i) { var s = V([q.x, q.y, 0]); i ? ctx.lineTo(s[0], s[1]) : ctx.moveTo(s[0], s[1]); }); ctx.stroke();
         if (phase === 'replay' || phase === 'learned') {
           ctx.strokeStyle = C.pen; ctx.setLineDash([]); ctx.lineWidth = 1.6; ctx.beginPath(); var lim = phase === 'replay' ? play : 1e9;
-          rec.pts.forEach(function (q, i) { if (q.t > lim) return; var s = P(-q.x, q.y); i ? ctx.lineTo(s[0], s[1]) : ctx.moveTo(s[0], s[1]); }); ctx.stroke();
+          rec.pts.forEach(function (q, i) { if (q.t > lim) return; var s = V([-q.x, q.y, 0]); i ? ctx.lineTo(s[0], s[1]) : ctx.moveTo(s[0], s[1]); }); ctx.stroke();
         }
         ctx.setLineDash([]); ctx.globalAlpha = 1;
       }
-      if ((stage === 1 || stage === 3) && !grab && !phase && !(stage === 3 && wv > 0.3)) {
+      if ((stage === 1 || stage === 3) && !grab && !phase && !(stage === 3 && wv > 0.3) && cw >= 0.5) {
         ring(J.rW, t);
         if (stage === 1) { ctx.font = '19px ' + HAND; ctx.fillStyle = C.pen; ctx.fillText(word('mot-ngay-nao-do.hd-nam-day'), J.rW[0] + 14, J.rW[1] + 18); }
       }
 
-      // neurons fire faster while it is thinking
+      // neurons fire faster while it is thinking; pulses run along the skeleton like an x-ray
       var thinking = phase === 'think';
       nextFire -= dt * (thinking ? 6 : ptr.in ? 2 : 1);
       if (nextFire <= 0 && dt) { nextFire = 0.35 + Math.random() * 0.4; net = 1; pulses.push({ j: JOINTS[(Math.random() * JOINTS.length) | 0], p: 0 }); }
       net = Math.max(0, net - dt * 2.2);
-      var layers = [[-5, [-1, 2.5, 6]], [0, [-0.5, 2, 4.5, 7]], [5, [1, 5]]], nodes = layers.map(function (L) { return L[1].map(function (y) { return [head[0] + L[0] * u, head[1] + y * u * 0.75]; }); });
-      ctx.lineWidth = 0.8; ctx.strokeStyle = C.accent; ctx.globalAlpha = 0.25 + net * 0.6; ctx.beginPath();
-      for (var a = 0; a < 2; a++) nodes[a].forEach(function (p) { nodes[a + 1].forEach(function (q) { ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); }); });
-      ctx.stroke(); ctx.globalAlpha = 1;
-      nodes.forEach(function (L) { L.forEach(function (p) { ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(p[0], p[1], 1.4 + net * 0.8, 0, 7); ctx.fill(); }); });
       function route(j) { var isArm = 'SEW'.indexOf(j[1]) >= 0, r = [neck, isArm ? chest : pelvis], ch = isArm ? 'SEW' : 'HKA'; for (var i = 0; i < 3; i++) { r.push(J[j[0] + ch[i]]); if (ch[i] === j[1]) break; } return r; }
-      pulses = pulses.filter(function (pl) { pl.p += dt * 1.6; if (pl.p >= 1) { glow[pl.j] = 1; return false; } var q = along(route(pl.j), pl.p); ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(q[0], q[1], 2.4, 0, 7); ctx.fill(); return true; });
-      JOINTS.forEach(function (j) {
-        var gl = glow[j] || 0; glow[j] = Math.max(0, gl - dt * 1.5);
-        ctx.fillStyle = C.sheet; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(J[j][0], J[j][1], 2.9, 0, 7); ctx.fill(); ctx.stroke();
-        if (gl > 0) { ctx.globalAlpha = gl; ctx.fillStyle = C.accent; ctx.strokeStyle = C.accent; ctx.beginPath(); ctx.arc(J[j][0], J[j][1], 2.9, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(J[j][0], J[j][1], 2.9 + (1 - gl) * 9, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; }
-      });
+      pulses = pulses.filter(function (pl) { pl.p += dt * 1.6; if (pl.p >= 1) { glow[pl.j] = 1; return false; } var q = along(route(pl.j), pl.p); ctx.fillStyle = C.accent; ctx.globalAlpha = 0.85; ctx.beginPath(); ctx.arc(q[0], q[1], 2.4, 0, 7); ctx.fill(); ctx.globalAlpha = 1; return true; });
 
       // speech: typed out, wrapped, tail pointing at the head
       if (bub) {
@@ -741,7 +921,7 @@
         lines.forEach(function (l, li) { var n = Math.max(0, Math.min(l.length, shown.length - k2)); ctx.fillText(l.slice(0, n), bx + 8, by + 6 + li * lh); k2 += l.length + 1; });
         ctx.textBaseline = 'alphabetic';
       }
-      c.style.cursor = grab ? 'grabbing' : ptr.in && hit([(ptr.x - ox) / u, (ptr.y - oy) / u]) ? 'grab' : '';
+      c.style.cursor = grab || spin.drag !== null ? 'grabbing' : ptr.in && hit(ptr.x, ptr.y) ? 'grab' : ptr.in ? 'ew-resize' : '';
       ctx.font = MONO; ctx.fillStyle = C['ink-2']; ctx.fillText('PA-HX · REV ?', 10, h - 11);
     }
   })();

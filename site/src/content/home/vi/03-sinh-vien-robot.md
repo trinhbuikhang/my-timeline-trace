@@ -32,7 +32,7 @@ mô hình 3D thô · kéo để xoay
 ↑ vẽ theo trí nhớ, không phải bản vẽ thật.
 
 ## mo-ta-mo-phong
-Mô phỏng robot dò đường: năm cảm biến đọc vạch, bộ điều khiển P lái xe. Có thể chỉnh hệ số Kp.
+Mô phỏng robot dò đường: năm cảm biến đọc vạch, bộ điều khiển P lái xe. Gặp vạch ngang thì xe dừng một chút. Có thể chỉnh hệ số Kp.
 
 ## nut-dat-lai
 ĐẶT LẠI
@@ -50,6 +50,9 @@ lạc
 
 ## hd-lac-roi
 lạc rồi!
+
+## hd-dung
+dừng
 
 ## hd-nhan-cam-bien
 5 × IR

@@ -37,7 +37,7 @@ mô hình 3D thô · kéo để xoay
 ↑ vẽ theo trí nhớ, không phải khung thật.
 
 ## mo-ta-mo-phong
-Mô phỏng UAV ba cánh quạt bay lơ lửng. Di chuột hoặc chạm để thổi gió, bộ điều khiển PD giữ nó lại. Chế độ Ngoài đời cho thấy nó nhấc lên được, lắc mạnh rồi lật.
+Mô phỏng UAV ba cánh quạt bay lơ lửng. Di chuột hoặc chạm để thổi gió bằng chiếc quạt mini, bộ điều khiển PD giữ nó lại. Chế độ Ngoài đời cho thấy nó nhấc lên được, lắc mạnh rồi lật.
 
 ## nut-mo-phong
 MÔ PHỎNG
